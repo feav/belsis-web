@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit SortieCaisse{% endblock %}
+
+{% block body %}
+    <h1>Edit SortieCaisse</h1>
+
+    {{ include('sortie_caisse/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('sortie_caisse_index') }}">back to list</a>
+
+    {{ include('sortie_caisse/_delete_form.html.twig') }}
+{% endblock %}

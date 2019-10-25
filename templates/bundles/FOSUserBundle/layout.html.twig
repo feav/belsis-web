@@ -1,0 +1,18 @@
+{# templates/bundles/FOSUserBundle/layout.html.twig #}
+{% extends 'base.html.twig' %}
+{# ... this works as expected ... #}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        {% block fos_user_content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

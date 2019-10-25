@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New SortieCaisse{% endblock %}
+
+{% block body %}
+    <h1>Create new SortieCaisse</h1>
+
+    {{ include('sortie_caisse/_form.html.twig') }}
+
+    <a href="{{ path('sortie_caisse_index') }}">back to list</a>
+{% endblock %}

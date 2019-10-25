@@ -1,0 +1,41 @@
+li{
+    list-style: none;
+}
+
+.top-nav li{
+    display: inline-block;
+}
+.top-nav li a{
+    color: black!important;
+}
+.top-nav{
+    position: absolute;
+    top: 0px;
+    right: 20px;
+}
+header{
+    background: #41b0e6bd;
+    color: black !important;
+    fill: black !important;
+    position: relative;
+    padding: 10px 10px 0px 10px;
+    margin-bottom: 10px;
+    height: 40px;
+}
+.red{
+    background: red!important;
+    color: white!important;
+    fill: white!important;
+}
+.text-red{
+    color: red!important;
+    fill: red!important;
+}
+
+.hg-100{
+    height: 100px!important;
+}
+
+.hg-35{
+    height: 35px!important;
+}

@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SortieCaisse index{% endblock %}
+
+{% block body %}
+    <h1>SortieCaisse index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Montant</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for sortie_caisse in sortie_caisses %}
+            <tr>
+                <td>{{ sortie_caisse.id }}</td>
+                <td>{{ sortie_caisse.date ? sortie_caisse.date|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ sortie_caisse.description }}</td>
+                <td>{{ sortie_caisse.montant }}</td>
+                <td>
+                    <a href="{{ path('sortie_caisse_show', {'id': sortie_caisse.id}) }}">show</a>
+                    <a href="{{ path('sortie_caisse_edit', {'id': sortie_caisse.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('sortie_caisse_new') }}">Create new</a>
+{% endblock %}
