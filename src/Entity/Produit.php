@@ -24,6 +24,11 @@ class Produit
     private $nom;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $image;
+
+    /**
      * @ORM\Column(type="integer")
      */
     private $prix;
@@ -75,6 +80,18 @@ class Produit
     public function getPrix()
     {
         return $this->prix;
+    }
+
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    public function setImage($image)
+    {
+        $this->image = $image;
+
+        return $this;
     }
 
     public function setPrix($prix)
@@ -132,6 +149,31 @@ class Produit
         }
 
         return $this;
+    }
+
+    /** Retourne directement la quantité de produit à prélever **/
+    public function getQuantite(){
+        $stock = $this->getStock();
+        //on suppose qu'il y'a un seul stock pour l'instant
+        if(!empty($stock)){
+            return $stock[0]->getQuantite();
+        }else{
+            return 0;
+        }
+
+    }
+
+    /** Retourne directement la quantité de produit à prélever **/
+    public function setQuantite($quantite){
+        $stock = $this->getStock();
+        //on suppose qu'il y'a un seul stock pour l'instant
+        if(!empty($stock)){
+            $stock[0]->setQuantite($quantite);
+            return $this;
+        }else{
+            return 0;
+        }
+
     }
 
     /**
