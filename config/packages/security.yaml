@@ -42,7 +42,13 @@ security:
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/, role: ROLE_ADMIN }
         - { path: ^/restaurant, role: ROLE_USER }
-        - { path: ^/utilisateur, role: ROLE_USER }
-        - { path: ^/sortie_caisse, role: ROLE_USER }
-        - { path: ^/mode_paiement, role: ROLE_USER }
+        - { path: ^/user, role: ROLE_USER }
+        - { path: ^/appareil, role: ROLE_USER }
+        - { path: ^/categorie, role: ROLE_USER }
+        - { path: ^/table, role: ROLE_USER }
+        - { path: ^/stock, role: ROLE_USER }
+        - { path: ^/commande, role: ROLE_USER }
+        - { path: ^/produit, role: ROLE_USER }
+        - { path: ^/sortie/caisse, role: ROLE_USER }
+        - { path: ^/mode/paiement, role: ROLE_USER }
         - { path: ^/createClient, roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] }

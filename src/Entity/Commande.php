@@ -54,13 +54,13 @@ class Commande
     private $user;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Produit", inversedBy="commandes")
+     * @ORM\OneToMany(targetEntity="CommandeProduit", mappedBy="commande")
      */
-    private $produit;
+    private $commandeProduit;
 
     public function __construct()
     {
-        $this->produit = new ArrayCollection();
+        $this->commandeProduit = new ArrayCollection();
     }
 
     public function getId()
@@ -153,32 +153,32 @@ class Commande
     }
 
     /**
-     * @return Collection|Produit[]
+     * @return Collection|CommandeProduit[]
      */
-    public function getProduit()
+    public function getCommandeProduit()
     {
-        return $this->produit;
+        return $this->commandeProduit;
     }
 
-    public function addProduit($produit)
+    public function addCommandeProduit($commandeProduit)
     {
-        if (!$this->produit->contains($produit)) {
-            $this->produit[] = $produit;
+        if (!$this->commandeProduit->contains($commandeProduit)) {
+            $this->$commandeProduit[] = $commandeProduit;
         }
 
         return $this;
     }
 
-    public function removeProduit($produit)
+    public function removeCommandeProduit($commandeProduit)
     {
-        if ($this->produit->contains($produit)) {
-            $this->produit->removeElement($produit);
+        if ($this->produit->contains($commandeProduit)) {
+            $this->produit->removeElement($commandeProduit);
         }
 
         return $this;
     }
 
     public function __toString(){
-        return $this->nom;
+        return $this->code;
     }
 }

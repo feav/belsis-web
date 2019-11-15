@@ -54,10 +54,15 @@ class Produit
      */
     private $commandes;
 
+    /**
+     * @ORM\OneToMany(targetEntity="CommandeProduit", mappedBy="produit")
+     */
+    private $commandeProduit;
+
     public function __construct()
     {
         $this->stock = new ArrayCollection();
-        $this->commandes = new ArrayCollection();
+        $this->commandeProduit = new ArrayCollection();
     }
 
     public function getId()
@@ -124,7 +129,13 @@ class Produit
 
         return $this;
     }
-
+    /**
+     * @return Collection|CommandeProduit[]
+     */
+    public function getCommandeProduit()
+    {
+        return $this->commandeProduit;
+    }
     /**
      * @return Collection|Stock[]
      */
