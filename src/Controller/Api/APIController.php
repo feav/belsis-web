@@ -43,7 +43,6 @@ class APIController extends FOSRestController
 
     public function authToken(string $token=null)
     {
-
         if (empty($token)) {
             return [
                     'status' => 'error',

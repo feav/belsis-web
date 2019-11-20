@@ -29,9 +29,9 @@ class ProduitController extends APIController
      */
     public function getProduits(Request $request)
     {
+        //var_dump($request->headers->get('Authorization')); die();
         $data = json_decode($request->getContent(), true);
-
-        $user = $this->authToken($data['token']);
+        $user = $this->authToken($request->get('token'));
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
@@ -39,6 +39,9 @@ class ProduitController extends APIController
                     Response::HTTP_INTERNAL_SERVER_ERROR)
             );
         }
+
+        $user = $this->authToken($data['token']);
+
 
         $restaurant = $user->getRestaurant();
         if (empty($restaurant)) {
@@ -78,17 +81,7 @@ class ProduitController extends APIController
     public function getProduitsByCategorie(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-
-        if (empty($data["token"])) {
-            return $this->handleView(
-                $this->view([
-                    'status' => 'error',
-                    'message' => 'Le token est vide'
-                ], RESPONSE::HTTP_BAD_REQUEST
-                ));
-        }
-
-        $user = $this->authToken($data['token']);
+        $user = $this->authToken($request->get('token'));
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
