@@ -185,6 +185,7 @@ class APIController extends FOSRestController
             'message' => 'Mise à jour reussie'
         ], 200));
     }
+
     /**
      *ListsallResto.
      * @Rest\Post("/new-restaurant", name="new_restaurant")

@@ -65,6 +65,11 @@ class Restaurant
      */
     private $commandes;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="restaurant")
+     */
+    private $users;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -125,6 +130,14 @@ class Restaurant
         $this->devise = $devise;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers()
+    {
+        return $this->users;
     }
 
     /**

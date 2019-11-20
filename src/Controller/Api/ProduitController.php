@@ -29,7 +29,7 @@ class ProduitController extends APIController
      */
     public function getProduits(Request $request)
     {
-        //var_dump($request->headers->get('Authorization')); die();
+        var_dump($request->headers->get('Authorization')); die();
         $data = json_decode($request->getContent(), true);
         $user = $this->authToken($request->get('token'));
         if (is_array($user)) {
