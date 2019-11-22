@@ -29,7 +29,8 @@ class ProduitController extends APIController
      */
     public function getProduits(Request $request)
     {
-        var_dump($request->headers->get('Authorization')); die();
+        var_dump($request->headers->get('Authorization'));
+        die();
         $data = json_decode($request->getContent(), true);
         $user = $this->authToken($request->get('token'));
         if (is_array($user)) {
@@ -57,15 +58,9 @@ class ProduitController extends APIController
         $produits = $restaurant->getProduits();
         $res = [];
         foreach ($produits as $k => $produit) {
-            $tabProduits['id'] = $produit->getId();
-            $tabProduits['nom'] = $produit->getNom();
-            $tabProduits['image'] = "image.jpg";
-            $tabProduits['categorie'] = $produit->getCategorie()->getNom();
+            $tabProduits[] = $this->getInfos();
 
-            $stock = $produit->getStock();
-
-            //on suppose qu'il y'a un seul stock pour l'instant
-            $tabProduits['quantite'] = $produit->getQuantite();
+            // $stock = $produit->getStock();
 
             $res[] = $tabProduits;
         }
@@ -123,16 +118,7 @@ class ProduitController extends APIController
         $produits = $categorie->getProduits();
         $res = [];
         foreach ($produits as $k => $produit) {
-            $tabProduits['id'] = $produit->getId();
-            $tabProduits['nom'] = $produit->getNom();
-            $tabProduits['prix'] = $produit->getPrix();
-            $tabProduits['image'] = "image.jpg";
-            $tabProduits['categorie'] = $produit->getCategorie()->getNom();
-
-            $stock = $produit->getStock();
-
-            //on suppose qu'il y'a un seul stock pour l'instant
-            $tabProduits['quantite'] = $produit->getQuantite();
+            $tabProduits[] = $this->getInfos($produit);
 
             $res[] = $tabProduits;
         }
@@ -352,13 +338,7 @@ class ProduitController extends APIController
                 ));
         }
 
-        $res = [];
-        $res['id'] = $produit->getId();
-        $res['nom'] = $produit->getNom();
-        $res['image'] = 'image.jpg';
-        $res['prix'] = $produit->getPrix();
-        $res['quantite'] = $produit->getQuantite();
-        $res['categorie'] = $produit->getCategorie()->getNom();
+        $res = $this->getInfos($produit);
 
         return $this->handleView($this->view($res, 200));
     }
@@ -408,5 +388,24 @@ class ProduitController extends APIController
         $this->em->flush();
 
         return $this->handleView($this->view(['status' => 'success', 'message' => 'suppression reussie'], 200));
+    }
+
+    public function getInfos(Produit $produit)
+    {
+        $base64 = "";
+        if ($produit->getImage()) {
+            $path = 'uploads/produits/' . $produit->getImage();
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data = file_get_contents($path);
+            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        }
+        return [
+            'id' => $produit->getId(),
+            'nom' => $produit->getNom(),
+            'prix' => $produit->getPrix(),
+            'quantite' => $produit->getQuantite(),
+            'categorie' => $produit->getCategorie()->getNom(),
+            'image' => $base64
+        ];
     }
 }

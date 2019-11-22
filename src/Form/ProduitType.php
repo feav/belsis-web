@@ -4,8 +4,10 @@ namespace App\Form;
 
 use App\Entity\Produit;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class ProduitType extends AbstractType
 {
@@ -15,9 +17,32 @@ class ProduitType extends AbstractType
             ->add('nom')
             ->add('prix')
             ->add('restaurant')
-            ->add('categorie',  NULL, ['required' => true])
-            ->add('stock',  NULL, ['required' => true])
-            //->add('commandes')
+            ->add('categorie', NULL, ['required' => true])
+            ->add('stock', NULL, ['required' => true])
+            // unmapped fields can't define their validation using annotations
+            ->add('image', FileType::class, [
+                'label' => 'Image',
+
+                // unmapped means that this field is not associated to any entity property
+                'mapped' => false,
+
+                'required' => false,
+
+                // unmapped fields can't define their validation using annotations
+                // in the associated entity, so you can use the PHP constraint classes
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            "image/png",
+                            "image/jpeg",
+                            "image/jpg",
+                            "image/gif"
+                        ],
+                        'mimeTypesMessage' => 'Veillez entrer une image valide',
+                    ])
+                ],
+            ])//->add('commandes')
         ;
     }
 

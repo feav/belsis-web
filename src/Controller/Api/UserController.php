@@ -21,6 +21,117 @@ class UserController extends APIController
 {
     /**
      *Get User profile info.
+     * @Rest\Post("/get", name="get")
+     *
+     * @return Response
+     */
+    public function getProfile(Request $request)
+    {
+        $data = json_decode($request->getContent(), true);
+        $user = $this->authToken($request->get('token'));
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_INTERNAL_SERVER_ERROR)
+            );
+        }
+
+        $restaurant = $user->getRestaurant();
+        if (empty($restaurant)) {
+            return $this->handleView(
+                $this->view([
+                    'statut' => 'error',
+                    'message' => 'Cet utilisateur n\est dans aucun restaurant.'
+                ],
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                ));
+        }
+        $restoId = $restaurant->getId();
+
+        $userExist = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $user->getId(), 'restaurant' => $restoId]);
+        if (empty($userExist)) {
+            return $this->handleView(
+                $this->view([
+                    'status' => 'error',
+                    'message' => 'Aucun utilisateur n\'existe avec cet identifiant dans ce restaurant'
+                ], RESPONSE::HTTP_BAD_REQUEST
+                ));
+        }
+
+        $res = $this->getUserInfos($user);
+
+        return $this->handleView($this->view($res, 200));
+    }
+
+    /**
+     *Update User profile info.
+     * @Rest\Post("/update", name="update")
+     *
+     * @return Response
+     */
+    public function update(Request $request, UserPasswordEncoderInterface $encoder)
+    {
+        $data = json_decode($request->getContent(), true);
+        $user = $this->authToken($request->get('token'));
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_INTERNAL_SERVER_ERROR)
+            );
+        }
+
+        $restaurant = $user->getRestaurant();
+        if (empty($restaurant)) {
+            return $this->handleView(
+                $this->view([
+                    'statut' => 'error',
+                    'message' => 'Cet utilisateur n\'est dans aucun restaurant.'
+                ],
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                ));
+        }
+        $restoId = $restaurant->getId();
+
+        $userExist = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $user->getId(), 'restaurant' => $restoId]);
+        if (empty($userExist)) {
+            return $this->handleView(
+                $this->view([
+                    'status' => 'error',
+                    'message' => 'Aucun utilisateur n\'existe avec cet identifiant dans ce restaurant'
+                ], RESPONSE::HTTP_BAD_REQUEST
+                ));
+        }
+
+        if (!empty($data['nom'])) {
+            $user->setNom($data['nom']);
+        }
+        if (!empty($data['prenom'])) {
+            $user->setPrenom($data['prenom']);
+        }
+        if (!empty($data['email'])) {
+            $user->setEmail($data['email']);
+        }
+        if (!empty($data['role'])) {
+            $user->setRoles(array($data['role']));
+        }
+        if (!empty($data['password'])) {
+            $encodedPwd = $encoder->encodePassword($user, $data['password']);
+            $user->setPassword($encodedPwd);
+        }
+
+        $this->em->persist($user);
+        $this->em->flush();
+
+        return $this->handleView($this->view([
+            'status' => 'success',
+            'message' => 'Mise à jour reussie'
+        ], 200));
+    }
+
+    /**
+     *Get User profile info.
      * @Rest\Post("/new", name="new")
      *
      * @return Response
@@ -37,15 +148,17 @@ class UserController extends APIController
             );
         }
 
-        if (empty($data["restaurant_id"])) {
+        $restaurant = $user->getRestaurant();
+        if (empty($restaurant)) {
             return $this->handleView(
                 $this->view([
-                    'status' => 'error',
-                    'message' => 'Le champ restaurant_id est vide'
-                ], RESPONSE::HTTP_BAD_REQUEST
+                    'statut' => 'error',
+                    'message' => 'Cet utilisateur n\est dans aucun restaurant.'
+                ],
+                    Response::HTTP_INTERNAL_SERVER_ERROR
                 ));
         }
-        $restoId = $data["restaurant_id"];
+        $restoId = $restaurant->getId();
 
         $restaurant = $this->getDoctrine()->getRepository(Restaurant::class)->findOneBy(['id' => $restoId]);
         if (empty($data["email"])) {
@@ -144,8 +257,7 @@ class UserController extends APIController
     public function getUsers(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-
-        $user = $this->authToken($data['token']);
+        $user = $this->authToken($request->get('token'));
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(

@@ -11,7 +11,8 @@
                 <th>Id</th>
                 <th>Nom</th>
                 <th>Prix</th>
-                <th>actions</th>
+                <th>Image</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -20,6 +21,7 @@
                 <td>{{ produit.id }}</td>
                 <td>{{ produit.nom }}</td>
                 <td>{{ produit.prix }}</td>
+                <td><img class="hg-35" src="{{ asset('uploads/produits/' ~ produit.image) }}" /></td>
                 <td>
                     <a href="{{ path('produit_show', {'id': produit.id}) }}">show</a>
                     <a href="{{ path('produit_edit', {'id': produit.id}) }}">edit</a>
