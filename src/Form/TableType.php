@@ -16,7 +16,6 @@ class TableType extends AbstractType
             ->add('description')
             ->add('coord_x')
             ->add('coord_y')
-            ->add('restaurant')
         ;
     }
 

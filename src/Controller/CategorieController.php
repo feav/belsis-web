@@ -10,12 +10,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @Route("/categorie")
  */
 class CategorieController extends AbstractController
 {
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
     /**
      * @Route("/", name="categorie_index", methods={"GET"})
      */
@@ -37,6 +42,8 @@ class CategorieController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            $user = $this->security->getUser();
+            $categorie->setRestaurant($user->getRestaurant());
             $entityManager->persist($categorie);
             $entityManager->flush();
 
@@ -45,7 +52,7 @@ class CategorieController extends AbstractController
 
         return $this->render('categorie/new.html.twig', [
             'categorie' => $categorie,
-            'form' => $form->createView(),
+            'form' => $form->createView()
         ]);
     }
 
@@ -91,5 +98,10 @@ class CategorieController extends AbstractController
         }
 
         return $this->redirectToRoute('categorie_index');
+    }
+
+    protected function getInfos(Categorie $categorie)
+    {
+
     }
 }

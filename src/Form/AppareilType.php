@@ -22,9 +22,7 @@ class AppareilType extends AbstractType
                     'Smartphone' => 'Smartphone',
                     'Imprimante' => 'Imprimante'
                 ],
-            ])
-            ->add('restaurant')
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

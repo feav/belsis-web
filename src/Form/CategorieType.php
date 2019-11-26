@@ -15,7 +15,6 @@ class CategorieType extends AbstractType
         $builder
             ->add('nom')
             ->add('description')
-            ->add('restaurant')
             ->add('imageFile', VichImageType::class, [
                 'required' => false,
                 'allow_delete' => true,

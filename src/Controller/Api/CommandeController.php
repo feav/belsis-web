@@ -53,22 +53,7 @@ class CommandeController extends APIController
         $commandes = $restaurant->getCommandes();
         $res = [];
         foreach ($commandes as $k => $cmd) {
-            $tabCommandes['id'] = $cmd->getId();
-            $tabCommandes['code'] = $cmd->getCode();
-            $tabCommandes['table'] = $cmd->getTable()->getNom();
-            $cmdProduits = $cmd->getCommandeProduit();
-            $total = 0;
-            $produits = [];
-            foreach ($cmdProduits as $n=>$cmdProduit){
-                $total += $cmdProduit->getPrix() * $cmdProduit->getQuantite();
-                $produits[$n]['nom'] = $cmdProduit->getProduit()->getNom();
-                $produits[$n]['quantite'] = $cmdProduit->getQuantite();
-                $produits[$n]['prix'] = $cmdProduit->getPrix();
-                $produits[$n]['stock'] = $cmdProduit->getProduit()->getQuantite();
-            }
-            $tabCommandes['total'] = $total;
-            $tabCommandes['produits'] = $produits;
-            $res[] = $tabCommandes;
+            $res[] = $this->getInfos($cmd);
         }
         return $this->handleView($this->view($res, Response::HTTP_OK));
     }
@@ -114,7 +99,7 @@ class CommandeController extends APIController
                 ));
         }
         $tableId = $data['table_id'];
-        $table = $this->getDoctrine()->getRepository(Table::class)->findBy(['id'=>$tableId, 'restaurant' => $restoId]);
+        $table = $this->getDoctrine()->getRepository(Table::class)->findBy(['id' => $tableId, 'restaurant' => $restoId]);
         if (empty($table)) {
             return $this->handleView(
                 $this->view([
@@ -125,25 +110,10 @@ class CommandeController extends APIController
                 ));
         }
 
-        $commandes = $this->getDoctrine()->getRepository(Commande::class)->findBy(['table'=>$tableId, 'restaurant' => $restoId]);
+        $commandes = $this->getDoctrine()->getRepository(Commande::class)->findBy(['table' => $tableId, 'restaurant' => $restoId]);
         $res = [];
         foreach ($commandes as $k => $cmd) {
-            $tabCommandes['id'] = $cmd->getId();
-            $tabCommandes['code'] = $cmd->getCode();
-            $tabCommandes['table'] = $cmd->getTable()->getNom();
-            $cmdProduits = $cmd->getCommandeProduit();
-            $total = 0;
-            $produits = [];
-            foreach ($cmdProduits as $n=>$cmdProduit){
-                $total += $cmdProduit->getPrix() * $cmdProduit->getQuantite();
-                $produits[$n]['nom'] = $cmdProduit->getProduit()->getNom();
-                $produits[$n]['quantite'] = $cmdProduit->getQuantite();
-                $produits[$n]['prix'] = $cmdProduit->getPrix();
-                $produits[$n]['stock'] = $cmdProduit->getProduit()->getQuantite();
-            }
-            $tabCommandes['total'] = $total;
-            $tabCommandes['produits'] = $produits;
-            $res[] = $tabCommandes;
+            $res[] = $this->getInfos($cmd);
         }
         return $this->handleView($this->view($res, Response::HTTP_OK));
     }
@@ -189,23 +159,17 @@ class CommandeController extends APIController
         }
         $commandeId = $data['id'];
 
-        $cmd = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['id'=>$commandeId, 'restaurant' => $restoId]);
-
-        $res['id'] = $cmd->getId();
-        $res['code'] = $cmd->getCode();
-        $res['table'] = $cmd->getTable()->getNom();
-        $cmdProduits = $cmd->getCommandeProduit();
-        $total = 0;
-        $produits = [];
-        foreach ($cmdProduits as $n=>$cmdProduit){
-            $total += $cmdProduit->getPrix() * $cmdProduit->getQuantite();
-            $produits[$n]['nom'] = $cmdProduit->getProduit()->getNom();
-            $produits[$n]['quantite'] = $cmdProduit->getQuantite();
-            $produits[$n]['prix'] = $cmdProduit->getPrix();
-            $produits[$n]['stock'] = $cmdProduit->getProduit()->getQuantite();
+        $cmd = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['id' => $commandeId, 'restaurant' => $restoId]);
+        if (!$cmd) {
+            return $this->handleView(
+                $this->view([
+                    'statut' => 'error',
+                    'message' => 'Aucune commande trouvée avec cet id.'
+                ],
+                    Response::HTTP_BAD_REQUEST
+                ));
         }
-        $res['total'] = $total;
-        $res['produits'] = $produits;
+        $res = $this->getInfos($cmd);
 
         return $this->handleView($this->view($res, Response::HTTP_OK));
     }
@@ -251,7 +215,7 @@ class CommandeController extends APIController
         }
         $tableId = $data['table_id'];
 
-        $table = $this->getDoctrine()->getRepository(Table::class)->findOneBy(['id'=>$tableId, 'restaurant' => $restoId]);
+        $table = $this->getDoctrine()->getRepository(Table::class)->findOneBy(['id' => $tableId, 'restaurant' => $restoId]);
         if (empty($table)) {
             return $this->handleView(
                 $this->view([
@@ -270,8 +234,8 @@ class CommandeController extends APIController
                 ],
                     Response::HTTP_BAD_REQUEST
                 ));
-        }else{
-            if(is_array($data['produits']) && !empty($data['produits'])){
+        } else {
+            if (is_array($data['produits']) && !empty($data['produits'])) {
                 $produits = [];
                 $commande = new Commande();
                 $commande->setCode('cmd123');
@@ -283,8 +247,8 @@ class CommandeController extends APIController
                 $this->em->persist($commande);
                 $this->em->flush();
                 $cmdProduits = [];
-                foreach($data['produits'] as $produitData){
-                    $produit = $this->getDoctrine()->getRepository(Produit::class)->findOneBy(['id'=>$produitData['id'], 'restaurant' => $restoId]);
+                foreach ($data['produits'] as $produitData) {
+                    $produit = $this->getDoctrine()->getRepository(Produit::class)->findOneBy(['id' => $produitData['id'], 'restaurant' => $restoId]);
                     if (!empty($produit)) {
                         $cmdProduit = new CommandeProduit();
                         $cmdProduit->setCommande($commande);
@@ -294,11 +258,11 @@ class CommandeController extends APIController
                         $cmdProduits[] = $cmdProduit;
                         $this->em->persist($cmdProduit);
                         $this->em->flush();
-                    }else{
+                    } else {
                         return $this->handleView(
                             $this->view([
                                 'statut' => 'error',
-                                'message' => 'Le produit d\'id '.$produitData['id'].' n\'existe pas.'
+                                'message' => 'Le produit d\'id ' . $produitData['id'] . ' n\'existe pas.'
                             ],
                                 Response::HTTP_BAD_REQUEST
                             ));
@@ -306,7 +270,7 @@ class CommandeController extends APIController
                 }
                 //$commande->addCommandeProduit($cmdProduits);
 
-            }else{
+            } else {
                 return $this->handleView(
                     $this->view([
                         'statut' => 'error',
@@ -360,7 +324,7 @@ class CommandeController extends APIController
                 ));
         }
 
-        $commande = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['id'=>$data['id'], 'restaurant' => $restoId]);
+        $commande = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['id' => $data['id'], 'restaurant' => $restoId]);
 
         if (empty($commande)) {
             return $this->handleView(
@@ -372,12 +336,34 @@ class CommandeController extends APIController
                 ));
         }
         $commandeProduits = $commande->getCommandeProduit();
-        foreach($commandeProduits as $cdmProduit){
+        foreach ($commandeProduits as $cdmProduit) {
             $this->em->remove($cdmProduit);
         }
         $this->em->remove($commande);
         $this->em->flush();
 
         return $this->handleView($this->view(['status' => 'success', 'message' => 'suppression reussie'], Response::HTTP_OK));
+    }
+
+    protected function getInfos(Commande $cmd)
+    {
+        $res = [];
+        $res['id'] = $cmd->getId();
+        $res['code'] = $cmd->getCode();
+        $res['table'] = $cmd->getTable()->getNom();
+        $cmdProduits = $cmd->getCommandeProduit();
+        $total = 0;
+        $produits = [];
+        foreach ($cmdProduits as $n => $cmdProduit) {
+            $total += $cmdProduit->getPrix() * $cmdProduit->getQuantite();
+            $produits[$n]['nom'] = $cmdProduit->getProduit()->getNom();
+            $produits[$n]['quantite'] = $cmdProduit->getQuantite();
+            $produits[$n]['prix'] = $cmdProduit->getPrix();
+            $produits[$n]['stock'] = $cmdProduit->getProduit()->getQuantite();
+        }
+
+        $res['total'] = $total;
+        $res['produits'] = $produits;
+        return $res;
     }
 }

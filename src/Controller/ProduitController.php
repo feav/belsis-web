@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Produit;
 use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
+use App\Service\FileUploader;
 use Behat\Transliterator\Transliterator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,12 +13,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @Route("/produit")
  */
 class ProduitController extends AbstractController
 {
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
+
     /**
      * @Route("/", name="produit_index", methods={"GET"})
      */
@@ -43,21 +50,13 @@ class ProduitController extends AbstractController
             /** @var UploadedFile $image */
             $image = $form['image']->getData();
             if ($image) {
-                $originalFilename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
-                //$safeFilename = \Transliterator::transliterator transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
-                $newFilename = $originalFilename . '-' . uniqid() . '.' . $image->guessExtension();
-
-                try {
-                    $image->move(
-                        $this->getParameter('produits_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
-                }
+                $fileUploader = new FileUploader($this->getParameter("produits_directory"));
+                $newFilename = $fileUploader->upload($image);
 
                 $produit->setImage($newFilename);
             }
+            $user = $this->security->getUser();
+            $produit->setRestaurant($user->getRestaurant());
             $entityManager->persist($produit);
             $entityManager->flush();
 
@@ -91,22 +90,9 @@ class ProduitController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile $image */
             $image = $form['image']->getData();
-
-            // this condition is needed because the 'image' field is not required
-            // so the PDF file must be processed only when a file is uploaded
             if ($image) {
-                $originalFilename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
-                //$safeFilename = \Transliterator::transliterator transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
-                $newFilename = $originalFilename . '-' . uniqid() . '.' . $image->guessExtension();
-
-                try {
-                    $image->move(
-                        $this->getParameter('produits_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
-                }
+                $fileUploader = new FileUploader($this->getParameter("produits_directory"));
+                $newFilename = $fileUploader->upload($image);
 
                 $produit->setImage($newFilename);
             }

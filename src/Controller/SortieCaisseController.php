@@ -5,16 +5,26 @@ namespace App\Controller;
 use App\Entity\SortieCaisse;
 use App\Form\SortieCaisseType;
 use App\Repository\SortieCaisseRepository;
+use FOS\UserBundle\Model\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @Route("/sortie/caisse")
  */
 class SortieCaisseController extends AbstractController
 {
+
+    public function __construct(Security $security)
+    {
+        // Avoid calling getUser() in the constructor: auth may not
+        // be complete yet. Instead, store the entire Security object.
+        $this->security = $security;
+    }
+
     /**
      * @Route("/", name="sortie_caisse_index", methods={"GET"})
      */
@@ -33,9 +43,10 @@ class SortieCaisseController extends AbstractController
         $sortieCaisse = new SortieCaisse();
         $form = $this->createForm(SortieCaisseType::class, $sortieCaisse);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            $user = $this->security->getUser();
+            $sortieCaisse->setRestaurant($user->getRestaurant());
             $entityManager->persist($sortieCaisse);
             $entityManager->flush();
 

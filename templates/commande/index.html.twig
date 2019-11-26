@@ -24,7 +24,6 @@
                 <td>{{ commande.etat }}</td>
                 <td>
                     <a href="{{ path('commande_show', {'id': commande.id}) }}">show</a>
-                    <a href="{{ path('commande_edit', {'id': commande.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
@@ -34,6 +33,4 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <a href="{{ path('commande_new') }}">Create new</a>
 {% endblock %}

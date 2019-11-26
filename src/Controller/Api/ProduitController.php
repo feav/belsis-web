@@ -405,8 +405,10 @@ class ProduitController extends APIController
         if ($produit->getImage()) {
             $path = 'uploads/produits/' . $produit->getImage();
             $type = pathinfo($path, PATHINFO_EXTENSION);
-            $data = file_get_contents($path);
-            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            if(file_exists($path)){
+                $data = file_get_contents($path);
+                $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
         }
         return [
             'id' => $produit->getId(),

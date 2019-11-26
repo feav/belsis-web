@@ -18,7 +18,6 @@ class CommandeType extends AbstractType
             ->add('modepaiement')
             ->add('restaurant')
             ->add('table')
-            ->add('utilisateur')
             ->add('produit')
         ;
     }

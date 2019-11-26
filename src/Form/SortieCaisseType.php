@@ -15,7 +15,6 @@ class SortieCaisseType extends AbstractType
             ->add('date')
             ->add('description')
             ->add('montant')
-            ->add('restaurant')
         ;
     }
 
