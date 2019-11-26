@@ -29,8 +29,6 @@ class ProduitController extends APIController
      */
     public function getProduits(Request $request)
     {
-        var_dump($request->headers->get('Authorization'));
-        die();
         $data = json_decode($request->getContent(), true);
         $user = $this->authToken($request->get('token'));
         if (is_array($user)) {
@@ -42,7 +40,6 @@ class ProduitController extends APIController
         }
 
         $user = $this->authToken($data['token']);
-
 
         $restaurant = $user->getRestaurant();
         if (empty($restaurant)) {
@@ -56,14 +53,14 @@ class ProduitController extends APIController
         }
         $restoId = $restaurant->getId();
         $produits = $restaurant->getProduits();
+        $tabProduits = [];
         $res = [];
+
         foreach ($produits as $k => $produit) {
-            $tabProduits[] = $this->getInfos();
-
+            $tabProduits[] = $this->getInfos($produit);
             // $stock = $produit->getStock();
-
-            $res[] = $tabProduits;
         }
+        $res[] = $tabProduits;
         return $this->handleView($this->view($res, 200));
     }
 
@@ -117,6 +114,7 @@ class ProduitController extends APIController
         }
         $produits = $categorie->getProduits();
         $res = [];
+        $tabProduits = [];
         foreach ($produits as $k => $produit) {
             $tabProduits[] = $this->getInfos($produit);
 
@@ -183,6 +181,10 @@ class ProduitController extends APIController
                 ));
         }
 
+        $base64 = $this->checkBase64($data['image']);
+        $imageName = 'produit' . '-' . uniqid() . '.' . $base64['type'];
+        file_put_contents($imageName, $base64['data']);
+
         $restaurant = $user->getRestaurant();
         if (empty($restaurant)) {
             return $this->handleView(
@@ -196,22 +198,29 @@ class ProduitController extends APIController
         $restoId = $restaurant->getId();
 
         $categorie = $this->getDoctrine()->getRepository(Categorie::class)->find($data['categorie_id']);
-
-        $stock = new Stock();
-        $stock->setRestaurant($restaurant);
-        $stock->setNom($data['nom']);
-        $stock->setQuantite($data['quantite']);
-        $this->em->persist($stock);
-
+        if(empty($data['stocks'])  ){
+            return $this->handleView(
+                $this->view([
+                    'statut' => 'error',
+                    'message' => 'Le champ stocks est vide ou n\'est pas un tableau!'
+                ],
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                ));
+        }
+        $stocks = $data['stocks'];
+        $stockObjs = [];
         $produit = new Produit();
         $produit->setRestaurant($restaurant);
         $produit->setNom($data['nom']);
         $produit->setPrix($data['prix']);
         $produit->setCategorie($categorie);
-        $produit->addStock($stock);
+        $produit->setImage($imageName);
+        foreach ($stocks as $stock){
+            $stockObj = $this->getDoctrine()->getRepository(Stock::class)->find($stock['id']);
+            $produit->addStock($stockObj);
+        }
 
         $this->em->persist($produit);
-
         $this->em->flush();
 
         return $this->handleView($this->view(['status' => 'success', 'message' => 'insertion reussie'], 200));
@@ -408,4 +417,26 @@ class ProduitController extends APIController
             'image' => $base64
         ];
     }
+
+    protected function checkBase64($data){
+        if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+            $data = substr($data, strpos($data, ',') + 1);
+            $type = strtolower($type[1]); // jpg, png, gif
+
+            if (!in_array($type, [ 'jpg', 'jpeg', 'gif', 'png' ])) {
+                throw new \Exception('invalid image type');
+            }
+
+            $data = base64_decode($data);
+
+            if ($data === false) {
+                throw new \Exception('base64_decode failed');
+            }
+
+            return ["data" => $data, "type" => $type];
+        } else {
+            throw new \Exception('did not match data URI with image data');
+        }
+    }
+
 }

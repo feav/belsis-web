@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  mer. 20 nov. 2019 à 12:01
+-- Généré le :  mar. 26 nov. 2019 à 09:21
 -- Version du serveur :  10.1.30-MariaDB
 -- Version de PHP :  7.2.2
 
@@ -96,10 +96,11 @@ CREATE TABLE `categorie` (
 --
 
 INSERT INTO `categorie` (`id`, `restaurant_id`, `nom`, `description`, `updated_at`, `image_name`, `image_original_name`, `image_mime_type`, `image_size`, `image_dimensions`) VALUES
-(1, 1, 'Vin Rouge', 'Vin Rouge', '2019-11-13 11:15:09', 'depositphotos_119634224-stock-illustration-restaurant-logo-cutlery-design.jpg', 'depositphotos_119634224-stock-illustration-restaurant-logo-cutlery-design.jpg', 'image/jpeg', 54758, '1024,1024'),
-(2, 1, 'Plats chauds', 'Plats chauds', '2019-11-13 11:12:02', 'default-image-categorie.jpg', 'default-image-categorie.jpg', 'image/jpeg', 33458, '500,375'),
+(1, 1, 'Vin Rouge', 'Vin Rouge', '2019-11-22 16:57:02', 'depositphotos_119634224-stock-illustration-restaurant-logo-cutlery-design.jpg', 'depositphotos_119634224-stock-illustration-restaurant-logo-cutlery-design.jpg', 'image/jpeg', 54758, '1024,1024'),
+(2, 1, 'Plats chauds', 'Plats chauds', '2019-11-25 17:19:18', 'default-image-categorie.jpg', 'default-image-categorie.jpg', 'image/jpeg', 33458, '500,375'),
 (3, 1, 'Poisson et crustacé', 'Poisson et crustacé', '2019-10-02 18:21:51', 'depositphotos_87620648-stock-illustration-apply-form-icon.jpg', 'depositphotos_87620648-stock-illustration-apply-form-icon.jpg', 'image/jpeg', 57628, '1024,1024'),
-(4, 1, 'Crudités', 'imageFile', '2019-10-02 18:22:11', 'le-titre-restaurant.jpg', 'le-titre-restaurant.jpg', 'image/jpeg', 10486, '800,800');
+(4, 1, 'Crudités', 'Crudité', '2019-11-26 09:17:17', 'le-titre-restaurant.jpg', 'le-titre-restaurant.jpg', 'image/jpeg', 10486, '800,800'),
+(5, 1, 'Boisson', 'Boisson', '2019-11-22 16:19:11', 'index.jpg', 'index.jpg', 'image/jpeg', 2381, '119,119');
 
 -- --------------------------------------------------------
 
@@ -257,7 +258,9 @@ INSERT INTO `migration_versions` (`version`, `executed_at`) VALUES
 ('20191002161549', '2019-10-02 16:17:05'),
 ('20191112131416', '2019-11-12 13:18:35'),
 ('20191114160006', '2019-11-14 16:01:43'),
-('20191115152843', '2019-11-15 15:30:56');
+('20191115152843', '2019-11-15 15:30:56'),
+('20191122110258', '2019-11-22 11:05:43'),
+('20191122135754', '2019-11-22 13:59:37');
 
 -- --------------------------------------------------------
 
@@ -300,8 +303,17 @@ CREATE TABLE `produit` (
 
 INSERT INTO `produit` (`id`, `restaurant_id`, `nom`, `prix`, `categorie_id`, `image`) VALUES
 (4, 1, 'Baron de Madrid', 20000, 1, NULL),
-(5, 1, 'Baron de la vallée', 15000, 1, NULL),
-(8, 1, 'émincés de tomates joyeuses farcies 123', 7555, 2, 'test123.jpg');
+(5, 1, 'Baron de la vallée', 15000, 1, 'le-titre-restaurant-5dd8054eaa132.jpeg'),
+(8, 1, 'émincés de tomates joyeuses farcies 123', 7555, 2, 'restaurant-menu-design-vector-material-chef-15718-5dd8004939b7a.jpeg'),
+(9, 1, 'Malta', 600, 5, 'index-5dd7fc6f629e0.jpeg'),
+(10, 1, 'tampico', 100, 5, 'tampico-5dd7fa0a130d9.jpeg'),
+(11, 1, 'Poulet sauce tomate', 5500, 2, 'poulet-5dd8047a17aff.jpeg'),
+(12, 1, 'Sauce basquaise', 5000, 2, NULL),
+(13, 1, 'Sauce basquaise', 5000, 2, NULL),
+(14, 1, 'Sauce basquaise', 5000, 2, NULL),
+(15, 1, 'Sauce basquaise', 5000, 2, NULL),
+(16, 1, 'Sauce rouge', 5000, 2, 'Plats chauds'),
+(17, 1, 'Poulet DG poivré', 5000, 2, 'produit-5ddbff0667962.jpeg');
 
 -- --------------------------------------------------------
 
@@ -321,7 +333,21 @@ CREATE TABLE `produit_stock` (
 INSERT INTO `produit_stock` (`produit_id`, `stock_id`) VALUES
 (4, 1),
 (5, 2),
-(8, 6);
+(8, 6),
+(9, 7),
+(10, 8),
+(11, 3),
+(12, 9),
+(13, 6),
+(13, 7),
+(14, 6),
+(14, 7),
+(15, 6),
+(15, 7),
+(16, 6),
+(16, 7),
+(17, 6),
+(17, 7);
 
 -- --------------------------------------------------------
 
@@ -390,7 +416,10 @@ INSERT INTO `stock` (`id`, `restaurant_id`, `nom`, `quantite`) VALUES
 (3, 1, 'portion de poulet', 16),
 (4, 1, 'pistache à l\'ail', 11),
 (5, 1, 'pistache à l\'ail', 10),
-(6, 1, 'émincés de tomates farcies', 257);
+(6, 1, 'émincés de tomates farcies', 257),
+(7, 1, 'Malta', 30),
+(8, 1, 'tampico', 30),
+(9, 1, 'Sauce basquaise', 10);
 
 -- --------------------------------------------------------
 
@@ -421,7 +450,10 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `restaurant_id`, `username`, `username_canonical`, `email`, `email_canonical`, `enabled`, `salt`, `password`, `last_login`, `confirmation_token`, `password_requested_at`, `roles`, `nom`, `prenom`) VALUES
-(1, 1, 'tester', 'tester', 'test00@ausiteodit.com', 'test00@ausiteodit.com', 1, NULL, '$2y$13$jE2w8keooa9CTruyA8j/Guafx3tgN37TwYpWu6X3mUGs9go2zDR32', '2019-11-20 10:24:33', NULL, NULL, 'a:1:{i:0;s:1:\"2\";}', 'new-tester', 'test test');
+(1, 1, 'tester', 'tester', 'test30@gmail.com', 'test30@gmail.com', 1, NULL, '$2y$13$COmZOo3xvERMJ.N1QiqNY.vSpjFzUmcQbZYa0ydgXDmHJOIm2f14y', '2019-11-26 09:20:51', NULL, NULL, 'a:1:{i:0;s:7:\"SERVEUR\";}', 'test30', 'test30'),
+(2, 1, 'test2', 'test2', 'test2@gmail.com', 'test2@gmail.com', 0, NULL, '123456', NULL, NULL, NULL, 'a:1:{i:0;s:7:\"SERVEUR\";}', 'test2', 'test2'),
+(4, 1, 'test3', 'test3', 'test3@gmail.com', 'test3@gmail.com', 0, NULL, '$2y$13$UQBf9r8LcV28h8/D3fMWaO2z8EuRY7kg.kKTewgD9EMcZBpnxKaym', NULL, NULL, NULL, 'a:1:{i:0;s:7:\"SERVEUR\";}', 'test3', 'test2'),
+(6, 1, 'test4', 'test4', 'test4@gmail.com', 'test4@gmail.com', 0, NULL, '$2y$13$8BdS4nVqjMoT9bvx2tE4lu3BUZNOmaaia6IZYlNwuL3M/6M9dPc7C', NULL, NULL, NULL, 'a:1:{i:0;s:12:\"ROLE_SERVEUR\";}', 'test4', 'test4');
 
 -- --------------------------------------------------------
 
@@ -456,7 +488,7 @@ CREATE TABLE `_table` (
 
 INSERT INTO `_table` (`id`, `restaurant_id`, `nom`, `description`, `coord_x`, `coord_y`) VALUES
 (1, 1, 'Table 1', 'Table 1', 15, 26),
-(2, 2, 'Table 1', 'Table 1', 85, 26);
+(2, 1, 'VIP 1', 'VIP 1', 85, 26);
 
 --
 -- Index pour les tables déchargées
@@ -633,19 +665,19 @@ ALTER TABLE `blog_post`
 -- AUTO_INCREMENT pour la table `categorie`
 --
 ALTER TABLE `categorie`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT pour la table `commande`
 --
 ALTER TABLE `commande`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT pour la table `commande_produit`
 --
 ALTER TABLE `commande_produit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT pour la table `howard_access_token`
@@ -681,7 +713,7 @@ ALTER TABLE `mode_paiement`
 -- AUTO_INCREMENT pour la table `produit`
 --
 ALTER TABLE `produit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT pour la table `restaurant`
@@ -699,13 +731,13 @@ ALTER TABLE `sortie_caisse`
 -- AUTO_INCREMENT pour la table `stock`
 --
 ALTER TABLE `stock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT pour la table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT pour la table `user00`

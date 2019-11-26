@@ -219,8 +219,14 @@ class UserController extends APIController
                 ));
         }
 
-        $userExist = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $data['email'], 'username' => $data['username'],
-            'restaurant' => $restoId]);
+        $qb = $this->getDoctrine()->getRepository(User::class)
+            ->createQueryBuilder('u')
+            ->where('u.restaurant = :restaurant')
+            ->andWhere('u.email = :email or u.username = :username')
+            ->setParameter('email', $data['email'])->
+            setParameter('username', $data['username'])
+            ->setParameter('restaurant', $restoId);
+        $userExist = $qb->getQuery()->execute();
         if (!empty($userExist)) {
             return $this->handleView(
                 $this->view([
@@ -229,6 +235,7 @@ class UserController extends APIController
                 ], RESPONSE::HTTP_BAD_REQUEST
                 ));
         }
+
         $encodedPwd = $encoder->encodePassword($user, $data['password']);
 
         $user = new User();
