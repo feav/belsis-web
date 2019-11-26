@@ -35,7 +35,7 @@ class ProduitController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -45,10 +45,10 @@ class ProduitController extends APIController
         if (empty($restaurant)) {
             return $this->handleView(
                 $this->view([
-                    'statut' => 'error',
-                    'message' => 'Cet utilisateur n\est dans aucun restaurant.'
+                    'status' => 'error',
+                    'message' => 'Cet utilisateur n\'est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -61,7 +61,7 @@ class ProduitController extends APIController
             // $stock = $produit->getStock();
         }
         $res[] = $tabProduits;
-        return $this->handleView($this->view($res, 200));
+        return $this->handleView($this->view($res, Response::HTTP_OK));
     }
 
     /**
@@ -78,7 +78,7 @@ class ProduitController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -86,30 +86,30 @@ class ProduitController extends APIController
         if (empty($restaurant)) {
             return $this->handleView(
                 $this->view([
-                    'statut' => 'error',
+                    'status' => 'error',
                     'message' => 'Cet utilisateur n\est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
         if (empty($data['categorie_id'])) {
             return $this->handleView(
                 $this->view([
-                    'statut' => 'error',
+                    'status' => 'error',
                     'message' => 'Le champ categorie_id est vide'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $categorie = $this->getDoctrine()->getRepository(Categorie::class)->find($data['categorie_id']);
         if (empty($categorie)) {
             return $this->handleView(
                 $this->view([
-                    'statut' => 'error',
+                    'status' => 'error',
                     'message' => 'Cette catégorie n\'existe pas'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $produits = $categorie->getProduits();
@@ -120,7 +120,7 @@ class ProduitController extends APIController
 
             $res[] = $tabProduits;
         }
-        return $this->handleView($this->view($res, 200));
+        return $this->handleView($this->view($res, Response::HTTP_OK));
     }
 
     /**
@@ -137,7 +137,7 @@ class ProduitController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
         if (empty($data["nom"])) {
@@ -189,10 +189,10 @@ class ProduitController extends APIController
         if (empty($restaurant)) {
             return $this->handleView(
                 $this->view([
-                    'statut' => 'error',
+                    'status' => 'error',
                     'message' => 'Cet utilisateur n\est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -201,10 +201,10 @@ class ProduitController extends APIController
         if(empty($data['stocks'])  ){
             return $this->handleView(
                 $this->view([
-                    'statut' => 'error',
+                    'status' => 'error',
                     'message' => 'Le champ stocks est vide ou n\'est pas un tableau!'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $stocks = $data['stocks'];
@@ -223,7 +223,7 @@ class ProduitController extends APIController
         $this->em->persist($produit);
         $this->em->flush();
 
-        return $this->handleView($this->view(['status' => 'success', 'message' => 'insertion reussie'], 200));
+        return $this->handleView($this->view(['status' => 'success', 'message' => 'insertion reussie'], Response::HTTP_OK));
     }
 
     /**
@@ -240,7 +240,7 @@ class ProduitController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -248,10 +248,10 @@ class ProduitController extends APIController
         if (empty($restaurant)) {
             return $this->handleView(
                 $this->view([
-                    'statut' => 'error',
+                    'status' => 'error',
                     'message' => 'Cet utilisateur n\est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -295,7 +295,7 @@ class ProduitController extends APIController
         $this->em->persist($produit);
         $this->em->flush();
 
-        return $this->handleView($this->view(['status' => 'success', 'message' => 'insertion reussie'], 200));
+        return $this->handleView($this->view(['status' => 'success', 'message' => 'insertion reussie'], Response::HTTP_OK));
     }
 
     /**
@@ -312,7 +312,7 @@ class ProduitController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -320,10 +320,10 @@ class ProduitController extends APIController
         if (empty($restaurant)) {
             return $this->handleView(
                 $this->view([
-                    'statut' => 'error',
+                    'status' => 'error',
                     'message' => 'Cet utilisateur n\est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -349,7 +349,7 @@ class ProduitController extends APIController
 
         $res = $this->getInfos($produit);
 
-        return $this->handleView($this->view($res, 200));
+        return $this->handleView($this->view($res, Response::HTTP_OK));
     }
 
     /**
@@ -366,7 +366,7 @@ class ProduitController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -374,10 +374,10 @@ class ProduitController extends APIController
         if (empty($restaurant)) {
             return $this->handleView(
                 $this->view([
-                    'statut' => 'error',
+                    'status' => 'error',
                     'message' => 'Cet utilisateur n\est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -396,10 +396,10 @@ class ProduitController extends APIController
         $this->em->remove($produit);
         $this->em->flush();
 
-        return $this->handleView($this->view(['status' => 'success', 'message' => 'suppression reussie'], 200));
+        return $this->handleView($this->view(['status' => 'success', 'message' => 'suppression reussie'], Response::HTTP_OK));
     }
 
-    public function getInfos(Produit $produit)
+    protected function getInfos(Produit $produit)
     {
         $base64 = "";
         if ($produit->getImage()) {

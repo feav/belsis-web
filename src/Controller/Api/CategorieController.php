@@ -34,7 +34,7 @@ class CategorieController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -42,10 +42,10 @@ class CategorieController extends APIController
         if (empty($restaurant)) {
             return $this->handleView(
                 $this->view([
-                    'statut' => 'error',
+                    'status' => 'error',
                     'message' => 'Cet utilisateur n\est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -53,10 +53,10 @@ class CategorieController extends APIController
         if (empty($data['id'])) {
             return $this->handleView(
                 $this->view([
-                    'statut' => 'error',
+                    'status' => 'error',
                     'message' => 'Le champ id est vide.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
 
@@ -72,7 +72,7 @@ class CategorieController extends APIController
 
         $res = $this->getInfos($categorie);
 
-        return $this->handleView($this->view($res, 200));
+        return $this->handleView($this->view($res, Response::HTTP_OK));
     }
 
     /**
@@ -89,7 +89,7 @@ class CategorieController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -97,10 +97,10 @@ class CategorieController extends APIController
         if (empty($restaurant)) {
             return $this->handleView(
                 $this->view([
-                    'statut' => 'error',
+                    'status' => 'error',
                     'message' => 'Cet utilisateur n\'est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -119,10 +119,10 @@ class CategorieController extends APIController
             $res[] = $this->getInfos($categorie);
         }
 
-        return $this->handleView($this->view($res, 200));
+        return $this->handleView($this->view($res, Response::HTTP_OK));
     }
 
-    public function getInfos(Categorie $categorie)
+    protected function getInfos(Categorie $categorie)
     {
         $catProduits = $categorie->getProduits();
         $produits = [];

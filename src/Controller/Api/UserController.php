@@ -33,7 +33,7 @@ class UserController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -44,7 +44,7 @@ class UserController extends APIController
                     'statut' => 'error',
                     'message' => 'Cet utilisateur n\est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -61,7 +61,7 @@ class UserController extends APIController
 
         $res = $this->getUserInfos($user);
 
-        return $this->handleView($this->view($res, 200));
+        return $this->handleView($this->view($res, Response::HTTP_OK));
     }
 
     /**
@@ -78,7 +78,7 @@ class UserController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -89,7 +89,7 @@ class UserController extends APIController
                     'statut' => 'error',
                     'message' => 'Cet utilisateur n\'est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -127,7 +127,7 @@ class UserController extends APIController
         return $this->handleView($this->view([
             'status' => 'success',
             'message' => 'Mise à jour reussie'
-        ], 200));
+        ], Response::HTTP_OK));
     }
 
     /**
@@ -144,7 +144,7 @@ class UserController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -155,7 +155,7 @@ class UserController extends APIController
                     'statut' => 'error',
                     'message' => 'Cet utilisateur n\est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -269,7 +269,7 @@ class UserController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -280,7 +280,7 @@ class UserController extends APIController
                     'statut' => 'error',
                     'message' => 'Cet utilisateur n\est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -292,10 +292,10 @@ class UserController extends APIController
 
             $res[] = $tabUsers;
         }
-        return $this->handleView($this->view($res, 200));
+        return $this->handleView($this->view($res, Response::HTTP_OK));
     }
 
-    public function getUserInfos(User $user)
+    protected function getUserInfos(User $user)
     {
         return [
             "id" => $user->getId(),

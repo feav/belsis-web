@@ -35,7 +35,7 @@ class CommandeController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -46,7 +46,7 @@ class CommandeController extends APIController
                     'statut' => 'error',
                     'message' => 'Cet utilisateur n\est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -70,7 +70,7 @@ class CommandeController extends APIController
             $tabCommandes['produits'] = $produits;
             $res[] = $tabCommandes;
         }
-        return $this->handleView($this->view($res, 200));
+        return $this->handleView($this->view($res, Response::HTTP_OK));
     }
 
     /**
@@ -88,7 +88,7 @@ class CommandeController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -99,7 +99,7 @@ class CommandeController extends APIController
                     'statut' => 'error',
                     'message' => 'Cet utilisateur n\est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -110,7 +110,7 @@ class CommandeController extends APIController
                     'statut' => 'error',
                     'message' => 'Le champ table_id est vide.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $tableId = $data['table_id'];
@@ -121,7 +121,7 @@ class CommandeController extends APIController
                     'statut' => 'error',
                     'message' => 'Cette table n\'est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
 
@@ -145,7 +145,7 @@ class CommandeController extends APIController
             $tabCommandes['produits'] = $produits;
             $res[] = $tabCommandes;
         }
-        return $this->handleView($this->view($res, 200));
+        return $this->handleView($this->view($res, Response::HTTP_OK));
     }
 
     /**
@@ -163,7 +163,7 @@ class CommandeController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
         $restaurant = $user->getRestaurant();
@@ -173,7 +173,7 @@ class CommandeController extends APIController
                     'statut' => 'error',
                     'message' => 'Cet utilisateur n\'est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -184,7 +184,7 @@ class CommandeController extends APIController
                     'statut' => 'error',
                     'message' => 'Le champ id est vide'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $commandeId = $data['id'];
@@ -207,7 +207,7 @@ class CommandeController extends APIController
         $res['total'] = $total;
         $res['produits'] = $produits;
 
-        return $this->handleView($this->view($res, 200));
+        return $this->handleView($this->view($res, Response::HTTP_OK));
     }
 
     /**
@@ -225,7 +225,7 @@ class CommandeController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
         $restaurant = $user->getRestaurant();
@@ -235,7 +235,7 @@ class CommandeController extends APIController
                     'statut' => 'error',
                     'message' => 'Cet utilisateur n\'est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -246,7 +246,7 @@ class CommandeController extends APIController
                     'statut' => 'error',
                     'message' => 'Le champ table_id est vide.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $tableId = $data['table_id'];
@@ -258,7 +258,7 @@ class CommandeController extends APIController
                     'statut' => 'error',
                     'message' => 'Cette table n\'existe pas.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
 
@@ -268,7 +268,7 @@ class CommandeController extends APIController
                     'statut' => 'error',
                     'message' => 'Le champ produits est bien vide.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }else{
             if(is_array($data['produits']) && !empty($data['produits'])){
@@ -300,7 +300,7 @@ class CommandeController extends APIController
                                 'statut' => 'error',
                                 'message' => 'Le produit d\'id '.$produitData['id'].' n\'existe pas.'
                             ],
-                                Response::HTTP_INTERNAL_SERVER_ERROR
+                                Response::HTTP_BAD_REQUEST
                             ));
                     }
                 }
@@ -312,12 +312,12 @@ class CommandeController extends APIController
                         'statut' => 'error',
                         'message' => 'Le champ produits n\'est pas un tableau.'
                     ],
-                        Response::HTTP_INTERNAL_SERVER_ERROR
+                        Response::HTTP_BAD_REQUEST
                     ));
             }
         }
 
-        return $this->handleView($this->view(['status' => 'success', 'message' => 'ajout reussi'], 200));
+        return $this->handleView($this->view(['status' => 'success', 'message' => 'ajout reussi'], Response::HTTP_OK));
     }
 
     /**
@@ -335,7 +335,7 @@ class CommandeController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
         $restaurant = $user->getRestaurant();
@@ -345,7 +345,7 @@ class CommandeController extends APIController
                     'statut' => 'error',
                     'message' => 'Cet utilisateur n\'est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -356,7 +356,7 @@ class CommandeController extends APIController
                     'statut' => 'error',
                     'message' => 'Le champ id est vide.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
 
@@ -368,7 +368,7 @@ class CommandeController extends APIController
                     'statut' => 'error',
                     'message' => 'Cette commande n\'existe pas.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $commandeProduits = $commande->getCommandeProduit();
@@ -378,6 +378,6 @@ class CommandeController extends APIController
         $this->em->remove($commande);
         $this->em->flush();
 
-        return $this->handleView($this->view(['status' => 'success', 'message' => 'suppression reussie'], 200));
+        return $this->handleView($this->view(['status' => 'success', 'message' => 'suppression reussie'], Response::HTTP_OK));
     }
 }

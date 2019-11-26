@@ -67,7 +67,7 @@ class APIController extends FOSRestController
 
         if (!$accessToken->getUser()->isEnabled()) {
             return [
-                'statut' => 'error',
+                'status' => 'error',
                 'message' => 'Votre compte n\'est pas actif'
             ];
         }
@@ -91,7 +91,7 @@ class APIController extends FOSRestController
             $em = $this->getDoctrine()->getManager();
             $em->persist($restaurant);
             $em->flush();
-            return $this->handleView($this->view(['status' => 'ok'], Response::HTTP_CREATED));
+            return $this->handleView($this->view(['status' => 'success'], Response::HTTP_OK));
         }
         return $this->handleView($this->view($form->getErrors()));
     }
@@ -114,75 +114,4 @@ class APIController extends FOSRestController
 
         return $this->handleView($this->view($restaurants, 200));
     }
-
-
-    /**
-     *Get Commands by TableID'.
-     * @Rest\Post("/get-commandes-by-table-id", name="get_commandes_by_table_id")
-     *
-     * @return Response
-     */
-    public function getCommandesByTableId(Request $request)
-    {
-        $data = json_decode($request->getContent(), true);
-        if (empty($data["token"])) {
-            return $this->handleView($this->view($data));
-        }
-        $user = $this->authToken($data['token']);
-        if (is_array($user)) {
-            return $this->handleView(
-                $this->view(
-                    $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
-            );
-        }
-
-        if (empty($data["restaurant_id"])) {
-            return $this->handleView(
-                $this->view([
-                    'status' => 'error',
-                    'message' => 'Le champ restaurant_id est vide'
-                ], RESPONSE::HTTP_BAD_REQUEST
-                ));
-        }
-        $restoId = $data["restaurant_id"];
-
-        if (empty($data["table_id"])) {
-            return $this->handleView(
-                $this->view([
-                    'status' => 'error',
-                    'message' => 'Le champ table_id est vide'
-                ], RESPONSE::HTTP_BAD_REQUEST
-                ));
-        }
-        $tableId = $data["table_id"];
-
-        $table = $this->getDoctrine()->getRepository(Table::class)->findOneBy(['id' => $tableId, 'restaurant' => $restoId]);
-
-        if (empty($table)) {
-            return $this->handleView(
-                $this->view(['status' => 'error', 'message' => 'Cette table n\'existe pas'],
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
-            );
-        }
-
-        $commandes = $this->getDoctrine()->getRepository(Commande::class)->findBy(['table' => $tableId]);
-
-        $res = [];
-        foreach ($commandes as $k => $cmd) {
-            $tab['id'] = $cmd->getId();
-            $tab['code'] = $cmd->getCode();
-            $produits = $cmd->getProduit();
-            foreach ($produits as $r => $produit) {
-                $tab['produit'][$r]['id'] = $produit->getId();
-                $tab['produit'][$r]['nom'] = $produit->getNom();
-                $tab['produit'][$r]['prix'] = $produit->getPrix();
-            }
-
-            $res[] = $tab;
-        }
-
-        return $this->handleView($this->view($res, 200));
-    }
-
 }

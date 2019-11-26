@@ -30,7 +30,7 @@ class TableController extends APIController
             return $this->handleView(
                 $this->view(
                     $user,
-                    Response::HTTP_INTERNAL_SERVER_ERROR)
+                    Response::HTTP_UNAUTHORIZED)
             );
         }
 
@@ -38,10 +38,10 @@ class TableController extends APIController
         if (empty($restaurant)) {
             return $this->handleView(
                 $this->view([
-                    'statut' => 'error',
+                    'status' => 'error',
                     'message' => 'Cet utilisateur n\est dans aucun restaurant.'
                 ],
-                    Response::HTTP_INTERNAL_SERVER_ERROR
+                    Response::HTTP_BAD_REQUEST
                 ));
         }
         $restoId = $restaurant->getId();
@@ -64,6 +64,6 @@ class TableController extends APIController
 
             $res[] = $tabTables;
         }
-        return $this->handleView($this->view($res, 200));
+        return $this->handleView($this->view($res, Response::HTTP_OK));
     }
 }
