@@ -9,70 +9,119 @@
     <link rel="stylesheet" href="{{ asset('css/font-awesome-4.7.0/css/font-awesome.css') }}">
 
     <script src="{{ asset('css/bootstrap-4.3.1-dist/js/bootstrap.js') }}"></script>
-
+    <script src="{{ asset('js/jquery-3.4.1.min.js') }}" defer></script>
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
-<header class="row header">
-    <nav class="top-nav">
-        <ul>
-            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                <li>
-                    <a href="{{ app.request.baseUrl }}">Accueil</a>
-                </li>
-                {# if is_granted('ROLE_ADMIN') #}
-                    <li>
-                        <a href="{{ path('restaurant_index') }}">Restaurant</a>
-                    </li>
-                {# endif #}
-                <li>
-                    <a href="{{ path('user_index') }}">Utilisateur</a>
-                </li>
-                <li>
-                    <a href="{{ path('sortie_caisse_index') }}">Sorties</a>
-                </li>
-                <li>
-                    <a href="{{ path('appareil_index') }}">Appareil</a>
-                </li>
-                <li>
-                    <a href="{{ path('categorie_index') }}">Categorie</a>
-                </li>
-                <li>
-                    <a href="{{ path('table_index') }}">Table</a>
-                </li>
-                <li>
-                    <a href="{{ path('stock_index') }}">Stock</a>
-                </li>
-                <li>
-                    <a href="{{ path('produit_index') }}">Produit</a>
-                </li>
-                <li>
-                    <a href="{{ path('commande_index') }}">Commande</a>
-                </li>
-                <li>
-                    <a href="{{ path('mode_paiement_index') }}">Mode-paiement</a>
-                </li>
-                <li>
-                    <a href="{{ path('fos_user_security_logout') }}">
-                        Déconnexion({{ app.user.getUsername() }})
-                    </a>
-                </li>
-            {% else %}
-                <li>
-                    <a href="{{ path('fos_user_security_login') }}">
-                        Connexion
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-    </nav>
-</header>
-<div class="container">
+<div class="container mg-l-0">
     <div class="row">
-        {% block body %}{% endblock %}
+        <div class="col-md-3 pd-l-0">
+            <div class="wrapper">
+                <!-- Sidebar -->
+                <nav id="sidebar">
+                    <div class="sidebar-header">
+                        <h3>Belsis</h3>
+                    </div>
+
+                    <ul class="list-unstyled components">
+                        <p>Dummy Heading</p>
+                        <li class="active">
+                            <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Home</a>
+                            <ul class="collapse list-unstyled" id="homeSubmenu">
+                                <li>
+                                    <a href="#">Home 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">Home 2</a>
+                                </li>
+                                <li>
+                                    <a href="#">Home 3</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">About</a>
+                        </li>
+                        <li>
+                            <a href="#">Portfolio</a>
+                        </li>
+                        <li>
+                            <a href="#">Contact</a>
+                        </li>
+                    </ul>
+                </nav>
+
+            </div>
+        </div>
+        <div class="col-md-9">
+            <header class="row header">
+                <nav class="top-nav">
+                    <ul>
+                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                            <li>
+                                <a href="{{ app.request.baseUrl }}">Accueil</a>
+                            </li>
+                            {# if is_granted('ROLE_ADMIN')  #}
+                            <li>
+                                <a href="{{ path('restaurant_index') }}">Restaurant</a>
+                            </li>
+                            {# endif #}
+                            <li>
+                                <a href="{{ path('user_index') }}">Utilisateur</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('sortie_caisse_index') }}">Sorties</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('appareil_index') }}">Appareil</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('categorie_index') }}">Categorie</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('table_index') }}">Table</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('stock_index') }}">Stock</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('produit_index') }}">Produit</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('commande_index') }}">Commande</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('mode_paiement_index') }}">Mode-paiement</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('fos_user_security_logout') }}">
+                                    Déconnexion({{ app.user.getUsername() }})
+                                </a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{{ path('fos_user_security_login') }}">
+                                    Connexion
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </header>
+            {% block body %}{% endblock %}
+        </div>
     </div>
     {% block javascripts %}{% endblock %}
 </div>
 <script src="{{ asset('css/font-awesome-4.7.0/js/font-awesome.js') }}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        alert('yeah you got it!');
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+
+    });
+</script>
 </body>
 </html>
