@@ -17,6 +17,8 @@ security:
             form_login:
                 provider: fos_userbundle
                 csrf_token_generator: security.csrf.token_manager
+                default_target_path: /dashboard
+                always_use_default_target_path: false
 
             logout:       true
             anonymous:    true
@@ -52,3 +54,4 @@ security:
         - { path: ^/sortie/caisse, role: ROLE_USER }
         - { path: ^/mode/paiement, role: ROLE_USER }
         - { path: ^/createClient, roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] }
+        - { path: ^/dashboard, roles: [ IS_AUTHENTICATED_FULLY ] }

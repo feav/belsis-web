@@ -1,18 +1,31 @@
-{# templates/bundles/FOSUserBundle/layout.html.twig #}
-{% extends 'base.html.twig' %}
-{# ... this works as expected ... #}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <link href="{{asset('assets/theme/vendors/bootstrap/dist/css/bootstrap.min.css')}}" rel="stylesheet">
+        <link href="{{asset('assets/custom/css/custom.min.css')}}" rel="stylesheet">
+        <style type="text/css">
+            body{background: #F7F7F7;}
+            form input[type="submit"]{
+                float: none!important;
+                margin: 0!important;
+            }
+        </style>
+    </head>
+    <body>
+        {% if app.request.hasPreviousSession %}
+            {% for type, messages in app.session.flashbag.all() %}
+                {% for message in messages %}
+                    <script type="text/javascript">
+                        {# call toast with {{message}} #}
+                    </script>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
 
-{% block body %}
-    <div class="container">
-        <div class="row">
-            <div>
-                <div class="row">
-                    <div class="col-xs-12">
-                        {% block fos_user_content %}{% endblock %}
-                    </div>
-                </div>
-            </div>
-
+        <div>
+            {% block fos_user_content %}
+            {% endblock fos_user_content %}
         </div>
-    </div>
-{% endblock %}
+    </body>
+</html>
