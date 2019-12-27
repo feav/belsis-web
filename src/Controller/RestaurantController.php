@@ -12,6 +12,9 @@ use Doctrine\Common\Util\Debug;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Service\FileUploader;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -43,9 +46,20 @@ class RestaurantController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            /** @var UploadedFile $logo */
+            $logo = $form['logo']->getData();
+            if ($logo) {
+                $fileUploader = new FileUploader($this->getParameter("image_directory")."/restaurant");
+                $newFilename = $fileUploader->upload($logo);
+
+                $restaurant->setLogo($newFilename);
+            }
+
             $entityManager->persist($restaurant);
             $entityManager->flush();
 
+            $flashBag = $this->get('session')->getFlashBag()->clear();
+            $this->addFlash('success', 'Enregistrement réussit');
             return $this->redirectToRoute('restaurant_index');
         }
 
@@ -74,8 +88,18 @@ class RestaurantController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $logo */
+            $logo = $form['logo']->getData();
+            if ($logo) {
+                $fileUploader = new FileUploader($this->getParameter("image_directory")."/restaurant");
+                $newFilename = $fileUploader->upload($logo);
+
+                $restaurant->setLogo($newFilename);
+            }
             $this->getDoctrine()->getManager()->flush();
 
+            $flashBag = $this->get('session')->getFlashBag()->clear();
+            $this->addFlash('success', 'Modification réussite');
             return $this->redirectToRoute('restaurant_index');
         }
 
@@ -94,6 +118,9 @@ class RestaurantController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($restaurant);
             $entityManager->flush();
+
+            $flashBag = $this->get('session')->getFlashBag()->clear();
+            $this->addFlash('success', 'Suppression réussite');
         }
 
         return $this->redirectToRoute('restaurant_index');

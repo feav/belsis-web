@@ -1,4 +1,47 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+	<div class="my-custom-class-for-errors">
+        {{ form_errors(form) }}
+    </div>
+
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Nom <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+        	{{ form_widget(form.nom, { 'attr': {'class': 'form-control', 'required':'required'} }) }}
+        </div>
+    </div>
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="email">Adresse <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	        {{ form_widget(form.adresse, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+	    </div>
+    </div>
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="email">Devise <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	        {{ form_widget(form.devise, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+	    </div>
+    </div>
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="email">Logo <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	        {{ form_widget(form.logo, { 'attr': {'class': 'form-control'}} ) }}
+	    </div>
+    </div>
+    <div class="item form-group">
+        <div class="col-md-6 col-sm-6 offset-md-3">
+            {% if restaurant.logo %}
+                <img class="hg-35" height="41" src="{{ asset('images/uploads/restaurant/' ~ restaurant.logo) }}" />
+            {% endif %}
+        </div>
+    </div>
+    <div class="ln_solid"></div>
+	<div class="form-group">
+		<div class="offset-md-3">
+		  <button class="btn call-action">{{ button_label|default('Enregistrer') }}</button>
+		</div>
+	</div>
 {{ form_end(form) }}

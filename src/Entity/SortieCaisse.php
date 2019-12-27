@@ -33,7 +33,7 @@ class SortieCaisse
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Restaurant", inversedBy="categories")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $restaurant;
 

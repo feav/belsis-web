@@ -6,7 +6,8 @@ use App\Entity\Categorie;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Vich\UploaderBundle\Form\Type\VichImageType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
 
 class CategorieType extends AbstractType
 {
@@ -15,12 +16,25 @@ class CategorieType extends AbstractType
         $builder
             ->add('nom')
             ->add('description')
-            ->add('imageFile', VichImageType::class, [
+            ->add('image', FileType::class, [
+                // unmapped means that this field is not associated to any entity property
+                'mapped' => false,
+
                 'required' => false,
-                'allow_delete' => true,
-                'download_label' => 'Image',
-                'label' => 'Image',
-               // 'asset_helper' => true,
+
+                // unmapped fields can't define their validation using annotations
+                // in the associated entity, so you can use the PHP constraint classes
+                'constraints' => [
+                    new File([
+                        'mimeTypes' => [
+                            "image/png",
+                            "image/jpeg",
+                            "image/jpg",
+                            "image/gif"
+                        ],
+                        'mimeTypesMessage' => 'Veillez entrer une image valide',
+                    ])
+                ],
             ])
         ;
     }

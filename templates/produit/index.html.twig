@@ -1,39 +1,41 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}Produit index{% endblock %}
+{% block title %}{{parent()}} | Produit{% endblock %}
+{% block datatables_css %}{% endblock %}
 
-{% block body %}
-    <h1>Produit index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Prix</th>
-                <th>Image</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for produit in produits %}
-            <tr>
-                <td>{{ produit.id }}</td>
-                <td>{{ produit.nom }}</td>
-                <td>{{ produit.prix }}</td>
-                <td><img class="hg-35" src="{{ asset('uploads/produits/' ~ produit.image) }}" /></td>
-                <td>
-                    <a href="{{ path('produit_show', {'id': produit.id}) }}">show</a>
-                    <a href="{{ path('produit_edit', {'id': produit.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('produit_new') }}">Create new</a>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Liste des produits</h1> <a href="{{path('produit_new')}}" class="call-action btn">Nouveau produit</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="card-box table-responsive">
+                <table id="datatable-responsive" class="table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nom</th>
+                            <th>Prix</th>
+                            <th>Image</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for produit in produits %}
+                        <tr>
+                            <td>{{ produit.id }}</td>
+                            <td>{{ produit.nom }}</td>
+                            <td>{{ produit.prix }}</td>
+                            <td><img class="hg-35 in-table" src="{{ asset('uploads/produits/' ~ produit.image) }}" /></td>
+                            <td>
+                                <a href="{{ path('produit_show', {'id': produit.id}) }}">show</a>
+                                <a href="{{ path('produit_edit', {'id': produit.id}) }}">edit</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}

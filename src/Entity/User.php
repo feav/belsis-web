@@ -22,14 +22,6 @@ class User extends BaseUser
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @ORM\JoinColumn(nullable=true)
-     * @Assert\Length(
-     *     min=3,
-     *     max=255,
-     *     minMessage="The name is too short.",
-     *     maxMessage="The name is too long.",
-     *     groups={"Registration", "Profile"}
-     * )
      */
     protected $nom;
 
@@ -39,7 +31,7 @@ class User extends BaseUser
     protected $prenom;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Commande", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="App\Entity\Commande", mappedBy="user", cascade={"remove"})
      *  @ORM\JoinColumn(nullable=true)
      */
     protected $commandes;

@@ -1,38 +1,47 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}Table{% endblock %}
+{% block title %}{{parent()}} | Table{% endblock %}
 
-{% block body %}
-    <h1>Table</h1>
+{% block datatables_css %}{% endblock %}
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ table.id }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ table.nom }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ table.description }}</td>
-            </tr>
-            <tr>
-                <th>Coord_x</th>
-                <td>{{ table.coordX }}</td>
-            </tr>
-            <tr>
-                <th>Coord_y</th>
-                <td>{{ table.coordY }}</td>
-            </tr>
-        </tbody>
-    </table>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Tables</h1> <a href="{{path('table_index')}}" class="call-action btn">Liste tables</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>{{ table.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nom</th>
+                        <td>{{ table.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ table.description }}</td>
+                    </tr>
+                    <tr>
+                        <th>Coord_x</th>
+                        <td>{{ table.coordX }}</td>
+                    </tr>
+                    <tr>
+                        <th>Coord_y</th>
+                        <td>{{ table.coordY }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <a href="{{ path('table_index') }}">back to list</a>
-
-    <a href="{{ path('table_edit', {'id': table.id}) }}">edit</a>
-
-    {{ include('table/_delete_form.html.twig') }}
+    <div class="detail-group-btn">
+        <a href="{{ path('table_edit', {'id': table.id}) }}" class="btn call-action">Modifier</a>
+        {{ include('table/_delete_form.html.twig') }}
+    </div>
 {% endblock %}
+
+{% block validation_js %}{% endblock %}
+{% block datatables_js %}{% endblock %}

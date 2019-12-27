@@ -1,13 +1,23 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}Edit Restaurant{% endblock %}
+{% block title %}{{parent()}} | edition de restaurant{% endblock %}
+{% block datatables_css %}{% endblock %}
 
-{% block body %}
-    <h1>Edit Restaurant</h1>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Edition d'un restaurant</h1> 
+        <a href="{{path('restaurant_index')}}" class="call-action btn">Liste restaurants</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
 
-    {{ include('restaurant/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('restaurant_index') }}">back to list</a>
-
-    {{ include('restaurant/_delete_form.html.twig') }}
+		    {{ include('restaurant/_form.html.twig', {'button_label': 'Modifier'}) }}
+			<div class="offset-md-3 btn-dlt-p-edit">
+		    	{{ include('restaurant/_delete_form.html.twig') }}
+		    </div>
+		</div>
+	</div>
 {% endblock %}
+
+{% block validation_js %}{% endblock %}
+{% block datatables_js %}{% endblock %}

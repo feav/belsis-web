@@ -1,11 +1,15 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}New Appareil{% endblock %}
+{% block title %}{{parent()}} | creation de appareil{% endblock %}
+{% block datatables_css %}{% endblock %}
 
-{% block body %}
-    <h1>Create new Appareil</h1>
-
-    {{ include('appareil/_form.html.twig') }}
-
-    <a href="{{ path('appareil_index') }}">back to list</a>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Nouveau appareil</h1> <a href="{{path('appareil_index')}}" class="call-action btn">Liste appareil</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+    	{{ include('appareil/_form.html.twig') }}
+	    </div>
+	</div>
 {% endblock %}

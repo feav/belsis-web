@@ -41,32 +41,32 @@ class Restaurant
     private $devise;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Categorie", mappedBy="restaurant")
+     * @ORM\OneToMany(targetEntity="App\Entity\Categorie", mappedBy="restaurant", cascade={"remove"})
      */
     private $categories;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Table", mappedBy="restaurant")
+     * @ORM\OneToMany(targetEntity="App\Entity\Table", mappedBy="restaurant", cascade={"remove"})
      */
     private $tables;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Stock", mappedBy="restaurant")
+     * @ORM\OneToMany(targetEntity="App\Entity\Stock", mappedBy="restaurant", cascade={"remove"})
      */
     private $stocks;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Produit", mappedBy="restaurant")
+     * @ORM\OneToMany(targetEntity="App\Entity\Produit", mappedBy="restaurant", cascade={"remove"})
      */
     private $produits;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Commande", mappedBy="restaurant")
+     * @ORM\OneToMany(targetEntity="App\Entity\Commande", mappedBy="restaurant", cascade={"remove"})
      */
     private $commandes;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="restaurant")
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="restaurant", cascade={"remove"})
      */
     private $users;
 

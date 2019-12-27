@@ -1,11 +1,15 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}New Table{% endblock %}
+{% block title %}{{parent()}} | creation de table{% endblock %}
+{% block datatables_css %}{% endblock %}
 
-{% block body %}
-    <h1>Create new Table</h1>
-
-    {{ include('table/_form.html.twig') }}
-
-    <a href="{{ path('table_index') }}">back to list</a>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Nouveau table</h1> <a href="{{path('table_index')}}" class="call-action btn">Liste table</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+    	{{ include('table/_form.html.twig') }}
+	    </div>
+	</div>
 {% endblock %}

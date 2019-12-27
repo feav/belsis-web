@@ -1,4 +1,77 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+	<div class="my-custom-class-for-errors">
+        {{ form_errors(form) }}
+    </div>
+
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Nom <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+        	{{ form_widget(form.nom, { 'attr': {'class': 'form-control', 'required':'required'} }) }}
+        </div>
+    </div>
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="">Prenom <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	        {{ form_widget(form.prenom, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+	    </div>
+    </div>
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="">Username <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	        {{ form_widget(form.username, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+	    </div>
+    </div>
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="">Email <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	        {{ form_widget(form.email, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+	    </div>
+    </div>
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="">Activer <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	        {{ form_widget(form.enabled, { 'attr': {'class': 'form-control'}} ) }}
+	    </div>
+    </div>
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="">Mot de passe <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	        <input type="password" name="password" class="form-control" placeholder="****">
+	    </div>
+    </div>
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="">Roles <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	        <select class="form-control" name="role_hierachique">
+	        	<option value="" selected disabled>Attribuer un role</option>
+				{% for rl in array_roles %}
+                    <option value="{{rl}}" {% if super_role == rl %} selected {% endif %}>
+                        {{rl}}
+                    </option>
+                {% endfor %}
+	        </select>
+	    </div>
+    </div>
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="">Restaurant <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	        {{ form_widget(form.restaurant, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+	    </div>
+    </div>
+
+    <div class="ln_solid"></div>
+	<div class="form-group">
+		<div class="offset-md-3">
+		  <button class="btn call-action">{{ button_label|default('Enregistrer') }}</button>
+		</div>
+	</div>
 {{ form_end(form) }}
+

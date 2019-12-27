@@ -1,41 +1,44 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}Table index{% endblock %}
+{% block title %}{{parent()}} | Table{% endblock %}
 
-{% block body %}
-    <h1>Table index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Description</th>
-                <th>Coord_x</th>
-                <th>Coord_y</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for table in tables %}
-            <tr>
-                <td>{{ table.id }}</td>
-                <td>{{ table.nom }}</td>
-                <td>{{ table.description }}</td>
-                <td>{{ table.coordX }}</td>
-                <td>{{ table.coordY }}</td>
-                <td>
-                    <a href="{{ path('table_show', {'id': table.id}) }}">show</a>
-                    <a href="{{ path('table_edit', {'id': table.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('table_new') }}">Create new</a>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Liste des tables</h1> <a href="{{path('table_new')}}" class="call-action btn">Nouveau table</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="card-box table-responsive">
+                <table id="datatable-responsive" class="table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nom</th>
+                            <th>Description</th>
+                            <th>Coord_x</th>
+                            <th>Coord_y</th>
+                            <th>actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for table in tables %}
+                        <tr>
+                            <td>{{ table.id }}</td>
+                            <td>{{ table.nom }}</td>
+                            <td>{{ table.description }}</td>
+                            <td>{{ table.coordX }}</td>
+                            <td>{{ table.coordY }}</td>
+                            <td>
+                                <a href="{{ path('table_show', {'id': table.id}) }}">show</a>
+                                <a href="{{ path('table_edit', {'id': table.id}) }}">edit</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block validation_js %}
 {% endblock %}

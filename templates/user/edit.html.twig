@@ -1,13 +1,23 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}Edit User{% endblock %}
+{% block title %}{{parent()}} | edition d'utilisateur{% endblock %}
+{% block datatables_css %}{% endblock %}
 
-{% block body %}
-    <h1>Edit User</h1>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Edition d'un utilisateur</h1> 
+        <a href="{{path('user_index')}}" class="call-action btn">Liste utilisateur</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
 
-    {{ include('user/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('user_index') }}">back to list</a>
-
-    {{ include('user/_delete_form.html.twig') }}
+		    {{ include('user/_form.html.twig', {'button_label': 'Modifier'}) }}
+			<div class="offset-md-3 btn-dlt-p-edit">
+		    	{{ include('user/_delete_form.html.twig') }}
+		    </div>
+		</div>
+	</div>
 {% endblock %}
+
+{% block validation_js %}{% endblock %}
+{% block datatables_js %}{% endblock %}

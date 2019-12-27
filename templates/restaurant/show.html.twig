@@ -1,38 +1,49 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}Restaurant{% endblock %}
+{% block title %}{{parent()}} | Restaurant{% endblock %}
 
-{% block body %}
-    <h1>Restaurant</h1>
+{% block datatables_css %}{% endblock %}
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ restaurant.id }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ restaurant.nom }}</td>
-            </tr>
-            <tr>
-                <th>Adresse</th>
-                <td>{{ restaurant.adresse }}</td>
-            </tr>
-            <tr>
-                <th>Logo</th>
-                <td>{{ restaurant.logo }}</td>
-            </tr>
-            <tr>
-                <th>Devise</th>
-                <td>{{ restaurant.devise }}</td>
-            </tr>
-        </tbody>
-    </table>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Restaurants</h1> <a href="{{path('restaurant_index')}}" class="call-action btn">Liste restaurant</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>{{ restaurant.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nom</th>
+                        <td>{{ restaurant.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Adresse</th>
+                        <td>{{ restaurant.adresse }}</td>
+                    </tr>
+                    <tr>
+                        <th>Logo</th>
+                        <td>
+                            <img class="hg-35 in-table" src="{{ asset('images/uploads/restaurant/' ~ restaurant.logo) }}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Devise</th>
+                        <td>{{ restaurant.devise }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <a href="{{ path('restaurant_index') }}">back to list</a>
-
-    <a href="{{ path('restaurant_edit', {'id': restaurant.id}) }}">edit</a>
-
-    {{ include('restaurant/_delete_form.html.twig') }}
+    <div class="detail-group-btn">
+        <a href="{{ path('restaurant_edit', {'id': restaurant.id}) }}" class="btn call-action">Modifier</a>
+        {{ include('restaurant/_delete_form.html.twig') }}
+    </div>
 {% endblock %}
+
+{% block validation_js %}{% endblock %}
+{% block datatables_js %}{% endblock %}

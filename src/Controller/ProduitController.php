@@ -115,8 +115,12 @@ class ProduitController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($produit);
             $entityManager->flush();
+
+            $flashBag = $this->get('session')->getFlashBag()->clear();
+            $this->addFlash('success', 'Suppression réussite');
         }
 
         return $this->redirectToRoute('produit_index');
     }
+
 }

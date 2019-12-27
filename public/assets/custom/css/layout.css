@@ -1,0 +1,30 @@
+.nav.side-menu>li{background: rgba(255,255,255,0.05);}
+table img.in-table{
+    height: 45px;
+    display: block;
+    margin: auto;
+}
+.row-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.row-title .title{
+    font-size: 33px;
+}
+.call-action, .call-action:hover, .call-action:focus{
+	background: #1abb9c;
+    color: #fff;
+}
+.nav_menu {
+    margin-bottom: 0;
+}
+.detail-group-btn{
+	display: flex;
+	align-items: center;
+}
+.btn-dlt-p-edit{
+	padding-left: 100px;
+    margin-top: -53px;
+}

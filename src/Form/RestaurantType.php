@@ -4,8 +4,10 @@ namespace App\Form;
 
 use App\Entity\Restaurant;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class RestaurantType extends AbstractType
 {
@@ -14,7 +16,26 @@ class RestaurantType extends AbstractType
         $builder
             ->add('nom')
             ->add('adresse')
-            ->add('logo')
+            ->add('logo', FileType::class, [
+                // unmapped means that this field is not associated to any entity property
+                'mapped' => false,
+
+                'required' => false,
+
+                // unmapped fields can't define their validation using annotations
+                // in the associated entity, so you can use the PHP constraint classes
+                'constraints' => [
+                    new File([
+                        'mimeTypes' => [
+                            "image/png",
+                            "image/jpeg",
+                            "image/jpg",
+                            "image/gif"
+                        ],
+                        'mimeTypesMessage' => 'Veillez entrer une image valide',
+                    ])
+                ],
+            ])
             ->add('devise')
         ;
     }

@@ -1,41 +1,46 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}Restaurant index{% endblock %}
+{% block title %}{{parent()}} | Restaurant{% endblock %}
 
-{% block body %}
-    <h1>Restaurant index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Adresse</th>
-                <th>Logo</th>
-                <th>Devise</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for restaurant in restaurants %}
-            <tr>
-                <td>{{ restaurant.id }}</td>
-                <td>{{ restaurant.nom }}</td>
-                <td>{{ restaurant.adresse }}</td>
-                <td>{{ restaurant.logo }}</td>
-                <td>{{ restaurant.devise }}</td>
-                <td>
-                    <a href="{{ path('restaurant_show', {'id': restaurant.id}) }}">show</a>
-                    <a href="{{ path('restaurant_edit', {'id': restaurant.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('restaurant_new') }}">Create new</a>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Liste des restaurants</h1> <a href="{{path('restaurant_new')}}" class="call-action btn">Nouveau restaurant</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="card-box table-responsive">
+                <table id="datatable-responsive" class="table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nom</th>
+                        <th>Adresse</th>
+                        <th>Logo</th>
+                        <th>Devise</th>
+                        <th>actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                        {% for restaurant in restaurants %}
+                            <tr>
+                                <td>{{ restaurant.id }}</td>
+                                <td>{{ restaurant.nom }}</td>
+                                <td>{{ restaurant.adresse }}</td>
+                                <td>
+                                    <img class="hg-35 in-table" src="{{ asset('images/uploads/restaurant/' ~ restaurant.logo) }}" />
+                                </td>
+                                <td>{{ restaurant.devise }}</td>
+                                <td>
+                                    <a href="{{ path('restaurant_show', {'id': restaurant.id}) }}">detail</a>&nbsp
+                                    <a href="{{ path('restaurant_edit', {'id': restaurant.id}) }}">modifier</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block validation_js %}
 {% endblock %}

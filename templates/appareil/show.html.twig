@@ -1,38 +1,47 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}Appareil{% endblock %}
+{% block title %}{{parent()}} | Appareil{% endblock %}
 
-{% block body %}
-    <h1>Appareil</h1>
+{% block datatables_css %}{% endblock %}
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ appareil.id }}</td>
-            </tr>
-            <tr>
-                <th>Marque</th>
-                <td>{{ appareil.marque }}</td>
-            </tr>
-            <tr>
-                <th>Imei</th>
-                <td>{{ appareil.imei }}</td>
-            </tr>
-            <tr>
-                <th>Type</th>
-                <td>{{ appareil.type }}</td>
-            </tr>
-            <tr>
-                <th>NumSerie</th>
-                <td>{{ appareil.numSerie }}</td>
-            </tr>
-        </tbody>
-    </table>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Appareil</h1> <a href="{{path('appareil_index')}}" class="call-action btn">Liste appareil</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>{{ appareil.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Marque</th>
+                        <td>{{ appareil.marque }}</td>
+                    </tr>
+                    <tr>
+                        <th>Imei</th>
+                        <td>{{ appareil.imei }}</td>
+                    </tr>
+                    <tr>
+                        <th>Type</th>
+                        <td>{{ appareil.type }}</td>
+                    </tr>
+                    <tr>
+                        <th>NumSerie</th>
+                        <td>{{ appareil.numSerie }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <a href="{{ path('appareil_index') }}">back to list</a>
-
-    <a href="{{ path('appareil_edit', {'id': appareil.id}) }}">edit</a>
-
-    {{ include('appareil/_delete_form.html.twig') }}
+    <div class="detail-group-btn">
+        <a href="{{ path('appareil_edit', {'id': appareil.id}) }}" class="btn call-action">Modifier</a>
+        {{ include('appareil/_delete_form.html.twig') }}
+    </div>
 {% endblock %}
+
+{% block validation_js %}{% endblock %}
+{% block datatables_js %}{% endblock %}

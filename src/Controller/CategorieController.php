@@ -6,11 +6,14 @@ use App\Entity\Categorie;
 use App\Form\CategorieType;
 use App\Repository\CategorieRepository;
 use Doctrine\Common\Util\Debug;
+use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @Route("/categorie")
@@ -42,6 +45,14 @@ class CategorieController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            /** @var UploadedFile $image */
+            $image = $form['image']->getData();
+            if ($image) {
+                $fileUploader = new FileUploader($this->getParameter("image_directory")."/categorie");
+                $newFilename = $fileUploader->upload($image);
+                $categorie->setImage($newFilename);
+            }
+
             $user = $this->security->getUser();
             $categorie->setRestaurant($user->getRestaurant());
             $entityManager->persist($categorie);
@@ -75,6 +86,13 @@ class CategorieController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $image */
+            $image = $form['image']->getData();
+            if ($image) {
+                $fileUploader = new FileUploader($this->getParameter("image_directory")."/categorie");
+                $newFilename = $fileUploader->upload($image);
+                $categorie->setImage($newFilename);
+            }
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('categorie_index');

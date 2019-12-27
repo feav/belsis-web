@@ -34,11 +34,6 @@ class Produit
     private $prix;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Restaurant", inversedBy="produits")
-     */
-    private $restaurant;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Categorie", inversedBy="produits")
      * @ORM\JoinColumn(nullable=false,onDelete="CASCADE")
      */
@@ -49,8 +44,14 @@ class Produit
      */
     private $stock;
 
+
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Commande", mappedBy="produit")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Restaurant", inversedBy="produits")
+     */
+    private $restaurant;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Commande")
      */
     private $commandes;
 
@@ -63,6 +64,7 @@ class Produit
     {
         $this->stock = new ArrayCollection();
         $this->commandeProduit = new ArrayCollection();
+        $this->commandes = new ArrayCollection();
     }
 
     public function getId()
@@ -106,18 +108,31 @@ class Produit
         return $this;
     }
 
-    public function getRestaurant()
-    {
-        return $this->restaurant;
+    /** Retourne directement la quantité de produit à prélever **/
+    public function getQuantite(){
+        $stock = $this->getStock();
+        //on suppose qu'il y'a un seul stock pour l'instant
+        if(!empty($stock)){
+            return $stock[0]->getQuantite();
+        }else{
+            return 0;
+        }
+
     }
 
-    public function setRestaurant($restaurant)
-    {
-        $this->restaurant = $restaurant;
+    /** Retourne directement la quantité de produit à prélever **/
+    public function setQuantite($quantite){
+        $stock = $this->getStock();
+        //on suppose qu'il y'a un seul stock pour l'instant
+        if(!empty($stock)){
+            $stock[0]->setQuantite($quantite);
+            return $this;
+        }else{
+            return 0;
+        }
 
-        return $this;
     }
-
+    
     public function getCategorie()
     {
         return $this->categorie;
@@ -129,13 +144,7 @@ class Produit
 
         return $this;
     }
-    /**
-     * @return Collection|CommandeProduit[]
-     */
-    public function getCommandeProduit()
-    {
-        return $this->commandeProduit;
-    }
+
     /**
      * @return Collection|Stock[]
      */
@@ -162,60 +171,77 @@ class Produit
         return $this;
     }
 
-    /** Retourne directement la quantité de produit à prélever **/
-    public function getQuantite(){
-        $stock = $this->getStock();
-        //on suppose qu'il y'a un seul stock pour l'instant
-        if(!empty($stock)){
-            return $stock[0]->getQuantite();
-        }else{
-            return 0;
-        }
-
+    public function getRestaurant()
+    {
+        return $this->restaurant;
     }
 
-    /** Retourne directement la quantité de produit à prélever **/
-    public function setQuantite($quantite){
-        $stock = $this->getStock();
-        //on suppose qu'il y'a un seul stock pour l'instant
-        if(!empty($stock)){
-            $stock[0]->setQuantite($quantite);
-            return $this;
-        }else{
-            return 0;
-        }
+    public function setRestaurant($restaurant)
+    {
+        $this->restaurant = $restaurant;
 
+        return $this;
+    }
+
+    /**
+     * @return Collection|CommandeProduit[]
+     */
+    public function getCommandeProduit()
+    {
+        return $this->commandeProduit;
+    }
+
+
+    public function __toString(){
+        return $this->nom;
     }
 
     /**
      * @return Collection|Commande[]
      */
-    public function getCommandes()
+    public function getCommandes(): Collection
     {
         return $this->commandes;
     }
 
-    public function addCommande($commande)
+    public function addCommande(Commande $commande): self
     {
         if (!$this->commandes->contains($commande)) {
             $this->commandes[] = $commande;
-            $commande->addProduit($this);
         }
 
         return $this;
     }
 
-    public function removeCommande(Commande $commande)
+    public function removeCommande(Commande $commande): self
     {
         if ($this->commandes->contains($commande)) {
             $this->commandes->removeElement($commande);
-            $commande->removeProduit($this);
         }
 
         return $this;
     }
 
-    public function __toString(){
-        return $this->nom;
+    public function addCommandeProduit(CommandeProduit $commandeProduit): self
+    {
+        if (!$this->commandeProduit->contains($commandeProduit)) {
+            $this->commandeProduit[] = $commandeProduit;
+            $commandeProduit->setProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommandeProduit(CommandeProduit $commandeProduit): self
+    {
+        if ($this->commandeProduit->contains($commandeProduit)) {
+            $this->commandeProduit->removeElement($commandeProduit);
+            // set the owning side to null (unless already changed)
+            if ($commandeProduit->getProduit() === $this) {
+                $commandeProduit->setProduit(null);
+            }
+        }
+
+        return $this;
     }
 }

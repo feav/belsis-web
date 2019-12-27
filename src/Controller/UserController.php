@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\UserService;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use FOS\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +18,11 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class UserController extends AbstractController
 {
+    private $user_s;
+
+    public function __construct(UserService $user_s){
+        $this->user_s = $user_s;
+    }
     /**
      * @Route("/", name="user_index", methods={"GET"})
      */
@@ -29,15 +36,39 @@ class UserController extends AbstractController
     /**
      * @Route("/new", name="user_new", methods={"GET","POST"})
      */
-    public function new(Request $request, UserPasswordEncoderInterface $encoder): Response
+    public function new(Request $request, UserPasswordEncoderInterface $encoder, UserManagerInterface $userManager): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $encodedPwd = $encoder->encodePassword($user, $request->get('user')->getPassword("password"));
-            $user->setPassword($encodedPwd);
+            $existEmail = $userManager->findUserByEmail($form->getData()->getEmail());
+            if(!is_null($existEmail)){
+                $this->addFlash('error', 'Un utilisateur existe déjà avec cet email.');
+                return $this->render('user/new.html.twig', [
+                    'user' => $user,
+                    'form' => $form->createView(),
+                    'super_role'=>$this->user_s->getSuperRole($user->getRoles()),
+                    'array_roles'=>['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
+                ]);
+            }
+            $userNameExist = $userManager->findUserByUsername($form->getData()->getUsername());
+            if(!is_null($userNameExist)){
+                $this->addFlash('error', 'Un utilisateur existe déjà avec ce nom d\'utilisateur.');
+                return $this->render('user/new.html.twig', [
+                    'user' => $user,
+                    'form' => $form->createView(),
+                    'super_role'=>$this->user_s->getSuperRole($user->getRoles()),
+                    'array_roles'=>['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
+                ]);
+            }
+
+            $role = $request->request->get('role_hierachique');
+            if($role)
+                $user->setRoles([$role]);
+            if($request->request->get('password'))
+                $user->setPlainPassword($request->request->get('password'));
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
@@ -49,6 +80,8 @@ class UserController extends AbstractController
         return $this->render('user/new.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
+            'super_role'=>$this->user_s->getSuperRole($user->getRoles()),
+            'array_roles'=>['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
         ]);
     }
 
@@ -71,17 +104,21 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $user->getPassword('password');
-            $encodedPwd = $encoder->encodePassword($user, $password);
-            $user->setPassword($encodedPwd);
-            //var_dump($encodedPwd); die();
+            $role = $request->request->get('role_hierachique');
+            if($role)
+                $user->setRoles([$role]);
+            if($request->request->get('password'))
+                $user->setPlainPassword($request->request->get('password'));
+        
             $this->getDoctrine()->getManager()->flush();
             return $this->redirectToRoute('user_index');
         }
 
         return $this->render('user/edit.html.twig', [
             'user' => $user,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'super_role'=>$this->user_s->getSuperRole($user->getRoles()),
+            'array_roles'=>['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
         ]);
     }
 

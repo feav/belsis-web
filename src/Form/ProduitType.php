@@ -31,7 +31,6 @@ class ProduitType extends AbstractType
                 // in the associated entity, so you can use the PHP constraint classes
                 'constraints' => [
                     new File([
-                        'maxSize' => '1024k',
                         'mimeTypes' => [
                             "image/png",
                             "image/jpeg",

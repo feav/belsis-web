@@ -1,11 +1,15 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}New Restaurant{% endblock %}
+{% block title %}{{parent()}} | creation de restaurant{% endblock %}
+{% block datatables_css %}{% endblock %}
 
-{% block body %}
-    <h1>Create new Restaurant</h1>
-
-    {{ include('restaurant/_form.html.twig') }}
-
-    <a href="{{ path('restaurant_index') }}">back to list</a>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Nouveau restaurant</h1> <a href="{{path('restaurant_index')}}" class="call-action btn">Liste restaurant</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+    	{{ include('restaurant/_form.html.twig') }}
+	    </div>
+	</div>
 {% endblock %}
