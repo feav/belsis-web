@@ -32,15 +32,18 @@ class User extends BaseUser
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Commande", mappedBy="user", cascade={"remove"})
-     *  @ORM\JoinColumn(nullable=true)
      */
     protected $commandes;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Restaurant", inversedBy="categories")
-     * @ORM\JoinColumn(nullable=true)
      */
     protected $restaurant;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Abonnement", mappedBy="user", cascade={"remove"})
+     */
+    protected $abonnements;
 
     public function getRestaurant()
     {
@@ -58,6 +61,7 @@ class User extends BaseUser
     {
         parent::__construct();
         $this->commandes = new ArrayCollection();
+        $this->abonnements = new ArrayCollection();
     }
 
     public function getId()
@@ -122,5 +126,36 @@ class User extends BaseUser
 
     public function __toString(){
         return $this->nom;
+    }
+
+    /**
+     * @return Collection|Abonnement[]
+     */
+    public function getAbonnements(): Collection
+    {
+        return $this->abonnements;
+    }
+
+    public function addAbonnement(Abonnement $abonnement): self
+    {
+        if (!$this->abonnements->contains($abonnement)) {
+            $this->abonnements[] = $abonnement;
+            $abonnement->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAbonnement(Abonnement $abonnement): self
+    {
+        if ($this->abonnements->contains($abonnement)) {
+            $this->abonnements->removeElement($abonnement);
+            // set the owning side to null (unless already changed)
+            if ($abonnement->getUser() === $this) {
+                $abonnement->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
