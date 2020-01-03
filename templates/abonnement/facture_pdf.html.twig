@@ -199,7 +199,7 @@
                     <span class="facture" style="font-family: 'Quicksand';">Facture</span>
                     <p style="font-size: 14px;font-family: 'Quicksand';">
                       Référence facture : {{data.data.id}} <br>
-                      Emise le {{ data.data.dateCreation ? data.data.dateCreation | localizeddate('none', 'none', null, "Europe/Paris", 'dd MMMM Y') : '' }} à {{ data.data.dateCreation | date('H') }}h
+                      Emise le {{ data.data.dateCreation ? data.data.dateCreation | date('d-m-Y H:i') : '' }}
                     </p>
                   </td>
                   <td class="adresse_client" style="width: 20%; vertical-align: top;">
@@ -248,7 +248,7 @@
                   <tr>
                     <td class="td_left">{{data.plan.nom}}</td>
                     <td class="td_right">{{data.data.tarif}} Fcfa</td>
-                    <td class="td_right">{{ data.data.getDateEcheance ? data.data.getDateEcheance | localizeddate('none', 'none', null, "Europe/Paris", 'dd MMMM Y') : '' }} à {{ data.data.getDateEcheance | date('H') }}h</td>
+                    <td class="td_right">{{ data.data.getDateEcheance ? data.data.getDateEcheance | date('d-m-Y H:i') : '' }}</td>
                   </tr>
                 </tbody>
               </table>
