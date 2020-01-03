@@ -29,18 +29,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
  */
 class APIController extends FOSRestController
 {
-    /**
-     * *@var ObjectManager
-     */
-    protected $em;
     private $client_manager;
+    private $em;
 
     /**
      * Contructeur de la classe
      */
-    public function __construct(ObjectManager $em, ClientManagerInterface $client_manager)
+    public function __construct(ClientManagerInterface $client_manager)
     {
-        $this->em = $em;
+        $this->em = $this->getDoctrine()->getManager();
         $this->client_manager = $client_manager;
     }
 
