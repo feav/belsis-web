@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-Type" content="text/html; charset=utf-8"/>
+    <style>
+      @font-face {
+        font-family: 'Quicksand';
+        font-style: normal;
+        font-weight: normal;
+        src: url(assets/fonts/quicksand/Quicksand-Bold.ttf) format('truetype');
+      }
+      @font-face {
+        font-family: 'Quicksand-Bold';
+        font-style: normal;
+        font-weight: normal;
+        src: url(assets/fonts/quicksand/Quicksand-Light.ttf) format('truetype');
+      }
+      @page {
+        margin:0px;
+      }
+
+      body { font-family: HelveticaNeue, sans-serif; }
+      hr {
+        page-break-after: always;
+        border: 0;
+      }
+      .container-content{
+        position: absolute;
+        z-index: 17;
+      }
+      .container-content .content-row{
+        padding-left: 60px;
+        padding-right: 60px;
+      }
+      .container-content .estimation-top{
+        padding-top: 50px;
+        padding-bottom: 20px;
+      }
+      table{
+        width: 100%;
+      }
+      .wrapper,
+      .estimation_projet{
+          font-size: 13px;
+          font-weight: normal;
+          font-style: normal;
+          font-stretch: normal;
+          line-height: normal;
+          letter-spacing: 0px;
+          color: #4a4a4a;
+          padding-top: 20px;
+          padding-bottom: 30px;
+      }
+      .estimation_projet h2{
+          font-size: 18px;
+          font-weight: normal;
+          color: #4a4a4a;
+      }
+      .estimation_projet .estimation_id{
+          font-size: 13px;
+      }
+      .container_footer{
+        font-size: 13px;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: 14px;
+        letter-spacing: 0px;
+        color: #4a4a4a;
+      }
+      .wrapper{
+        padding-top: 25px;
+        padding-bottom: 25px;
+      }
+      .wrapper .wrapper_top{
+        padding-bottom: 30px;
+      }
+      .wrapper_top table th,
+      .wrapper_top table td{
+        width: 50%;
+        padding: 10px 0;
+        font-size: 13px;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        color: #4a4a4a;
+      }
+      .wrapper_top table th.border,.wrapper_top table td.border{
+        border-bottom: solid 1px #e9e9e9;
+      }
+      .wrapper_top table th.td_right,
+      .wrapper_top table td.td_right{
+        text-align: right;
+      }
+      .wrapper_top table th.td_left,
+      .wrapper_top table td.td_left{
+        text-align: left;
+      }
+      .wrapper_top table th{
+        font-size: 13px;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        border: none;
+        padding-bottom: 15px;
+      }
+      p{
+        line-height: 18px;
+      }
+      .prestation{
+        font-size: 18px;
+        font-weight: normal;
+      }
+      
+      .wrapper_top table table .first_tr td{
+        border: none;
+        padding-top: 0;
+      }
+      img.logo{
+        width: 70px;
+      }
+
+      .estimation-footer,
+      .estimation-content{
+        padding-top: 20px;
+      }
+      tr.header td{
+        font-size : 12px;
+        font-weight: normal;
+      }
+      .size-16{
+        font-size: 16px;
+      }
+      .size-18{
+        font-size: 18px;
+      }
+      .size-20{
+        font-size: 20px;
+      }
+      .facture{
+        font-size: 20px;
+      }
+      footer {
+        position: fixed; 
+        bottom: 0cm; 
+        left: 0cm; 
+        right: 0cm;
+        height: 2cm;
+
+        /** Extra personal styles **/
+        color: white;
+        text-align: center;
+        line-height: 0.5cm;
+        background-color: #075987;
+        vertical-align: middle;
+        font-size: 13.5px;
+        padding: 25px 25px;
+      }
+      .left{
+        padding: 10px 0;
+        float: left;
+        width : 40%;
+        border-bottom: solid 1px #e9e9e9;
+        display : inline-block;
+      }
+      .right{
+        left:100px;
+        padding: 10px 0;
+        float: right;
+        width : 50%;
+        border-bottom: solid 1px #e9e9e9;
+      }
+      .left-signature{
+        position:absolute;
+        left:100px;
+        bottom:-450px;
+        width: 50%;
+      }
+      .right-signature{
+        position:absolute;
+        right:-100px;
+        bottom:-450px;
+        width: 50%;
+      }
+    </style>
+  </head>
+  <body>  
+    <div class="container-content">
+      <div class="content">
+        <div class="estimation-top content-row">
+          <div class="head">
+              <table>
+                <tr>
+                  <td class="adresse_site" style="width: 80%;text-align: left;">
+                    <span class="facture" style="font-family: 'Quicksand';">Facture</span>
+                    <p style="font-size: 14px;font-family: 'Quicksand';">
+                      Référence facture : {{data.data.id}} <br>
+                      Emise le {{ data.data.dateCreation ? data.data.dateCreation | localizeddate('none', 'none', null, "Europe/Paris", 'dd MMMM Y') : '' }} à {{ data.data.dateCreation | date('H') }}h
+                    </p>
+                  </td>
+                  <td class="adresse_client" style="width: 20%; vertical-align: top;">
+                    {#<img class="logo" src="assets/images/static/logo.png">#}
+                    </div>
+                  </td>
+                </tr>
+              </table>
+          </div>
+        </div>
+        <div class="estimation-content content-row">
+          <div>
+            <div class="left" style="font-family: 'Quicksand';">Belsis</div>
+            <div class="right" style="font-family: 'Quicksand';">Client</div>
+          </div>
+          <div class="wrapper">
+            <div class="wrapper_top">
+              <table>
+                <tbody>
+                  <tr>
+                    <td class="td_left" colspan="2" style="padding-top: 15px;font-family: 'Quicksand';">
+                      <br>
+                        Belsis <br>
+                        adresse <br>
+                    </td>
+                    <td class="td_left" colspan="2" style="padding-top: 15px;font-family: 'Quicksand';">
+                        {{data.client.prenom}} {{data.client.nom}} <br>
+                        Restaurant: <br>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table>
+                <tbody>
+                  <tr>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <th class="td_left border" style="font-size: 18px;font-family: 'Quicksand';" colspan="4">Abonnement</th>
+                  </tr>
+                  <tr class="header" style="font-family: 'Quicksand';">
+                    <td class="td_left" style="width: 70%;">Plan</td>
+                    <td class="td_right">Tarif</td>
+                    <td class="td_right">date expiration</td>
+                  </tr>
+                  <tr>
+                    <td class="td_left">{{data.plan.nom}}</td>
+                    <td class="td_right">{{data.data.tarif}} Fcfa</td>
+                    <td class="td_right">{{ data.data.getDateEcheance ? data.data.getDateEcheance | localizeddate('none', 'none', null, "Europe/Paris", 'dd MMMM Y') : '' }} à {{ data.data.getDateEcheance | date('H') }}h</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        {#<footer>
+            Circa hos dies Lollianus primae lanuginis adulescens, Lampadi filius ex praefecto, exploratius causam Maximino spectante, convictus codicem noxiarum artium nondum per aetatem firmato consilio descripsisse, exulque mittendus, ut sperabatur, patris inpulsu provocavit ad principem, et iussus ad eius comitatum duci, de fumo, ut aiunt, in flammam traditus Phalangio Baeticae consulari cecidit funesti carnificis
+        </footer>#}
+        
+      </div>  
+    </div>
+  </body>
+</html>

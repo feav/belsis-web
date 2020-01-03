@@ -11,6 +11,10 @@ use Symfony\Component\Templating\EngineInterface;
 use Doctrine\{
     Common\Persistence\ObjectManager
 };
+use Dompdf\Options;
+use Dompdf\Dompdf;
+use App\Entity\Abonnement;
+use App\Entity\Plan;
 
 class GlobalService{
 
@@ -25,40 +29,50 @@ class GlobalService{
         $this->templating = $templating;
     }
 
-    public function leftTimeFormate($date)
-    {
-        $retour = array();
-
-        $date2 = time();
-        $date1 = strtotime($date);
-
-        $diff = ($date1 - $date2);
-
-        if ($diff < 0) {
-            $retour['negatif'] = true;
-            $message = "etait il y a ";
-        } else {
-            $retour['negatif'] = false;
-            $message = "dans ";
+    public function buildFiles($files, $tabExtension, $maxSize, $directorySave, $save_originalName){
+        $filesArray = array();
+        foreach ($files as $key => $value) {
+            if( ($value instanceof UploadedFile) && ($value->getError()=="0")){
+                if($value->getSize() < $maxSize){
+                    $originalName=$value->getClientOriginalName();
+                    $name_array = explode('.',$originalName);
+                    $file_type=$name_array[sizeof($name_array)-1];
+                    $nameWithoutExt = str_replace(".".$file_type, "", $originalName);
+                    $valid_filetypes=  $tabExtension;
+                    
+                    if(in_array(strtolower($file_type),$valid_filetypes)){
+                        if($save_originalName)
+                            $name = $originalName;
+                        else
+                            $name=$nameWithoutExt.'-'.Date("Yds").'.'.$file_type;
+                        $value->move($directorySave, $name);
+                        $filesArray[] = $name;
+                    }else{
+                        print_r("Entrez votre image avec une extension valide");
+                    }
+                }else{
+                    print_r("Fichier trop lourd".$value->getSize());
+                }
+            }else{
+                print_r("Erreur de chargement du fichier");
+            }            
         }
+        return $filesArray;
+    }
 
-        $tmp = abs($diff);
-        $retour['second'] = $tmp % 60;
+    public function generatePdf($template, $data, $params){
 
-        $tmp = floor(($tmp - $retour['second']) / 60);
-        $retour['minute'] = $tmp % 60;
-
-        $tmp = floor(($tmp - $retour['minute']) / 60);
-        $retour['hour'] = $tmp % 60;
-
-        $tmp = floor(($tmp - $retour['hour']) / 24);
-        $retour['day'] = $tmp % 24;
-        $retour['message'] = $message;
-
-        $tmp = floor(($tmp - $retour['day']) / 30);
-        $retour['month'] = $diff % (60*60*3600*24*30);
-        $retour['message'] = $message;
-
-        return $retour;
+        $options = new Options();
+        $dompdf = new Dompdf($options);
+        $dompdf -> setPaper ($params['format']['value'], $params['format']['affichage']);
+        $html = $this->templating->render($template, ['data' => $data]);
+        $dompdf->loadHtml($html);
+        $dompdf->render();
+        if($params['is_download']['value']){
+            $output = $dompdf->output();
+            file_put_contents($params['is_download']['save_path'], $output);
+        }
+        
+        return $dompdf;
     }
 }

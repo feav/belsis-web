@@ -50,7 +50,7 @@
                             <td>
                                 <a href="{{ path('abonnement_show', {'id': abonnement.id}) }}">show</a>
                                 <a href="{{ path('abonnement_edit', {'id': abonnement.id}) }}">edit</a>
-                                <a href="{{ path('abonnement_edit', {'id': abonnement.id}) }}" class="btn call-action btn-export-facture">Exporter facture</a>
+                                <a href="{{ path('abonnement_facture', {'id': abonnement.id}) }}" class="btn call-action btn-export-facture">Exporter facture</a>
                             </td>
                         </tr>
                     {% endfor %}

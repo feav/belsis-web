@@ -7,10 +7,15 @@ use App\Form\AbonnementType;
 use App\Repository\AbonnementRepository;
 use App\Repository\PlanRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\{
+    Common\Persistence\ObjectManager
+};
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\GlobalService;
+use Dompdf\Options;
+use Dompdf\Dompdf;
 
 /**
  * @Route("/abonnement")
@@ -22,7 +27,8 @@ class AbonnementController extends AbstractController
     private $abonnementRepository;
     private $global_s;
     
-    public function __construct(AbonnementRepository $abonnementRepository, PlanRepository $planRepository, GlobalService $global_s){
+    public function __construct(ObjectManager $em, AbonnementRepository $abonnementRepository, PlanRepository $planRepository, GlobalService $global_s){
+        $this->em = $em;
       $this->abonnementRepository = $abonnementRepository;
       $this->planRepository = $planRepository;
       $this->global_s = $global_s;
@@ -136,5 +142,31 @@ class AbonnementController extends AbstractController
         }
 
         return $this->redirectToRoute('abonnement_index');
+    }
+
+    /**
+     * @Route("/export-facture/{id}", name="abonnement_facture")
+     */
+    public function exporteFacture($id, GlobalService $global_s){
+
+        $abonnement = $this->em->getRepository(Abonnement::class)->find($id);
+        $abonnementArray = [
+            'data'=>$abonnement,
+            'plan'=>[
+                'nom'=>$abonnement->getPlan()
+            ],
+            'client'=>[
+                'prenom'=> $abonnement->getUser()->getPrenom(),
+                'nom'=>$abonnement->getUser()->getNom()
+            ]
+        ];
+        
+        $ouput_name = 'facture_'.$abonnement->getId().'.pdf';
+        $params = [
+            'format'=>['value'=>'A4', 'affichage'=>'portrait'],
+            'is_download'=>['value'=>false, 'save_path'=>""]
+        ];
+        $dompdf = $global_s->generatePdf('abonnement/facture_pdf.html.twig', $abonnementArray , $params);  
+        return new Response ($dompdf->stream($ouput_name, array("Attachment" => false)));
     }
 }
