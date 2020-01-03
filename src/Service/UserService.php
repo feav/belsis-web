@@ -2,7 +2,6 @@
 namespace App\Service;
 
 use App\Entity\User;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -12,9 +11,10 @@ class UserService{
     private $doctrine;
     private $security;
     private $event;
+    private $em;
     
-    public function __construct(RegistryInterface $doctrine, Security $security){
-        $this->doctrine = $doctrine;
+    public function __construct(Security $security){
+        $this->em = $this->getDoctrine()->getManager();
         $this->security = $security;
         //$this->event = $event;
     }
