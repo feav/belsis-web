@@ -22,7 +22,6 @@ class GlobalService{
     private $em;
     
     public function __construct(RequestStack $requestStack, EngineInterface $templating){
-        $this->em = $this->getDoctrine()->getManager();
         $this->request = $requestStack->getCurrentRequest();
         $this->public_path = $this->request->server->get('DOCUMENT_ROOT');
         $this->templating = $templating;

@@ -14,7 +14,6 @@ class UserService{
     private $em;
     
     public function __construct(Security $security){
-        $this->em = $this->getDoctrine()->getManager();
         $this->security = $security;
         //$this->event = $event;
     }

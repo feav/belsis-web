@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20191227185205 extends AbstractMigration
+final class Version20200103214059 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -22,8 +22,7 @@ final class Version20191227185205 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE sortie_caisse DROP FOREIGN KEY FK_B5579974B1E7706E');
-        $this->addSql('ALTER TABLE sortie_caisse ADD CONSTRAINT FK_B5579974B1E7706E FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE restaurant CHANGE status status TINYINT(1) NOT NULL, CHANGE chiffre_affaire chiffre_affaire INT NOT NULL');
     }
 
     public function down(Schema $schema) : void
@@ -31,7 +30,6 @@ final class Version20191227185205 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE sortie_caisse DROP FOREIGN KEY FK_B5579974B1E7706E');
-        $this->addSql('ALTER TABLE sortie_caisse ADD CONSTRAINT FK_B5579974B1E7706E FOREIGN KEY (restaurant_id) REFERENCES restaurant (id)');
+        $this->addSql('ALTER TABLE restaurant CHANGE chiffre_affaire chiffre_affaire VARCHAR(255) NOT NULL COLLATE utf8mb4_unicode_ci, CHANGE status status VARCHAR(255) NOT NULL COLLATE utf8mb4_unicode_ci');
     }
 }
