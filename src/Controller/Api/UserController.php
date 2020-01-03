@@ -74,6 +74,7 @@ class UserController extends APIController
                 Response::HTTP_OK)
             );
         }
+        //$response->headers->set('Access-Control-Allow-Origin', '*');
     }
 
 

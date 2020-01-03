@@ -39,6 +39,7 @@ class AbonnementController extends AbstractController
             $abonnementsArray[] =[
                 'id'=>$value->getId(),
                 'dateCreation'=>$value->getDateCreation()->format('Y-m-d H:i:s'),
+                'getDateEcheance'=>$value->getDateEcheance()->format('Y-m-d H:i:s'),
                 'echeance'=>[
                     'month'=>(new \DateTime())->diff($value->getDateEcheance())->format('%m'),
                     'day'=>(new \DateTime())->diff($value->getDateEcheance())->format('%d'),
