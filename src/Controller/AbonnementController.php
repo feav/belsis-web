@@ -7,7 +7,6 @@ use App\Form\AbonnementType;
 use App\Repository\AbonnementRepository;
 use App\Repository\PlanRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,8 +24,7 @@ class AbonnementController extends AbstractController
     private $abonnementRepository;
     private $global_s;
     
-    public function __construct(ObjectManager $em, AbonnementRepository $abonnementRepository, PlanRepository $planRepository, GlobalService $global_s){
-        $this->em = $em;
+    public function __construct(AbonnementRepository $abonnementRepository, PlanRepository $planRepository, GlobalService $global_s){
       $this->abonnementRepository = $abonnementRepository;
       $this->planRepository = $planRepository;
       $this->global_s = $global_s;
@@ -145,9 +143,9 @@ class AbonnementController extends AbstractController
     /**
      * @Route("/export-facture/{id}", name="abonnement_facture")
      */
-    public function exporteFacture($id, GlobalService $global_s){
+    public function exporteFacture($id, GlobalService $global_s, AbonnementRepository $abonnementRepository){
 
-        $abonnement = $this->em->getRepository(Abonnement::class)->find($id);
+        $abonnement = $abonnementRepository->find($id);
         $abonnementArray = [
             'data'=>$abonnement,
             'plan'=>[
