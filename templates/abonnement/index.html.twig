@@ -34,7 +34,7 @@
                             <td>
                                 {{ abonnement.user.prenom }} {{ abonnement.user.nom }}
                             </td>
-                            <td>{{ abonnement.dateCreation ? abonnement.dateCreation | localizeddate('medium', 'none', 'fr') : '' }} à {{ abonnement.dateCreation | date('H') }}h</td>
+                            <td>{{ abonnement.dateCreation ? abonnement.dateCreation | date('d-m-Y H:i') : '' }}</td>
                             <td>
                                 {{ abonnement.echeance.is_expire > 0 ? "Dans ": 'il y a ' }}
                                 <b> 
@@ -44,7 +44,7 @@
                                     {{ abonnement.echeance.hour ? abonnement.echeance.hour~"minute" }}
                                 </b>
                                 <br>
-                                ( <em>{{ abonnement.getDateEcheance ? abonnement.getDateEcheance | localizeddate('medium', 'none', 'fr') : '' }} à {{ abonnement.getDateEcheance | date('H') }}h</em> )
+                                ( <em>{{ abonnement.getDateEcheance ? abonnement.getDateEcheance | date('d-m-Y H:i') : '' }}</em> )
                             </td>
                             <td>{{ abonnement.tarif }}</td>
                             <td>
