@@ -25,6 +25,9 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    Twig\Extensions\IntlExtension: ~
+    Twig\Extensions\I18nExtension: ~
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     sensio_framework_extra.view.listener:
