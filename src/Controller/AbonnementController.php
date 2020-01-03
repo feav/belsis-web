@@ -7,9 +7,7 @@ use App\Form\AbonnementType;
 use App\Repository\AbonnementRepository;
 use App\Repository\PlanRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Doctrine\{
-    Common\Persistence\ObjectManager
-};
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
