@@ -8,9 +8,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Templating\EngineInterface;
-use Doctrine\{
-    Common\Persistence\ObjectManager
-};
+
 use Dompdf\Options;
 use Dompdf\Dompdf;
 use App\Entity\Abonnement;
@@ -21,9 +19,10 @@ class GlobalService{
     private $requestStack;
     private $public_path;
     private $templating;
+    private $em;
     
-    public function __construct(ObjectManager $em, RequestStack $requestStack, EngineInterface $templating){
-        $this->em = $em;
+    public function __construct(RequestStack $requestStack, EngineInterface $templating){
+        $this->em = $this->getDoctrine()->getManager();
         $this->request = $requestStack->getCurrentRequest();
         $this->public_path = $this->request->server->get('DOCUMENT_ROOT');
         $this->templating = $templating;
