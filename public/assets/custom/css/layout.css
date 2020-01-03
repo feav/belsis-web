@@ -27,4 +27,6 @@ table img.in-table{
 .btn-dlt-p-edit{
 	padding-left: 100px;
     margin-top: -53px;
+    padding-left: 177px;
 }
+.hidden-field{display: none;}

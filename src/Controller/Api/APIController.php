@@ -16,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\Common\Util\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use FOS\OAuthServerBundle\Model\ClientManagerInterface;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -32,13 +33,15 @@ class APIController extends FOSRestController
      * *@var ObjectManager
      */
     protected $em;
+    private $client_manager;
 
     /**
      * Contructeur de la classe
      */
-    public function __construct(ObjectManager $em)
+    public function __construct(ObjectManager $em, ClientManagerInterface $client_manager)
     {
         $this->em = $em;
+        $this->client_manager = $client_manager;
     }
 
     public function authToken(string $token=null)

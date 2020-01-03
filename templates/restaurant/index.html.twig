@@ -4,7 +4,10 @@
 
 {% block bo_content %}
     <div class="row-title">
-        <h1 class="title">Liste des restaurants</h1> <a href="{{path('restaurant_new')}}" class="call-action btn">Nouveau restaurant</a>
+        <h1 class="title">Liste des restaurants</h1> 
+        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+            <a href="{{path('restaurant_new')}}" class="call-action btn">Nouveau restaurant</a>
+        {% endif %}
     </div>
     <div class="x_panel">
         <div class="x_content">
@@ -12,27 +15,37 @@
                 <table id="datatable-responsive" class="table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                   <thead>
                     <tr>
-                        <th>Id</th>
+                        <th>Status</th>
                         <th>Nom</th>
                         <th>Adresse</th>
-                        <th>Logo</th>
+                        <th>Chiffre d'affaire</th>
                         <th>Devise</th>
+                        <th>Logo</th>
                         <th>actions</th>
                     </tr>
                   </thead>
                   <tbody>
                         {% for restaurant in restaurants %}
                             <tr>
-                                <td>{{ restaurant.id }}</td>
+                                <td style="font-weight: bold;">
+                                    {% if restaurant.status %}
+                                        <span style="color: #1abb9c">Actif</span>
+                                    {% else %}
+                                        <span>Desactivé</span>
+                                    {% endif %}
+                                </td>
                                 <td>{{ restaurant.nom }}</td>
                                 <td>{{ restaurant.adresse }}</td>
+                                <td>{{ restaurant.chiffreAffaire }}</td>
+                                <td>{{ restaurant.devise }}</td>
                                 <td>
                                     <img class="hg-35 in-table" src="{{ asset('images/uploads/restaurant/' ~ restaurant.logo) }}" />
                                 </td>
-                                <td>{{ restaurant.devise }}</td>
                                 <td>
                                     <a href="{{ path('restaurant_show', {'id': restaurant.id}) }}">detail</a>&nbsp
-                                    <a href="{{ path('restaurant_edit', {'id': restaurant.id}) }}">modifier</a>
+                                    {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                                        <a href="{{ path('restaurant_edit', {'id': restaurant.id}) }}">modifier</a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}

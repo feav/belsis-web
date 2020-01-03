@@ -1,17 +1,20 @@
 <?php
 
 namespace App\Controller\Api;
-
-use App\Entity\Commande;
-use App\Entity\User;
-use App\Entity\Restaurant;
-use App\Form\RestaurantType;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use FOS\UserBundle\Model\UserManagerInterface;
+
+use App\Entity\Commande;
+use App\Entity\User;
+use App\Entity\Restaurant;
+use App\Form\RestaurantType;
+use App\Repository\UserRepository;
 
 /**
  * API Controller.
@@ -19,6 +22,61 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class UserController extends APIController
 {
+
+    private $userRepository;
+    private $encoderFactory;
+    
+    public function __construct(UserRepository $userRepository, EncoderFactoryInterface $encoderFactory){
+      $this->userRepository = $userRepository;
+      $this->encoderFactory = $encoderFactory;
+    }
+
+    /**
+     *Get User profile info.
+     * @Rest\Post("/login", name="login")
+     *
+     * @return Response
+     */
+    public function login(Request $request, UserManagerInterface $userManager){
+        
+        $_username = $request->request->get('username');
+        $_password = $request->request->get('password');
+
+        $user = $userManager->findUserByUsername($_username);
+        $encoder = $this->get('security.password_encoder');
+
+        if(!$user || !$encoder->isPasswordValid($user, $_password)){
+            return $this->handleView($this->view(
+                [
+                'status' => 'error',
+                'message' => "identifiant ou mot de passe invalide"
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR)
+            );
+        }
+        elseif (!$user->isEnabled()) {
+            return $this->handleView($this->view(
+                [
+                'status' => 'error',
+                'message' => "Votre compte n'est pas activé"
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR)
+            );
+        }
+        else{
+            return $this->handleView($this->view(
+                [
+                    'email'=>$user->getUsername(),
+                    'username'=>$user->getUsername(),
+                    'prenom'=>$user->getPrenom(),
+                    'nom'=>$user->getNom(),
+                ],
+                Response::HTTP_OK)
+            );
+        }
+    }
+
+
     /**
      *Get User profile info.
      * @Rest\Post("/get", name="get")

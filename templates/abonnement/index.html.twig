@@ -1,0 +1,62 @@
+{% extends 'backOffice/layout.html.twig' %}
+
+{% block title %}{{parent()}} | Paiement{% endblock %}
+{% block style %}
+    <style type="text/css">
+        .btn-export-facture{
+            padding: 2px 5px;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Liste des Paiement</h1> <a href="{{path('abonnement_new')}}" class="call-action btn">Nouvel abonnement</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="card-box table-responsive">
+                <table id="datatable-responsive" class="table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Date creation</th>
+                            <th> Echeance </th>
+                            <th>Tarif</th>
+                            <th>actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for abonnement in abonnements %}
+                        <tr>
+                            <td>
+                                {{ abonnement.user.prenom }} {{ abonnement.user.nom }}
+                            </td>
+                            <td>{{ abonnement.dateCreation ? abonnement.dateCreation|date('Y-m-d H:i') : '' }}</td>
+                            <td>
+                                {{ abonnement.echeance.is_expire > 0 ? "Dans ": 'il y a ' }}
+                                <b> 
+                                    {{ abonnement.echeance.month ? abonnement.echeance.month~"Mois" }}
+                                    {{ abonnement.echeance.day ? abonnement.echeance.day~"jour" }}
+                                    {{ abonnement.echeance.hour ? abonnement.echeance.hour~"h" }}
+                                    {{ abonnement.echeance.hour ? abonnement.echeance.hour~"minute" }}
+                                </b>
+                            </td>
+                            <td>{{ abonnement.tarif }}</td>
+                            <td>
+                                <a href="{{ path('abonnement_show', {'id': abonnement.id}) }}">show</a>
+                                <a href="{{ path('abonnement_edit', {'id': abonnement.id}) }}">edit</a>
+                                <a href="{{ path('abonnement_edit', {'id': abonnement.id}) }}" class="btn call-action btn-export-facture">Exporter facture</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block validation_js %}
+{% endblock %}

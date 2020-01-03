@@ -17,18 +17,25 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\GlobalService;
 
 /**
  * @Route("/restaurant")
  */
 class RestaurantController extends AbstractController
 {
+    private $global_s;
+    
+    public function __construct(GlobalService $global_s){
+      $this->global_s = $global_s;
+    }
+
     /**
      * @Route("/", name="restaurant_index", methods={"GET"})
      */
     public
     function index(RestaurantRepository $restaurantRepository): Response
-    {
+    {   
         return $this->render('restaurant/index.html.twig', [
             'restaurants' => $restaurantRepository->findAll(),
         ]);
@@ -77,6 +84,19 @@ class RestaurantController extends AbstractController
         return $this->render('restaurant/show.html.twig', [
             'restaurant' => $restaurant,
         ]);
+    }    
+
+    /**
+     * @Route("/change-status/{id}", name="restaurant_status", methods={"GET"})
+     */
+    public function changeStatus(Request $request, Restaurant $restaurant): Response
+    {   
+        if($restaurant->getStatus())
+            $restaurant->setStatus(false);
+        else
+            $restaurant->setStatus(true);
+        $this->getDoctrine()->getManager()->flush();
+        return $this->redirectToRoute('restaurant_index');
     }
 
     /**

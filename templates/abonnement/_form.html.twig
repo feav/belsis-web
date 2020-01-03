@@ -1,0 +1,47 @@
+{{ form_start(form) }}
+	<div class="my-custom-class-for-errors">
+        {{ form_errors(form) }}
+    </div>
+
+    <div class="item form-group hidden-field">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="name">Date création <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+        	{{ form_widget(form.dateCreation, { 'attr': {'class': 'form-control', 'required':'required'} }) }}
+        </div>
+    </div>
+    <div class="item form-group hidden-field">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" >date écheance<span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	        {{ form_widget(form.dateEcheance, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+	    </div>
+    </div>
+    <div class="item form-group hidden-field">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" >Tarif <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	        {{ form_widget(form.tarif, { 'attr': {'class': 'form-control'}} ) }}
+	    </div>
+    </div>
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" >Client <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	         {{ form_widget(form.user, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+	    </div>
+    </div>
+    <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" >Plan <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+	         {{ form_widget(form.plan, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+	    </div>
+    </div>
+    <div class="ln_solid"></div>
+	<div class="form-group">
+		<div class="offset-md-3">
+		  <button class="btn call-action">{{ button_label|default('Enregistrer') }}</button>
+		</div>
+	</div>
+{{ form_end(form) }}

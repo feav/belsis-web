@@ -16,6 +16,8 @@ class RestaurantType extends AbstractType
         $builder
             ->add('nom')
             ->add('adresse')
+            ->add('chiffreAffaire')
+            ->add('status')
             ->add('logo', FileType::class, [
                 // unmapped means that this field is not associated to any entity property
                 'mapped' => false,

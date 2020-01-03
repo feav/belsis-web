@@ -1,0 +1,15 @@
+{% extends 'backOffice/layout.html.twig' %}
+
+{% block title %}{{parent()}} | creation de plan{% endblock %}
+{% block datatables_css %}{% endblock %}
+
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Nouveau plan</h1> <a href="{{path('plan_index')}}" class="call-action btn">Liste plan</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+    	{{ include('plan/_form.html.twig') }}
+	    </div>
+	</div>
+{% endblock %}

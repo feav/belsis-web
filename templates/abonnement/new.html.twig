@@ -1,0 +1,15 @@
+{% extends 'backOffice/layout.html.twig' %}
+
+{% block title %}{{parent()}} | creation de abonnement{% endblock %}
+{% block datatables_css %}{% endblock %}
+
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Nouveau abonnement</h1> <a href="{{path('abonnement_index')}}" class="call-action btn">Liste abonnement</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+    	{{ include('abonnement/_form.html.twig') }}
+	    </div>
+	</div>
+{% endblock %}

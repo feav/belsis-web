@@ -1,0 +1,46 @@
+{% extends 'backOffice/layout.html.twig' %}
+
+{% block title %}{{parent()}} | Plan{% endblock %}
+
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Liste des plan</h1> <a href="{{path('plan_new')}}" class="call-action btn">Nouveau plan</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="card-box table-responsive">
+                <table id="datatable-responsive" class="table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nom</th>
+                            <th>Tarif</th>
+                            <th>Duree</th>
+                            <th>actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for plan in plans %}
+                        <tr>
+                            <td>{{ plan.id }}</td>
+                            <td>{{ plan.nom }}</td>
+                            <td>{{ plan.tarif }}</td>
+                            <td>{{ plan.duree }}</td>
+                            <td>
+                                <a href="{{ path('plan_show', {'id': plan.id}) }}">show</a>
+                                <a href="{{ path('plan_edit', {'id': plan.id}) }}">edit</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5">no records found</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block validation_js %}
+{% endblock %}

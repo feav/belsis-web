@@ -70,6 +70,21 @@ class Restaurant
      */
     private $users;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $emplacement;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $chiffreAffaire;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $status;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -297,5 +312,41 @@ class Restaurant
 
     public function __toString(){
         return $this->nom;
+    }
+
+    public function getEmplacement(): ?string
+    {
+        return $this->emplacement;
+    }
+
+    public function setEmplacement(string $emplacement): self
+    {
+        $this->emplacement = $emplacement;
+
+        return $this;
+    }
+
+    public function getChiffreAffaire(): ?int
+    {
+        return $this->chiffreAffaire;
+    }
+
+    public function setChiffreAffaire(int $chiffreAffaire): self
+    {
+        $this->chiffreAffaire = $chiffreAffaire;
+
+        return $this;
+    }
+
+    public function getStatus(): ?bool
+    {
+        return $this->status;
+    }
+
+    public function setStatus(bool $status): self
+    {
+        $this->status = $status;
+
+        return $this;
     }
 }

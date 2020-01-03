@@ -26,7 +26,7 @@
     <link href="{{asset('assets/theme/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css')}}" rel="stylesheet">
     {% endblock %}
     <link href="{{asset('assets/plugins/toastr/toastr.min.css')}}" rel="stylesheet">
-
+    {% block style %}{% endblock %}
   </head>
 
   <body class="nav-md">
@@ -57,10 +57,16 @@
                 <h3></h3>
                 <ul class="nav side-menu">
                   <li>
-                    <a href="{{path('restaurant_index')}}">Restaurant</a>
+                    <a href="{{path('restaurant_index')}}">Trafic</a>
                     {#<ul class="nav child_menu" style="display: none;">
                       <li><a href="index.html">Dashboard</a></li>
                     </ul>#}
+                  </li>
+                  <li>
+                    <a href="{{path('abonnement_index')}}">Paiement</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void()">Chat</a>
                   </li>
                   <li>
                     <a href="{{path('produit_index')}}">Produit</a>
@@ -76,6 +82,9 @@
                   </li>
                   <li>
                     <a href="{{path('appareil_index')}}">Appareil</a>
+                  </li>
+                  <li>
+                    <a href="{{path('plan_index')}}">Plan</a>
                   </li>
                 </ul>
               </div>
