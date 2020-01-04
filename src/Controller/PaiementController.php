@@ -21,6 +21,30 @@ class PaiementController extends AbstractController
     public function __construct(AbonnementRepository $abonnementRepository){
       $this->abonnementRepository = $abonnementRepository;
     }
+
+    /**
+     * @Route("/new", name="paiement_new", methods={"GET","POST"})
+     */
+    public function new(Request $request): Response
+    {
+        $paiement = new Paiement();
+        $form = $this->createForm(PaiementType::class, $paiement);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($paiement);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('paiement_index');
+        }
+
+        return $this->render('paiement/new.html.twig', [
+            'paiement' => $paiement,
+            'form' => $form->createView(),
+        ]);
+    }
+
     /**
      * @Route("/{id}", name="paiement_index", methods={"GET"})
      */
@@ -53,30 +77,7 @@ class PaiementController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="paiement_new", methods={"GET","POST"})
-     */
-    public function new(Request $request): Response
-    {
-        $paiement = new Paiement();
-        $form = $this->createForm(PaiementType::class, $paiement);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($paiement);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('paiement_index');
-        }
-
-        return $this->render('paiement/new.html.twig', [
-            'paiement' => $paiement,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/create/{id}", name="create_paiement", methods={"GET"})
+     * @Route("/{id}/create", name="create_paiement", methods={"GET"})
      */
     public function create(Request $request, $id): Response
     {
@@ -93,7 +94,7 @@ class PaiementController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="paiement_show", methods={"GET"})
+     * @Route("/{id}/detail", name="paiement_show", methods={"GET"})
      */
     public function show(Paiement $paiement): Response
     {
@@ -123,7 +124,7 @@ class PaiementController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="paiement_delete", methods={"DELETE"})
+     * @Route("/{id}/delete", name="paiement_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Paiement $paiement): Response
     {
