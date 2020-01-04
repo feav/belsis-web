@@ -30,19 +30,17 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class APIController extends FOSRestController
 {
     private $client_manager;
-    private $em;
 
     /**
      * Contructeur de la classe
      */
     public function __construct(ClientManagerInterface $client_manager)
     {
-        $this->em = $this->getDoctrine()->getManager();
-        $this->client_manager = $client_manager;
     }
 
     public function authToken(string $token=null)
     {
+        $em = $this->getDoctrine()->getManager();
         if (empty($token)) {
             return [
                     'status' => 'error',
@@ -50,7 +48,7 @@ class APIController extends FOSRestController
                 ];
         }
 
-        $accessToken = $this->em->getRepository(AccessToken::class)->findOneByToken($token);
+        $accessToken = $em->getRepository(AccessToken::class)->findOneByToken($token);
         if (!$accessToken) {
             return [
                 'status' => 'error',

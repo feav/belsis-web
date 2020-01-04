@@ -74,19 +74,17 @@ class UserController extends APIController
                 Response::HTTP_OK)
             );
         }
-        //$response->headers->set('Access-Control-Allow-Origin', '*');
     }
 
 
     /**
      *Get User profile info.
-     * @Rest\Post("/get", name="get")
+     * @Rest\Post("/get-infos", name="get")
      *
      * @return Response
      */
     public function getProfile(Request $request)
     {
-        $data = json_decode($request->getContent(), true);
         $user = $this->authToken($request->get('token'));
         if (is_array($user)) {
             return $this->handleView(
@@ -96,31 +94,9 @@ class UserController extends APIController
             );
         }
 
-        $restaurant = $user->getRestaurant();
-        if (empty($restaurant)) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Cet utilisateur n\est dans aucun restaurant.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
-        $restoId = $restaurant->getId();
+        $infos = $this->getUserEssential($user);
 
-        $userExist = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $user->getId(), 'restaurant' => $restoId]);
-        if (empty($userExist)) {
-            return $this->handleView(
-                $this->view([
-                    'status' => 'error',
-                    'message' => 'Aucun utilisateur n\'existe avec cet identifiant dans ce restaurant'
-                ], RESPONSE::HTTP_BAD_REQUEST
-                ));
-        }
-
-        $res = $this->getUserInfos($user);
-
-        return $this->handleView($this->view($res, Response::HTTP_OK));
+        return $this->handleView($this->view($infos, Response::HTTP_OK));
     }
 
     /**
@@ -364,4 +340,15 @@ class UserController extends APIController
             "role" => $user->getRoles()
         ];
     }
+
+    public function getUserEssential(User $user){
+      return [
+              'id' => $user->getId(),
+              'username' => $user->getUserName(),
+              'email' => $user->getEmail(),
+              'nom' => $user->getNom(),
+              'prenom' => $user->getPrenom()
+          ];
+    }
+
 }
