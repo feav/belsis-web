@@ -43,7 +43,12 @@ class Restaurant
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Categorie", mappedBy="restaurant", cascade={"remove"})
      */
-    private $categories;
+    private $categories;    
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="restaurant", cascade={"remove"})
+     */
+    private $users;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Table", mappedBy="restaurant", cascade={"remove"})
@@ -65,15 +70,11 @@ class Restaurant
      */
     private $commandes;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="restaurant", cascade={"remove"})
-     */
-    private $users;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToOne(targetEntity="App\Entity\Abonnement", mappedBy="restaurant", cascade={"remove"})
      */
-    private $emplacement;
+    private $abonnement;
 
     /**
      * @ORM\Column(type="integer")
@@ -92,6 +93,8 @@ class Restaurant
         $this->stocks = new ArrayCollection();
         $this->produits = new ArrayCollection();
         $this->commandes = new ArrayCollection();
+        $this->status = true;
+        $this->users = new ArrayCollection();
     }
 
     public function getId()
@@ -145,14 +148,6 @@ class Restaurant
         $this->devise = $devise;
 
         return $this;
-    }
-
-    /**
-     * @return Collection|User[]
-     */
-    public function getUsers()
-    {
-        return $this->users;
     }
 
     /**
@@ -314,18 +309,6 @@ class Restaurant
         return $this->nom;
     }
 
-    public function getEmplacement(): ?string
-    {
-        return $this->emplacement;
-    }
-
-    public function setEmplacement(string $emplacement): self
-    {
-        $this->emplacement = $emplacement;
-
-        return $this;
-    }
-
     public function getChiffreAffaire(): ?int
     {
         return $this->chiffreAffaire;
@@ -346,6 +329,55 @@ class Restaurant
     public function setStatus(bool $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getAbonnement(): ?Abonnement
+    {
+        return $this->abonnement;
+    }
+
+    public function setAbonnement(?Abonnement $abonnement): self
+    {
+        $this->abonnement = $abonnement;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newRestaurant = $abonnement === null ? null : $this;
+        if ($newRestaurant !== $abonnement->getRestaurant()) {
+            $abonnement->setRestaurant($newRestaurant);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setRestaurant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            // set the owning side to null (unless already changed)
+            if ($user->getRestaurant() === $this) {
+                $user->setRestaurant(null);
+            }
+        }
 
         return $this;
     }

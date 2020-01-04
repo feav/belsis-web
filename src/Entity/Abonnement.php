@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -27,16 +29,21 @@ class Abonnement
     private $tarif;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="abonnements")
-     * @ORM\JoinColumn(nullable=false,onDelete="CASCADE")
-     */
-    private $user;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Plan", inversedBy="abonnements")
      * @ORM\JoinColumn(nullable=false,onDelete="CASCADE")
      */
     private $plan;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Restaurant", inversedBy="abonnement")
+     * @ORM\JoinColumn(referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $restaurant;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Paiement", mappedBy="abonnement", cascade={"remove"})
+     */
+    private $paiements;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -52,6 +59,7 @@ class Abonnement
     {
         $this->dateCreation = new \Datetime();
         $this->status = 0;
+        $this->paiements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -79,18 +87,6 @@ class Abonnement
     public function setTarif(int $tarif): self
     {
         $this->tarif = $tarif;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
 
         return $this;
     }
@@ -129,5 +125,52 @@ class Abonnement
         $this->dateEcheance = $dateEcheance;
 
         return $this;
+    }
+
+    public function getRestaurant(): ?Restaurant
+    {
+        return $this->restaurant;
+    }
+
+    public function setRestaurant(?Restaurant $restaurant): self
+    {
+        $this->restaurant = $restaurant;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Paiement[]
+     */
+    public function getPaiements(): Collection
+    {
+        return $this->paiements;
+    }
+
+    public function addPaiement(Paiement $paiement): self
+    {
+        if (!$this->paiements->contains($paiement)) {
+            $this->paiements[] = $paiement;
+            $paiement->setAbonnement($this);
+        }
+
+        return $this;
+    }
+
+    public function removePaiement(Paiement $paiement): self
+    {
+        if ($this->paiements->contains($paiement)) {
+            $this->paiements->removeElement($paiement);
+            // set the owning side to null (unless already changed)
+            if ($paiement->getAbonnement() === $this) {
+                $paiement->setAbonnement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString(){
+        return $this->getPlan()->getNom();
     }
 }

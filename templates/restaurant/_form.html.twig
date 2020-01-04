@@ -56,9 +56,11 @@
 	<div class="form-group">
 		<div class="offset-md-3">
 		  <button class="btn call-action">{{ button_label|default('Enregistrer') }}</button>
-          <a href="{{ path('restaurant_status', {'id': restaurant.id}) }}" class="btn btn-primary">
-            {{ restaurant.status ? 'Bloquer' : 'Activer' }}
-        </a>
+            {% if restaurant.id != "" %}
+                <a href="{{ path('restaurant_status', {'id': restaurant.id}) }}" class="btn btn-primary">
+                {{ restaurant.status ? 'Bloquer' : 'Activer' }}
+                </a>
+            {% endif %}
 		</div>
 	</div>
 {{ form_end(form) }}

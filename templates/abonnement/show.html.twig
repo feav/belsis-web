@@ -18,12 +18,15 @@
                     </tr>
                     <tr>
                         <th>DateCreation</th>
-                        <td>{{ abonnement.dateCreation ? abonnement.dateCreation|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>{{ abonnement.dateCreation ? abonnement.dateCreation|date('d-m-Y H:i') : '' }}</td>
                     </tr>
                     <tr>
                         <th>DateEcheance</th>
-                        <td>{{ abonnement.dateEcheance ? abonnement.dateEcheance |date('Y-m-d H:i:s') : '' }}</td>
-                            <td>{{ abonnement.tarif }}</td>
+                        <td>{{ abonnement.dateEcheance ? abonnement.dateEcheance |date('d-m-Y H:i') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Restaurant</th>
+                        <td>{{ abonnement.restaurant.nom }}</td>
                     </tr>
                     <tr>
                         <th>Tarif</th>

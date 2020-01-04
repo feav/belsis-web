@@ -1,6 +1,6 @@
 {% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}{{parent()}} | Paiement{% endblock %}
+{% block title %}{{parent()}} | Abonnement{% endblock %}
 {% block style %}
     <style type="text/css">
         .btn-export-facture{
@@ -13,7 +13,7 @@
 
 {% block bo_content %}
     <div class="row-title">
-        <h1 class="title">Liste des Paiement</h1> <a href="{{path('abonnement_new')}}" class="call-action btn">Nouvel abonnement</a>
+        <h1 class="title">Liste des Abonnement</h1> <a href="{{path('abonnement_new')}}" class="call-action btn">Nouvel abonnement</a>
     </div>
     <div class="x_panel">
         <div class="x_content">
@@ -21,9 +21,9 @@
                 <table id="datatable-responsive" class="table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>Client</th>
+                            <th>Restaurant</th>
                             <th>Date creation</th>
-                            <th> Echeance </th>
+                            <th> Echeance dernier paiement </th>
                             <th>Tarif</th>
                             <th>actions</th>
                         </tr>
@@ -32,7 +32,7 @@
                     {% for abonnement in abonnements %}
                         <tr>
                             <td>
-                                {{ abonnement.user.prenom }} {{ abonnement.user.nom }}
+                                {{ abonnement.restaurant.nom }}
                             </td>
                             <td>{{ abonnement.dateCreation ? abonnement.dateCreation | date('d-m-Y H:i') : '' }}</td>
                             <td>
@@ -50,7 +50,8 @@
                             <td>
                                 <a href="{{ path('abonnement_show', {'id': abonnement.id}) }}">show</a>
                                 <a href="{{ path('abonnement_edit', {'id': abonnement.id}) }}">edit</a>
-                                <a href="{{ path('abonnement_facture', {'id': abonnement.id}) }}" class="btn call-action btn-export-facture" target="_blank">Exporter facture</a>
+                                <a href="{{ path('paiement_index', {'id': abonnement.id}) }}" class="btn call-action btn-export-facture">liste paiements</a>
+                                {#<a href="{{ path('abonnement_facture', {'id': abonnement.id}) }}" class="btn call-action btn-export-facture" target="_blank">Exporter facture</a>#}
                             </td>
                         </tr>
                     {% endfor %}

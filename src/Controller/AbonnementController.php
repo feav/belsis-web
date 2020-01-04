@@ -35,7 +35,7 @@ class AbonnementController extends AbstractController
      */
     public function index(AbonnementRepository $abonnementRepository): Response
     {   
-                $abonnements = $abonnementRepository->findAll();
+        $abonnements = $abonnementRepository->findAll();
         $abonnementsArray = [];
         foreach ($abonnements as $key => $value) {
             $abonnementsArray[] =[
@@ -50,9 +50,8 @@ class AbonnementController extends AbstractController
                     'is_expire'=> (strtotime($value->getDateEcheance()->format('Y-m-d H:i:s')) - time()),
                 ],
                 'tarif'=>$value->getTarif(),
-                'user'=>[
-                    'prenom'=>$value->getUser()->getPrenom(),
-                    'nom'=>$value->getUser()->getNom(),
+                'restaurant'=>[
+                    'nom'=>$value->getRestaurant() ? $value->getRestaurant()->getNom() : "",
                 ]
             ];
         }
@@ -82,7 +81,7 @@ class AbonnementController extends AbstractController
             $entityManager->persist($abonnement);
             $entityManager->flush();
 
-            return $this->redirectToRoute('abonnement_index');
+            return $this->redirectToRoute('create_paiement',['id'=>$abonnement->getId()]);
         }
 
         return $this->render('abonnement/new.html.twig', [
@@ -152,8 +151,15 @@ class AbonnementController extends AbstractController
                 'nom'=>$abonnement->getPlan()
             ],
             'client'=>[
-                'prenom'=> $abonnement->getUser()->getPrenom(),
-                'nom'=>$abonnement->getUser()->getNom()
+                'prenom'=> $abonnement->getRestaurant() ? (
+                        count($abonnement->getRestaurant()->getUsers()) > 0 ? $abonnement->getRestaurant()->getUsers()[0]->getPrenom() : ""
+                    ) :"",
+                'nom'=> $abonnement->getRestaurant() ? (
+                        count($abonnement->getRestaurant()->getUsers()) > 0 ? $abonnement->getRestaurant()->getUsers()[0]->getNom() : ""
+                    ) : ""
+            ],
+            'restaurant'=>[
+                'nom'=>$abonnement->getRestaurant() ? $abonnement->getRestaurant()->getNom() : "",
             ]
         ];
         

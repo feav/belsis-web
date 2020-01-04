@@ -1,0 +1,70 @@
+{% extends 'backOffice/layout.html.twig' %}
+
+{% block title %}{{parent()}} | Paiement{% endblock %}
+{% block style %}
+    <style type="text/css">
+        .btn-export-facture{
+            padding: 2px 5px;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Liste des paiements</h1> 
+        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+            {#<a href="{{path('paiement_new')}}" class="call-action btn">Nouveau paiement</a>#}
+        {% endif %}
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="card-box table-responsive">
+                <table id="datatable-responsive" class="table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>DateCreation</th>
+                            <th>Echeance</th>
+                            <th>Montant</th>
+                            <th>Abonnement</th>
+                            <th>Plan</th>
+                            <th>actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for paiement in paiements %}
+                        <tr>
+                            <td>{{ paiement.data.id }}</td>
+                            <td>{{ paiement.data.dateCreation ? paiement.data.dateCreation|date('Y-m-d H:i') : '' }}</td>
+                            <td>
+                                {{ paiement.echeance.is_expire > 0 ? "Dans ": 'il y a ' }}
+                                <b> 
+                                    {{ paiement.echeance.month ? paiement.echeance.month~"Mois" }}
+                                    {{ paiement.echeance.day ? paiement.echeance.day~"jour" }}
+                                    {{ paiement.echeance.hour ? paiement.echeance.hour~"h" }}
+                                    {{ paiement.echeance.hour ? paiement.echeance.hour~"minute" }}
+                                </b>
+                                <br>
+                                ( <em>{{ paiement.getDateEcheance ? paiement.getDateEcheance | date('d-m-Y H:i') : '' }}</em> )
+                            </td>
+                            <td>{{ paiement.data.montant }} XFA</td>
+                            <td>{{ paiement.data.abonnement.id }}</td>
+                            <td>{{ paiement.data.abonnement.plan.nom }}</td>
+                            <td>
+                                {#<a href="{{ path('paiement_show', {'id': paiement.data.id}) }}">show</a>
+                                <a href="{{ path('paiement_edit', {'id': paiement.data.id}) }}">edit</a>
+                                #}
+                                <a href="{{ path('abonnement_facture', {'id': paiement.data.abonnement.id}) }}" class="btn call-action btn-export-facture" target="_blank">Exporter facture</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block validation_js %}
+{% endblock %}

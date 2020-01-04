@@ -1,0 +1,15 @@
+{% extends 'backOffice/layout.html.twig' %}
+
+{% block title %}{{parent()}} | creation de paiement{% endblock %}
+{% block datatables_css %}{% endblock %}
+
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Nouveau paiement</h1> <a href="{{path('paiement_index')}}" class="call-action btn">Liste paiement</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+    	{{ include('paiement/_form.html.twig') }}
+	    </div>
+	</div>
+{% endblock %}

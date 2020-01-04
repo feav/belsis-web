@@ -227,7 +227,7 @@
                     </td>
                     <td class="td_left" colspan="2" style="padding-top: 15px;font-family: 'Quicksand';">
                         {{data.client.prenom}} {{data.client.nom}} <br>
-                        Restaurant: <br>
+                        Restaurant: {{data.restaurant.nom}} <br>
                     </td>
                   </tr>
                 </tbody>
@@ -247,7 +247,7 @@
                   </tr>
                   <tr>
                     <td class="td_left">{{data.plan.nom}}</td>
-                    <td class="td_right">{{data.data.tarif}} Fcfa</td>
+                    <td class="td_right">{{data.data.tarif}} XFA</td>
                     <td class="td_right">{{ data.data.getDateEcheance ? data.data.getDateEcheance | date('d-m-Y H:i') : '' }}</td>
                   </tr>
                 </tbody>
