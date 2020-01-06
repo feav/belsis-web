@@ -17,6 +17,7 @@ class CommandeRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Commande::class);
+        $this->em = $this->getEntityManager()->getConnection();
     }
 
     // /**
@@ -47,4 +48,62 @@ class CommandeRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function getCommandeAll()
+    {
+        $sql = "
+            SELECT cmd.id, cmd.code, cmd.date, cmd.etat, prod.nom as produit_nom, resto.nom as restaurant_nom
+                FROM commande as cmd
+                inner join commande_produit as cmd_prod
+                inner join produit as prod
+                inner join restaurant as resto
+                WHERE  cmd.id = cmd_prod.commande_id
+                AND  cmd_prod.produit_id = prod.id
+                AND prod.restaurant_id = resto.id
+                ORDER BY cmd.date DESC";
+        $commandes = $this->em->prepare($sql);
+        $commandes->execute();
+        $commandes = $commandes->fetchAll();
+        return $commandes;
+    }
+
+    public function getCommandeDetail($idCommande)
+    {
+        $sql = "
+            SELECT cmd.id, cmd.code, cmd.date, cmd.etat, prod.nom as produit_nom, resto.nom as restaurant_nom
+                FROM commande as cmd
+                inner join commande_produit as cmd_prod
+                inner join produit as prod
+                inner join restaurant as resto
+                WHERE  cmd.id = cmd_prod.commande_id
+                AND  cmd_prod.produit_id = prod.id
+                AND prod.restaurant_id = resto.id
+                AND cmd.id = :idCommande
+                ORDER BY cmd.date DESC";
+        $commandes = $this->em->prepare($sql);
+        $commandes->execute(['idCommande'=>$idCommande]);
+        $commandes = $commandes->fetch();
+
+        return $commandes;
+    }
+
+    public function getCommandeRestaurant($idrestaurant)
+    {
+        $sql = "
+            SELECT COUNT(cmd.id) as nbrCommande
+                FROM commande as cmd
+                inner join commande_produit as cmd_prod
+                inner join produit as prod
+                inner join restaurant as resto
+                WHERE  cmd.id = cmd_prod.commande_id
+                AND  cmd_prod.produit_id = prod.id
+                AND prod.restaurant_id = resto.id
+                AND resto.id = :idrestaurant
+                ORDER BY cmd.date DESC";
+        $nbrCommande = $this->em->prepare($sql);
+        $nbrCommande->execute(['idrestaurant'=>$idrestaurant]);
+        $nbrCommande = $nbrCommande->fetch();
+
+        return $nbrCommande['nbrCommande'];
+    }
 }

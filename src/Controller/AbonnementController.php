@@ -52,7 +52,8 @@ class AbonnementController extends AbstractController
                 'tarif'=>$value->getTarif(),
                 'restaurant'=>[
                     'nom'=>$value->getRestaurant() ? $value->getRestaurant()->getNom() : "",
-                ]
+                ],
+                'plan'=>$value->getPlan()
             ];
         }
         return $this->render('abonnement/index.html.twig', [

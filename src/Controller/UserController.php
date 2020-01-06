@@ -23,11 +23,31 @@ class UserController extends AbstractController
     public function __construct(UserService $user_s){
         $this->user_s = $user_s;
     }
+
     /**
      * @Route("/", name="user_index", methods={"GET"})
      */
     public function index(UserRepository $userRepository): Response
     {
+        $users = $userRepository->findAll();
+        foreach ($users as $key => $value) {
+            if($this->user_s->getSuperRole($value->getRoles()) == "ROLE_SUPER_ADMIN"){
+                $value->setRole("super_admin");
+            }
+            elseif($this->user_s->getSuperRole($value->getRoles()) == "SERVEUR"){
+                $value->setRole("serveur");
+            }
+            elseif($this->user_s->getSuperRole($value->getRoles()) == "ROLE_SERVEUR"){
+                $value->setRole("serveur");
+            }
+            elseif($this->user_s->getSuperRole($value->getRoles()) == "ROLE_ADMIN"){
+                $value->setRole("admin");
+            }
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->flush();
+        }
+
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAll(),
         ]);
@@ -49,8 +69,7 @@ class UserController extends AbstractController
                 return $this->render('user/new.html.twig', [
                     'user' => $user,
                     'form' => $form->createView(),
-                    'super_role'=>$this->user_s->getSuperRole($user->getRoles()),
-                    'array_roles'=>['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
+                    'array_roles'=>['serveur', 'admin', 'superadmin']
                 ]);
             }
             $userNameExist = $userManager->findUserByUsername($form->getData()->getUsername());
@@ -59,14 +78,15 @@ class UserController extends AbstractController
                 return $this->render('user/new.html.twig', [
                     'user' => $user,
                     'form' => $form->createView(),
-                    'super_role'=>$this->user_s->getSuperRole($user->getRoles()),
-                    'array_roles'=>['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
+                    'array_roles'=>['serveur', 'admin', 'superadmin']
                 ]);
             }
 
-            $role = $request->request->get('role_hierachique');
-            if($role)
-                $user->setRoles([$role]);
+            $role = $request->request->get('role');
+            if($role){
+                $user->setRoles(['ROLE_'.strtolower($role)]); 
+                $user->setRole($role);
+            }
             if($request->request->get('password'))
                 $user->setPlainPassword($request->request->get('password'));
 
@@ -80,8 +100,7 @@ class UserController extends AbstractController
         return $this->render('user/new.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
-            'super_role'=>$this->user_s->getSuperRole($user->getRoles()),
-            'array_roles'=>['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
+            'array_roles'=>['serveur', 'admin', 'superadmin']
         ]);
     }
 
@@ -104,9 +123,11 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $role = $request->request->get('role_hierachique');
-            if($role)
-                $user->setRoles([$role]);
+            $role = $request->request->get('role');
+            if($role){
+                $user->setRoles(['ROLE_'.strtolower($role)]); 
+                $user->setRole($role);
+            }
             if($request->request->get('password'))
                 $user->setPlainPassword($request->request->get('password'));
         
@@ -117,8 +138,7 @@ class UserController extends AbstractController
         return $this->render('user/edit.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
-            'super_role'=>$this->user_s->getSuperRole($user->getRoles()),
-            'array_roles'=>['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
+            'array_roles'=>['serveur', 'admin', 'superadmin']
         ]);
     }
 
@@ -136,3 +156,5 @@ class UserController extends AbstractController
         return $this->redirectToRoute('user_index');
     }
 }
+
+

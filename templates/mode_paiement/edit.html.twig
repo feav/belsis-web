@@ -1,13 +1,23 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}Edit ModePaiement{% endblock %}
+{% block title %}{{parent()}} | edition d'un mode paiement{% endblock %}
+{% block datatables_css %}{% endblock %}
 
-{% block body %}
-    <h1>Edit ModePaiement</h1>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Edition d'un mode paiement</h1> 
+        <a href="{{path('mode_paiement_index')}}" class="call-action btn">Liste mode paiement</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+		    {{ include('mode_paiement/_form.html.twig', {'button_label': 'Modifier'}) }}
+			<div class="offset-md-3 btn-dlt-p-edit">
+		    	{{ include('mode_paiement/_delete_form.html.twig') }}
+		    </div>
+		</div>
+	</div>
 
-    {{ include('mode_paiement/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('mode_paiement_index') }}">back to list</a>
-
-    {{ include('mode_paiement/_delete_form.html.twig') }}
 {% endblock %}
+
+{% block validation_js %}{% endblock %}
+{% block datatables_js %}{% endblock %}

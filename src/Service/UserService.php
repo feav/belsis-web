@@ -24,7 +24,7 @@ class UserService{
     }*/
    
     public function getSuperRole(array $roles){
-        $tabRole = array('5'=>'ROLE_SUPER_ADMIN', '4'=>'ROLE_ADMIN', '3'=>'ROLE_USER');
+        $tabRole = array('5'=>'ROLE_SUPER_ADMIN', '4'=>'ROLE_ADMIN', '3'=> 'ROLE_SERVEUR', '2'=>'ROLE_USER');
         $tabLevel= array();
         foreach ($tabRole as $key => $value) {
             if(in_array(strtoupper($value), $roles, true))

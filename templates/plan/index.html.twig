@@ -27,8 +27,8 @@
                             <td>{{ plan.tarif }}</td>
                             <td>{{ plan.duree }}</td>
                             <td>
-                                <a href="{{ path('plan_show', {'id': plan.id}) }}">show</a>
-                                <a href="{{ path('plan_edit', {'id': plan.id}) }}">edit</a>
+                                <a href="{{ path('plan_show', {'id': plan.id}) }}">detail</a>
+                                <a href="{{ path('plan_edit', {'id': plan.id}) }}">modifier</a>
                             </td>
                         </tr>
                     {% else %}

@@ -17,7 +17,7 @@
                             <th>Prenom</th>
                             <th>Username</th>
                             <th>Email</th>
-                            <th>Enabled</th>
+                            <th>Status</th>
                             <th>Roles</th>
                             <th>actions</th>
                         </tr>
@@ -30,11 +30,11 @@
                             <td>{{ user.prenom }}</td>
                             <td>{{ user.username }}</td>
                             <td>{{ user.email }}</td>
-                            <td>{{ user.enabled ? 'Yes' : 'No' }}</td>
-                            <td>{{ user.roles ? user.roles|join(', ') : '' }}</td>
+                            <td>{{ user.enabled ? 'Activé' : 'Desactivé' }}</td>
+                            <td>{{ user.role }}</td>
                             <td>
-                                <a href="{{ path('user_show', {'id': user.id}) }}">show</a>
-                                <a href="{{ path('user_edit', {'id': user.id}) }}">edit</a>
+                                <a href="{{ path('user_show', {'id': user.id}) }}">detail</a>
+                                <a href="{{ path('user_edit', {'id': user.id}) }}">modifier</a>
                             </td>
                         </tr>
                     {% endfor %}

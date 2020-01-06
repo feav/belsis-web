@@ -16,8 +16,8 @@ class ProduitType extends AbstractType
         $builder
             ->add('nom')
             ->add('prix')
+            ->add('quantite')
             ->add('categorie', NULL, ['required' => true])
-            ->add('stock', NULL, ['required' => true])
             // unmapped fields can't define their validation using annotations
             ->add('image', FileType::class, [
                 'label' => 'Image',

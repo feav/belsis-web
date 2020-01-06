@@ -39,17 +39,13 @@ class Commande
     private $modepaiement;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Restaurant", inversedBy="commandes")
-     */
-    private $restaurant;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Table", inversedBy="commandes")
      */
     private $table;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="commandes")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $user;
 
@@ -57,6 +53,11 @@ class Commande
      * @ORM\OneToMany(targetEntity="CommandeProduit", mappedBy="commande")
      */
     private $commandeProduit;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $montant;
 
     public function __construct()
     {
@@ -116,18 +117,6 @@ class Commande
         return $this;
     }
 
-    public function getRestaurant()
-    {
-        return $this->restaurant;
-    }
-
-    public function setRestaurant($restaurant)
-    {
-        $this->restaurant = $restaurant;
-
-        return $this;
-    }
-
     public function getTable()
     {
         return $this->table;
@@ -180,5 +169,17 @@ class Commande
 
     public function __toString(){
         return $this->code;
+    }
+
+    public function getMontant(): ?int
+    {
+        return $this->montant;
+    }
+
+    public function setMontant(int $montant): self
+    {
+        $this->montant = $montant;
+
+        return $this;
     }
 }

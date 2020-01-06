@@ -22,6 +22,7 @@
                     <thead>
                         <tr>
                             <th>Restaurant</th>
+                            <th>Plan</th>
                             <th>Date creation</th>
                             <th> Echeance dernier paiement </th>
                             <th>Tarif</th>
@@ -33,6 +34,9 @@
                         <tr>
                             <td>
                                 {{ abonnement.restaurant.nom }}
+                            </td>
+                            <td>
+                                {{ abonnement.plan.nom }}
                             </td>
                             <td>{{ abonnement.dateCreation ? abonnement.dateCreation | date('d-m-Y H:i') : '' }}</td>
                             <td>
@@ -48,8 +52,8 @@
                             </td>
                             <td>{{ abonnement.tarif }}</td>
                             <td>
-                                <a href="{{ path('abonnement_show', {'id': abonnement.id}) }}">show</a>
-                                <a href="{{ path('abonnement_edit', {'id': abonnement.id}) }}">edit</a>
+                                <a href="{{ path('abonnement_show', {'id': abonnement.id}) }}">detail</a>
+                                {#<a href="{{ path('abonnement_edit', {'id': abonnement.id}) }}">modifier</a>#}
                                 <a href="{{ path('paiement_index', {'id': abonnement.id}) }}" class="btn call-action btn-export-facture">liste paiements</a>
                                 {#<a href="{{ path('abonnement_facture', {'id': abonnement.id}) }}" class="btn call-action btn-export-facture" target="_blank">Exporter facture</a>#}
                             </td>

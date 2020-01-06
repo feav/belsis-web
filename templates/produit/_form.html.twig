@@ -11,24 +11,25 @@
         </div>
     </div>
     <div class="item form-group">
-        <label class="col-form-label col-md-3 col-sm-3 label-align" for="email">Prix <span class="required">*</span>
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="email">
+            Prix ({{ produit.restaurant ? produit.restaurant.nom : ""}})<span class="required">*</span>
         </label>
         <div class="col-md-6 col-sm-6">
 	        {{ form_widget(form.prix, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
 	    </div>
     </div>
     <div class="item form-group">
+        <label class="col-form-label col-md-3 col-sm-3 label-align" for="email">Quantite <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6">
+            {{ form_widget(form.quantite, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+        </div>
+    </div>
+    <div class="item form-group">
         <label class="col-form-label col-md-3 col-sm-3 label-align" for="email">Categorie <span class="required">*</span>
         </label>
         <div class="col-md-6 col-sm-6">
 	        {{ form_widget(form.categorie, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
-	    </div>
-    </div>
-    <div class="item form-group">
-        <label class="col-form-label col-md-3 col-sm-3 label-align" for="email">Stock <span class="required">*</span>
-        </label>
-        <div class="col-md-6 col-sm-6">
-	        {{ form_widget(form.stock, { 'attr': {'class': 'form-control'}} ) }}
 	    </div>
     </div>
     <div class="item form-group">

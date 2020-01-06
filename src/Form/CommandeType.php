@@ -15,10 +15,10 @@ class CommandeType extends AbstractType
             ->add('code')
             ->add('date')
             ->add('etat')
+            ->add('montant')
             ->add('modepaiement')
-            ->add('restaurant')
             ->add('table')
-            ->add('produit')
+            ->add('user')
         ;
     }
 

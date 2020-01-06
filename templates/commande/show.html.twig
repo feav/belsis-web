@@ -1,32 +1,69 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}Commande{% endblock %}
+{% block title %}{{parent()}} | Commande{% endblock %}
 
-{% block body %}
-    <h1>Commande</h1>
+{% block datatables_css %}{% endblock %}
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ commande.id }}</td>
-            </tr>
-            <tr>
-                <th>Code</th>
-                <td>{{ commande.code }}</td>
-            </tr>
-            <tr>
-                <th>Date</th>
-                <td>{{ commande.date ? commande.date|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Etat</th>
-                <td>{{ commande.etat }}</td>
-            </tr>
-        </tbody>
-    </table>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Liste commandes</h1> <a href="{{path('commande_index')}}" class="call-action btn">Liste commande</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>{{ commande.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Code</th>
+                        <td>{{ commande.code }}</td>
+                    </tr>
+                    <tr>
+                        <th>Restaurant</th>
+                        <td>{{ commande.restaurant_nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <td>{{ commande.date ? commande.date|date('d-m-Y H:i') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Etat</th>
+                        <td>{{ commande.etat }}</td>
+                    </tr>
+                </tbody>
+            </table>
 
-    <a href="{{ path('commande_index') }}">back to list</a>
+            <hr>
+            <h3>Detail commande</h3>
 
-    {{ include('commande/_delete_form.html.twig') }}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Quantite</th>
+                        <th>prix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cmd in commandeProduit %}
+                        <tr>
+                            <td>{{cmd.produit.nom}}</td>
+                            <td>{{cmd.produit.quantite}}</td>
+                            <td>{{cmd.produit.prix}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="detail-group-btn">
+        {#<a href="{{ path('commande_edit', {'id': commande.id}) }}" class="btn call-action">Modifier</a>#}
+        {{ include('commande/_delete_form.html.twig') }}
+    </div>
 {% endblock %}
+
+{% block validation_js %}{% endblock %}
+{% block datatables_js %}{% endblock %}

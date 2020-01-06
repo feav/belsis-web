@@ -14,8 +14,10 @@
                     <thead>
                         <tr>
                             <th>Id</th>
+                            <th>Restaurant</th>
                             <th>Nom</th>
                             <th>Prix</th>
+                            <th>Qte stock</th>
                             <th>Image</th>
                             <th>Actions</th>
                         </tr>
@@ -24,8 +26,10 @@
                     {% for produit in produits %}
                         <tr>
                             <td>{{ produit.id }}</td>
+                            <td>{{ produit.restaurant.nom }}</td>
                             <td>{{ produit.nom }}</td>
                             <td>{{ produit.prix }}</td>
+                            <td>{{ produit.quantite }}</td>
                             <td><img class="hg-35 in-table" src="{{ asset('uploads/produits/' ~ produit.image) }}" /></td>
                             <td>
                                 <a href="{{ path('produit_show', {'id': produit.id}) }}">show</a>

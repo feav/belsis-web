@@ -40,31 +40,24 @@ class Produit
     private $categorie;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Stock", inversedBy="produits")
-     */
-    private $stock;
-
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Restaurant", inversedBy="produits")
      */
     private $restaurant;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Commande")
-     */
-    private $commandes;
 
     /**
      * @ORM\OneToMany(targetEntity="CommandeProduit", mappedBy="produit")
      */
     private $commandeProduit;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $quantite;
+
     public function __construct()
     {
-        $this->stock = new ArrayCollection();
         $this->commandeProduit = new ArrayCollection();
-        $this->commandes = new ArrayCollection();
+        $this->quantite = 0;
     }
 
     public function getId()
@@ -107,31 +100,6 @@ class Produit
 
         return $this;
     }
-
-    /** Retourne directement la quantité de produit à prélever **/
-    public function getQuantite(){
-        $stock = $this->getStock();
-        //on suppose qu'il y'a un seul stock pour l'instant
-        if(!empty($stock)){
-            return $stock[0]->getQuantite();
-        }else{
-            return 0;
-        }
-
-    }
-
-    /** Retourne directement la quantité de produit à prélever **/
-    public function setQuantite($quantite){
-        $stock = $this->getStock();
-        //on suppose qu'il y'a un seul stock pour l'instant
-        if(!empty($stock)){
-            $stock[0]->setQuantite($quantite);
-            return $this;
-        }else{
-            return 0;
-        }
-
-    }
     
     public function getCategorie()
     {
@@ -141,32 +109,6 @@ class Produit
     public function setCategorie($categorie)
     {
         $this->categorie = $categorie;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Stock[]
-     */
-    public function getStock()
-    {
-        return $this->stock;
-    }
-
-    public function addStock($stock)
-    {
-        if (!$this->stock->contains($stock)) {
-            $this->stock[] = $stock;
-        }
-
-        return $this;
-    }
-
-    public function removeStock($stock)
-    {
-        if ($this->stock->contains($stock)) {
-            $this->stock->removeElement($stock);
-        }
 
         return $this;
     }
@@ -196,32 +138,6 @@ class Produit
         return $this->nom;
     }
 
-    /**
-     * @return Collection|Commande[]
-     */
-    public function getCommandes(): Collection
-    {
-        return $this->commandes;
-    }
-
-    public function addCommande(Commande $commande): self
-    {
-        if (!$this->commandes->contains($commande)) {
-            $this->commandes[] = $commande;
-        }
-
-        return $this;
-    }
-
-    public function removeCommande(Commande $commande): self
-    {
-        if ($this->commandes->contains($commande)) {
-            $this->commandes->removeElement($commande);
-        }
-
-        return $this;
-    }
-
     public function addCommandeProduit(CommandeProduit $commandeProduit): self
     {
         if (!$this->commandeProduit->contains($commandeProduit)) {
@@ -241,6 +157,18 @@ class Produit
                 $commandeProduit->setProduit(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getQuantite(): ?int
+    {
+        return $this->quantite;
+    }
+
+    public function setQuantite(?int $quantite): self
+    {
+        $this->quantite = $quantite;
 
         return $this;
     }

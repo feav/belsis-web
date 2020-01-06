@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Commande;
 use App\Form\CommandeType;
 use App\Repository\CommandeRepository;
+use App\Repository\CommandeProduitRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,15 +15,16 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/commande")
  */
-class CommandeController extends AbstractController
+class CommandeController extends Controller
 {
     /**
      * @Route("/", name="commande_index", methods={"GET"})
      */
     public function index(CommandeRepository $commandeRepository): Response
-    {
+    {   
+        //var_dump($commandeRepository->getCommandeAll());
         return $this->render('commande/index.html.twig', [
-            'commandes' => $commandeRepository->findAll(),
+            'commandes' => $commandeRepository->getCommandeAll(),
         ]);
     }
 
@@ -51,10 +54,11 @@ class CommandeController extends AbstractController
     /**
      * @Route("/{id}", name="commande_show", methods={"GET"})
      */
-    public function show(Commande $commande): Response
+    public function show(Commande $commande, CommandeRepository $commandeRepository, CommandeProduitRepository $commandeProduitRepository): Response
     {
         return $this->render('commande/show.html.twig', [
-            'commande' => $commande,
+            'commandeProduit'=> $commandeProduitRepository->findBy(['commande'=>$commande]),
+            'commande' => $commandeRepository->getCommandeDetail($commande->getId()),
         ]);
     }
 

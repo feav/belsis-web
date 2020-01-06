@@ -49,10 +49,10 @@
         <label class="col-form-label col-md-3 col-sm-3 label-align" for="">Roles <span class="required">*</span>
         </label>
         <div class="col-md-6 col-sm-6">
-	        <select class="form-control" name="role_hierachique">
+	        <select class="form-control" name="role">
 	        	<option value="" selected disabled>Attribuer un role</option>
 				{% for rl in array_roles %}
-                    <option value="{{rl}}" {% if super_role == rl %} selected {% endif %}>
+                    <option value="{{rl}}" {% if user.role == rl %} selected {% endif %}>
                         {{rl}}
                     </option>
                 {% endfor %}

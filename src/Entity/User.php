@@ -41,6 +41,11 @@ class User extends BaseUser
      */
     protected $restaurant;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $role;
+
     public function getRestaurant()
     {
         return $this->restaurant;
@@ -121,5 +126,16 @@ class User extends BaseUser
 
     public function __toString(){
         return $this->prenom." ". $this->nom;
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): self
+    {
+        $this->role = $role;
+        return $this;
     }
 }

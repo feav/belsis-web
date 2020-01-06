@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Entity\User00;
 use App\Form\RestaurantType;
 use App\Repository\RestaurantRepository;
+use App\Repository\CommandeRepository;
 use Doctrine\Common\Util\Debug;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,9 +26,11 @@ use App\Service\GlobalService;
 class RestaurantController extends AbstractController
 {
     private $global_s;
+    private $commandeRepository;
     
-    public function __construct(GlobalService $global_s){
+    public function __construct(GlobalService $global_s, CommandeRepository $commandeRepository){
       $this->global_s = $global_s;
+      $this->commandeRepository = $commandeRepository;
     }
 
     /**
@@ -80,9 +83,10 @@ class RestaurantController extends AbstractController
      * @Route("/{id}", name="restaurant_show", methods={"GET"})
      */
     public function show(Restaurant $restaurant): Response
-    {
+    {   
         return $this->render('restaurant/show.html.twig', [
             'restaurant' => $restaurant,
+            'nbrCommande' => $this->commandeRepository->getCommandeRestaurant($restaurant->getId())
         ]);
     }    
 

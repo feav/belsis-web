@@ -13,7 +13,6 @@ class ModePaiementType extends AbstractType
     {
         $builder
             ->add('nom')
-            ->add('code')
         ;
     }
 

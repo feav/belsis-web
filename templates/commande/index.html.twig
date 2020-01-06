@@ -1,36 +1,46 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}Commande index{% endblock %}
+{% block title %}{{parent()}} | Commande{% endblock %}
 
-{% block body %}
-    <h1>Commande index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Code</th>
-                <th>Date</th>
-                <th>Etat</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for commande in commandes %}
-            <tr>
-                <td>{{ commande.id }}</td>
-                <td>{{ commande.code }}</td>
-                <td>{{ commande.date ? commande.date|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ commande.etat }}</td>
-                <td>
-                    <a href="{{ path('commande_show', {'id': commande.id}) }}">show</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Liste des Commandes</h1> 
+        {#{% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+            <a href="{{path('commande_new')}}" class="call-action btn">Nouveau commande</a>
+        {% endif %}#}
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="card-box table-responsive">
+                <table id="datatable-responsive" class="table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Restaurant</th>
+                            <th>Code</th>
+                            <th>Date</th>
+                            <th>Etat</th>
+                            <th>actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for commande in commandes %}
+                        <tr>
+                            <td>{{ commande.id }}</td>
+                            <td>{{ commande.restaurant_nom }}</td>
+                            <td>{{ commande.code }}</td>
+                            <td>{{ commande.date ? commande.date|date('d-m-Y H:i') : '' }}</td>
+                            <td>{{ commande.etat }}</td>
+                            <td>
+                                <a href="{{ path('commande_show', {'id': commande.id}) }}">detail</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block validation_js %}
 {% endblock %}

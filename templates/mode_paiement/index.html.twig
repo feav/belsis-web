@@ -1,37 +1,37 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}ModePaiement index{% endblock %}
+{% block title %}{{parent()}} | Mode de paiement{% endblock %}
+{% block datatables_css %}{% endblock %}
 
-{% block body %}
-    <h1>ModePaiement index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Code</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for mode_paiement in mode_paiements %}
-            <tr>
-                <td>{{ mode_paiement.id }}</td>
-                <td>{{ mode_paiement.nom }}</td>
-                <td>{{ mode_paiement.code }}</td>
-                <td>
-                    <a href="{{ path('mode_paiement_show', {'id': mode_paiement.id}) }}">show</a>
-                    <a href="{{ path('mode_paiement_edit', {'id': mode_paiement.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('mode_paiement_new') }}">Create new</a>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Mode de paiement</h1> <a href="{{path('mode_paiement_new')}}" class="call-action btn">Nouveau</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="card-box table-responsive">
+                <table id="datatable-responsive" class="table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nom</th>
+                            <th>actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for mode_paiement in mode_paiements %}
+                        <tr>
+                            <td>{{ mode_paiement.id }}</td>
+                            <td>{{ mode_paiement.nom }}</td>
+                            <td>
+                                <a href="{{ path('mode_paiement_show', {'id': mode_paiement.id}) }}">detail</a>
+                                <a href="{{ path('mode_paiement_edit', {'id': mode_paiement.id}) }}">modifier</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}

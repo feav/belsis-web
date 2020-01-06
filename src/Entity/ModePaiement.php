@@ -30,11 +30,6 @@ class ModePaiement
     private $nom;
 
     /**
-     * @ORM\Column(type="string", length=20)
-     */
-    private $code;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Commande", mappedBy="modepaiement")
      */
     private $commandes;
@@ -69,18 +64,6 @@ class ModePaiement
     public function setNom($nom)
     {
         $this->nom = $nom;
-
-        return $this;
-    }
-
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    public function setCode($code)
-    {
-        $this->code = $code;
 
         return $this;
     }

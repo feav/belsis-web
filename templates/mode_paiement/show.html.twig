@@ -1,30 +1,32 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}ModePaiement{% endblock %}
+{% block title %}{{parent()}} | Mode de paiement{% endblock %}
 
-{% block body %}
-    <h1>ModePaiement</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ mode_paiement.id }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ mode_paiement.nom }}</td>
-            </tr>
-            <tr>
-                <th>Code</th>
-                <td>{{ mode_paiement.code }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <a href="{{ path('mode_paiement_index') }}">back to list</a>
-
-    <a href="{{ path('mode_paiement_edit', {'id': mode_paiement.id}) }}">edit</a>
-
-    {{ include('mode_paiement/_delete_form.html.twig') }}
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Mode de paiement</h1> <a href="{{path('mode_paiement_index')}}" class="call-action btn">Liste Mode de paiement</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>{{ mode_paiement.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nom</th>
+                        <td>{{ mode_paiement.nom }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="detail-group-btn">
+        <a href="{{ path('mode_paiement_edit', {'id': mode_paiement.id}) }}" class="btn call-action">Modifier</a>
+        {{ include('mode_paiement/_delete_form.html.twig') }}
+    </div>
 {% endblock %}
+{% block validation_js %}{% endblock %}
+{% block datatables_js %}{% endblock %}

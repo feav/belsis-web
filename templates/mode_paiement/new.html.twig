@@ -1,11 +1,15 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}New ModePaiement{% endblock %}
+{% block title %}{{parent()}} | creation d'un mode de paiement{% endblock %}
+{% block datatables_css %}{% endblock %}
 
-{% block body %}
-    <h1>Create new ModePaiement</h1>
-
-    {{ include('mode_paiement/_form.html.twig') }}
-
-    <a href="{{ path('mode_paiement_index') }}">back to list</a>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Nouveau mode paiement</h1> <a href="{{path('mode_paiement_index')}}" class="call-action btn">modes paiement</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+    	{{ include('mode_paiement/_form.html.twig') }}
+	    </div>
+	</div>
 {% endblock %}
