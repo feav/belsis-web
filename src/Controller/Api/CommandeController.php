@@ -3,6 +3,11 @@
 namespace App\Controller\Api;
 
 use App\Entity\CommandeProduit;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\CategorieRepository;
+use App\Repository\CommandeRepository;
+use App\Repository\CommandeProduitRepository;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 use App\Entity\Produit;
 use App\Entity\Table;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,288 +18,34 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Commande;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * API Controller.
- * @Route("/api/commande", name="api_commande_")
+ * @Route("/api/commande", name="api_order_")
  */
 class CommandeController extends APIController
 {
-    /**
-     *Get Commandes of a 'Restaurant'.
-     * @Rest\Post("/get-all", name="get_all")
-     *
-     * @return Response
-     */
-    public function getCommandes(Request $request)
+    private $commandeRepository;
+    private $commandeProduitRepository;
+    private $doctrine;
+
+    public function __construct(CommandeRepository $commandeRepository, CommandeProduitRepository $commandeProduitRepository, RegistryInterface $doctrine)
     {
-        $data = json_decode($request->getContent(), true);
-
-        $user = $this->authToken($data['token']);
-        if (is_array($user)) {
-            return $this->handleView(
-                $this->view(
-                    $user,
-                    Response::HTTP_UNAUTHORIZED)
-            );
-        }
-
-        $restaurant = $user->getRestaurant();
-        if (empty($restaurant)) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Cet utilisateur n\est dans aucun restaurant.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
-        $restoId = $restaurant->getId();
-        $commandes = $restaurant->getCommandes();
-        $res = [];
-        foreach ($commandes as $k => $cmd) {
-            $res[] = $this->getInfos($cmd);
-        }
-        return $this->handleView($this->view($res, Response::HTTP_OK));
+        $this->commandeRepository = $commandeRepository;
+        $this->commandeProduitRepository = $commandeProduitRepository;
+        $this->doctrine = $doctrine;
     }
 
     /**
-     *Get Commandes of a table in a 'Restaurant'.
-     * @Rest\Post("/get-by-table-id", name="get_by_table_id")
-     *
-     * @return Response
-     */
-    public function getCommandesByTableId(Request $request)
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $user = $this->authToken($data['token']);
-        if (is_array($user)) {
-            return $this->handleView(
-                $this->view(
-                    $user,
-                    Response::HTTP_UNAUTHORIZED)
-            );
-        }
-
-        $restaurant = $user->getRestaurant();
-        if (empty($restaurant)) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Cet utilisateur n\est dans aucun restaurant.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
-        $restoId = $restaurant->getId();
-
-        if (empty($data['table_id'])) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Le champ table_id est vide.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
-        $tableId = $data['table_id'];
-        $table = $this->getDoctrine()->getRepository(Table::class)->findBy(['id' => $tableId, 'restaurant' => $restoId]);
-        if (empty($table)) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Cette table n\'est dans aucun restaurant.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
-
-        $commandes = $this->getDoctrine()->getRepository(Commande::class)->findBy(['table' => $tableId, 'restaurant' => $restoId]);
-        $res = [];
-        foreach ($commandes as $k => $cmd) {
-            $res[] = $this->getInfos($cmd);
-        }
-        return $this->handleView($this->view($res, Response::HTTP_OK));
-    }
-
-    /**
-     *Get Commandes of a table in a 'Restaurant'.
-     * @Rest\Post("/get", name="get")
-     *
-     * @return Response
-     */
-    public function getCommande(Request $request)
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $user = $this->authToken($data['token']);
-        if (is_array($user)) {
-            return $this->handleView(
-                $this->view(
-                    $user,
-                    Response::HTTP_UNAUTHORIZED)
-            );
-        }
-        $restaurant = $user->getRestaurant();
-        if (empty($restaurant)) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Cet utilisateur n\'est dans aucun restaurant.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
-        $restoId = $restaurant->getId();
-
-        if (empty($data['id'])) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Le champ id est vide'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
-        $commandeId = $data['id'];
-
-        $cmd = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['id' => $commandeId, 'restaurant' => $restoId]);
-        if (!$cmd) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Aucune commande trouvée avec cet id.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
-        $res = $this->getInfos($cmd);
-
-        return $this->handleView($this->view($res, Response::HTTP_OK));
-    }
-
-    /**
-     *Add new Order.
-     * @Rest\Post("/new", name="new")
-     *
-     * @return Response
-     */
-    public function newCommande(Request $request)
-    {
-        $data = json_decode($request->getContent(), true);
-        $produits = [];
-        $user = $this->authToken($data['token']);
-        if (is_array($user)) {
-            return $this->handleView(
-                $this->view(
-                    $user,
-                    Response::HTTP_UNAUTHORIZED)
-            );
-        }
-        $restaurant = $user->getRestaurant();
-        if (empty($restaurant)) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Cet utilisateur n\'est dans aucun restaurant.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
-        $restoId = $restaurant->getId();
-
-        if (empty($data['table_id'])) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Le champ table_id est vide.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
-        $tableId = $data['table_id'];
-
-        $table = $this->getDoctrine()->getRepository(Table::class)->findOneBy(['id' => $tableId, 'restaurant' => $restoId]);
-        if (empty($table)) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Cette table n\'existe pas.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
-
-        if (empty($data['produits'])) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Le champ produits est bien vide.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        } else {
-            if (is_array($data['produits']) && !empty($data['produits'])) {
-                $produits = [];
-                $commande = new Commande();
-                $commande->setCode('cmd123');
-                $commande->setRestaurant($restaurant);
-                $commande->setDate(new \DateTime());
-                $commande->setEtat('en_cours');
-                $commande->setTable($table);
-                $commande->setUser($user);
-                $this->em->persist($commande);
-                $this->em->flush();
-                $cmdProduits = [];
-                foreach ($data['produits'] as $produitData) {
-                    $produit = $this->getDoctrine()->getRepository(Produit::class)->findOneBy(['id' => $produitData['id'], 'restaurant' => $restoId]);
-                    if (!empty($produit)) {
-                        $cmdProduit = new CommandeProduit();
-                        $cmdProduit->setCommande($commande);
-                        $cmdProduit->setQuantite($produitData['quantite']);
-                        $cmdProduit->setPrix($produitData['prix']);
-                        $cmdProduit->setProduit($produit);
-                        $cmdProduits[] = $cmdProduit;
-                        $this->em->persist($cmdProduit);
-                        $this->em->flush();
-                    } else {
-                        return $this->handleView(
-                            $this->view([
-                                'statut' => 'error',
-                                'message' => 'Le produit d\'id ' . $produitData['id'] . ' n\'existe pas.'
-                            ],
-                                Response::HTTP_BAD_REQUEST
-                            ));
-                    }
-                }
-                //$commande->addCommandeProduit($cmdProduits);
-
-            } else {
-                return $this->handleView(
-                    $this->view([
-                        'statut' => 'error',
-                        'message' => 'Le champ produits n\'est pas un tableau.'
-                    ],
-                        Response::HTTP_BAD_REQUEST
-                    ));
-            }
-        }
-
-        return $this->handleView($this->view(['status' => 'success', 'message' => 'ajout reussi'], Response::HTTP_OK));
-    }
-
-    /**
-     *Delete Order.
-     * @Rest\Post("/delete", name="delete")
+     *Get Commandes id.
+     * @Rest\Post("/delete", name="delete_order")
      *
      * @return Response
      */
     public function deleteCommande(Request $request)
     {
-        $data = json_decode($request->getContent(), true);
-        $produits = [];
-        $user = $this->authToken($data['token']);
+        $user = $this->authToken($request->get('token'));
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
@@ -302,68 +53,65 @@ class CommandeController extends APIController
                     Response::HTTP_UNAUTHORIZED)
             );
         }
-        $restaurant = $user->getRestaurant();
-        if (empty($restaurant)) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Cet utilisateur n\'est dans aucun restaurant.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
-        $restoId = $restaurant->getId();
+        $commande = $this->commandeRepository->find($request->get('order_id'));
 
-        if (empty($data['id'])) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Le champ id est vide.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
+        $this->doctrine->getEntityManager()->remove($commande);
+        $this->doctrine->getEntityManager()->flush();
 
-        $commande = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['id' => $data['id'], 'restaurant' => $restoId]);
-
-        if (empty($commande)) {
-            return $this->handleView(
-                $this->view([
-                    'statut' => 'error',
-                    'message' => 'Cette commande n\'existe pas.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
-        }
-        $commandeProduits = $commande->getCommandeProduit();
-        foreach ($commandeProduits as $cdmProduit) {
-            $this->em->remove($cdmProduit);
-        }
-        $this->em->remove($commande);
-        $this->em->flush();
-
-        return $this->handleView($this->view(['status' => 'success', 'message' => 'suppression reussie'], Response::HTTP_OK));
+        return $this->handleView($this->view(
+            [
+                'status' => 'success',
+                'message' => "Commande supprimé avec succès"
+            ], 
+            Response::HTTP_OK)
+        );
     }
 
-    protected function getInfos(Commande $cmd)
+    /**
+     *Get Commandes id
+     * @Rest\Post("/get", name="get_commande")
+     *
+     * @return Response
+     */
+    public function getCommandeById(Request $request)
     {
-        $res = [];
-        $res['id'] = $cmd->getId();
-        $res['code'] = $cmd->getCode();
-        $res['table'] = $cmd->getTable()->getNom();
-        $cmdProduits = $cmd->getCommandeProduit();
-        $total = 0;
-        $produits = [];
-        foreach ($cmdProduits as $n => $cmdProduit) {
-            $total += $cmdProduit->getPrix() * $cmdProduit->getQuantite();
-            $produits[$n]['nom'] = $cmdProduit->getProduit()->getNom();
-            $produits[$n]['quantite'] = $cmdProduit->getQuantite();
-            $produits[$n]['prix'] = $cmdProduit->getPrix();
-            $produits[$n]['stock'] = $cmdProduit->getProduit()->getQuantite();
+        $user = $this->authToken($request->get('token'));
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
         }
 
-        $res['total'] = $total;
-        $res['produits'] = $produits;
-        return $res;
+        $commande = $this->commandeRepository->find($request->get('order_id'));
+        $commandeProduit = $this->commandeProduitRepository->findBy(['commande'=>$request->get('order_id')]);
+
+        $commandeProduitArray = [];
+        $totalProduit = $totalPrice =0;
+        foreach ($commandeProduit as $key => $value) {
+            $commandeProduitArray[] = [
+                'name'=> $value->getProduit()->getNom(),
+                'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
+                'price'=>$value->getPrix(),
+                'total_price'=>$value->getPrix() * $value->getQuantite(),
+                'qty'=>$value->getQuantite()
+            ];
+            $totalProduit += $value->getQuantite();
+            $totalPrice += $value->getPrix() * $value->getQuantite();
+        }
+
+        return $this->handleView($this->view(
+            [
+                'id'=> $commande->getId(),
+                'data'=> $commande->getDate()->format('Y-m-d H:i:s'),
+                'etat'=> $commande->getEtat(),
+                'price'=> $totalPrice,
+                'qty'=> $totalProduit,
+                'detail'=> $commandeProduitArray
+            ], 
+            Response::HTTP_OK)
+        );
     }
+
 }

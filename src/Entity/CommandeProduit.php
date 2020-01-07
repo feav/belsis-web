@@ -34,7 +34,7 @@ class CommandeProduit
 
     /**
      * @ORM\ManyToOne(targetEntity="Commande", inversedBy="commandeProduits")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $commande;
 

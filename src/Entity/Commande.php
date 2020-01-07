@@ -50,7 +50,7 @@ class Commande
     private $user;
 
     /**
-     * @ORM\OneToMany(targetEntity="CommandeProduit", mappedBy="commande")
+     * @ORM\OneToMany(targetEntity="CommandeProduit", mappedBy="commande", cascade={"remove"})
      */
     private $commandeProduit;
 
