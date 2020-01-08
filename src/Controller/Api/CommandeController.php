@@ -30,11 +30,10 @@ class CommandeController extends APIController
     private $commandeProduitRepository;
     private $doctrine;
 
-    public function __construct(CommandeRepository $commandeRepository, CommandeProduitRepository $commandeProduitRepository, RegistryInterface $doctrine)
+    public function __construct(CommandeRepository $commandeRepository, CommandeProduitRepository $commandeProduitRepository)
     {
         $this->commandeRepository = $commandeRepository;
         $this->commandeProduitRepository = $commandeProduitRepository;
-        $this->doctrine = $doctrine;
     }
 
 
