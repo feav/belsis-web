@@ -123,12 +123,11 @@ class CommandeController extends APIController
         $commandeProduitArray = [];
         foreach ($commandeProduit as $key => $value) {
             $commandeProduitArray[] = [
-                'id'=> $value->getId(),
+                'id'=> $value->getProduit()->getId(),
                 'name'=> $value->getProduit()->getNom(),
                 'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
-                'price'=>$value->getPrix(),
-                'total_price'=>$value->getPrix() * $value->getQuantite(),
-                'qty'=>$value->getQuantite()
+                'price'=>$value->getProduit()->getPrix(),
+                'qty_stock'=>$value->getProduit()->getQuantite(),
             ];
         }
 
