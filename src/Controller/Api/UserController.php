@@ -95,7 +95,7 @@ class UserController extends APIController
             );
         }
 
-        $entityManager = $this->getDoctrine()->getManager()
+        $entityManager = $this->getDoctrine()->getManager();
         $commande = $this->commandeRepository->find($request->get('order_id'));
         $entityManager->remove($commande);
         $entityManager->flush();
