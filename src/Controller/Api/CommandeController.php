@@ -36,6 +36,36 @@ class CommandeController extends APIController
         $this->commandeProduitRepository = $commandeProduitRepository;
     }
 
+    /**
+     *Get Commandes id.
+     * @Rest\Post("/delete", name="delete_order")
+     *
+     * @return Response
+     */
+    public function deleteCommande(Request $request)
+    {
+        $user = $this->authToken($request->get('token'));
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $commande = $this->commandeRepository->find($request->get('order_id'));
+        $entityManager->remove($commande);
+        $entityManager->flush();
+
+        return $this->handleView($this->view(
+            [
+                'status' => 'success',
+                'message' => "Commande supprimé avec succès"
+            ], 
+            Response::HTTP_OK)
+        );
+    }
 
 
     /**
