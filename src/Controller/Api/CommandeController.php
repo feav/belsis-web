@@ -123,6 +123,7 @@ class CommandeController extends APIController
         $commandeProduitArray = [];
         foreach ($commandeProduit as $key => $value) {
             $commandeProduitArray[] = [
+                'id'=> $value->getId(),
                 'name'=> $value->getProduit()->getNom(),
                 'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
                 'price'=>$value->getPrix(),
@@ -161,11 +162,12 @@ class CommandeController extends APIController
         $totalProduit = $totalPrice =0;
         foreach ($commandeProduit as $key => $value) {
             $commandeProduitArray[] = [
+                'id'=>$value->getId()
                 'name'=> $value->getProduit()->getNom(),
                 'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
+                'qty'=>$value->getQuantite(),
                 'price'=>$value->getPrix(),
                 'total_price'=>$value->getPrix() * $value->getQuantite(),
-                'qty'=>$value->getQuantite()
             ];
             $totalProduit += $value->getQuantite();
             $totalPrice += $value->getPrix() * $value->getQuantite();
@@ -174,10 +176,10 @@ class CommandeController extends APIController
         return $this->handleView($this->view(
             [
                 'id'=> $commande->getId(),
-                'data'=> $commande->getDate()->format('Y-m-d H:i:s'),
+                'date_create'=> $commande->getDate()->format('Y-m-d H:i:s'),
                 'etat'=> $commande->getEtat(),
-                'price'=> $totalPrice,
                 'qty'=> $totalProduit,
+                'price'=> $totalPrice,
                 'detail'=> $commandeProduitArray
             ], 
             Response::HTTP_OK)
