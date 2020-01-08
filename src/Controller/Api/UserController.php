@@ -5,6 +5,7 @@ use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Repository\CommandeRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -22,13 +23,14 @@ use App\Repository\UserRepository;
  */
 class UserController extends APIController
 {
-
+    private $commandeRepository;
     private $userRepository;
     private $encoderFactory;
     
-    public function __construct(UserRepository $userRepository, EncoderFactoryInterface $encoderFactory){
+    public function __construct(UserRepository $userRepository, EncoderFactoryInterface $encoderFactory, CommandeRepository $commandeRepository){
       $this->userRepository = $userRepository;
       $this->encoderFactory = $encoderFactory;
+      $this->commandeRepository = $commandeRepository;
     }
 
     /**
@@ -74,6 +76,36 @@ class UserController extends APIController
                 Response::HTTP_OK)
             );
         }
+    }
+
+    /**
+     *Get Commandes id.
+     * @Rest\Post("/delete", name="delete_order")
+     *
+     * @return Response
+     */
+    public function deleteCommande(Request $request)
+    {
+        $user = $this->authToken($request->get('token'));
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        $commande = $this->commandeRepository->find($request->get('order_id'));
+
+        $this->doctrine->getEntityManager()->remove($commande);
+        $this->doctrine->getEntityManager()->flush();
+
+        return $this->handleView($this->view(
+            [
+                'status' => 'success',
+                'message' => "Commande supprimé avec succès"
+            ], 
+            Response::HTTP_OK)
+        );
     }
 
 

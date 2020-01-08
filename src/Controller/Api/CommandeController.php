@@ -37,35 +37,7 @@ class CommandeController extends APIController
         $this->doctrine = $doctrine;
     }
 
-    /**
-     *Get Commandes id.
-     * @Rest\Post("/delete", name="delete_order")
-     *
-     * @return Response
-     */
-    public function deleteCommande(Request $request)
-    {
-        $user = $this->authToken($request->get('token'));
-        if (is_array($user)) {
-            return $this->handleView(
-                $this->view(
-                    $user,
-                    Response::HTTP_UNAUTHORIZED)
-            );
-        }
-        $commande = $this->commandeRepository->find($request->get('order_id'));
 
-        $this->doctrine->getEntityManager()->remove($commande);
-        $this->doctrine->getEntityManager()->flush();
-
-        return $this->handleView($this->view(
-            [
-                'status' => 'success',
-                'message' => "Commande supprimé avec succès"
-            ], 
-            Response::HTTP_OK)
-        );
-    }
 
     /**
      *Get Commandes id
@@ -75,14 +47,14 @@ class CommandeController extends APIController
      */
     public function getCommandeById(Request $request)
     {
-        $user = $this->authToken($request->get('token'));
+        /*$user = $this->authToken($request->get('token'));
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
                     $user,
                     Response::HTTP_UNAUTHORIZED)
             );
-        }
+        }*/
 
         $commande = $this->commandeRepository->find($request->get('order_id'));
         $commandeProduit = $this->commandeProduitRepository->findBy(['commande'=>$request->get('order_id')]);
@@ -103,6 +75,7 @@ class CommandeController extends APIController
 
         return $this->handleView($this->view(
             [
+                'token'=> $request->get('token'),
                 'id'=> $commande->getId(),
                 'data'=> $commande->getDate()->format('Y-m-d H:i:s'),
                 'etat'=> $commande->getEtat(),
