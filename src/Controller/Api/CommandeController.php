@@ -162,7 +162,7 @@ class CommandeController extends APIController
         $totalProduit = $totalPrice =0;
         foreach ($commandeProduit as $key => $value) {
             $commandeProduitArray[] = [
-                'id'=>$value->getId()
+                'id'=>$value->getId(),
                 'name'=> $value->getProduit()->getNom(),
                 'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
                 'qty'=>$value->getQuantite(),
