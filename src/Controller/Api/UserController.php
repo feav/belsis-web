@@ -94,10 +94,11 @@ class UserController extends APIController
                     Response::HTTP_UNAUTHORIZED)
             );
         }
-        $commande = $this->commandeRepository->find($request->get('order_id'));
 
-        $this->doctrine->getEntityManager()->remove($commande);
-        $this->doctrine->getEntityManager()->flush();
+        $entityManager = $this->getDoctrine()->getManager()
+        $commande = $this->commandeRepository->find($request->get('order_id'));
+        $entityManager->remove($commande);
+        $entityManager->flush();
 
         return $this->handleView($this->view(
             [

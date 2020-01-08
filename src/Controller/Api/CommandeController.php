@@ -46,14 +46,14 @@ class CommandeController extends APIController
      */
     public function getCommandeById(Request $request)
     {
-        /*$user = $this->authToken($request->get('token'));
+        $user = $this->authToken($request->get('token'));
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
                     $user,
                     Response::HTTP_UNAUTHORIZED)
             );
-        }*/
+        }
 
         $commande = $this->commandeRepository->find($request->get('order_id'));
         $commandeProduit = $this->commandeProduitRepository->findBy(['commande'=>$request->get('order_id')]);
