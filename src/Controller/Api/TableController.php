@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\Commande;
+use App\Repository\TableRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,17 +16,23 @@ use FOS\RestBundle\Controller\Annotations as Rest;
  */
 class TableController extends APIController
 {
-    /**
-     *Get Product af a 'Restaurant'.
-     * @Rest\Post("/get-all", name="get_all")
-     *
-     * @return Response
-     */
-    public function getTables(Request $request)
-    {
-        $data = json_decode($request->getContent(), true);
+    private $tableRepository;
+    private $doctrine;
 
-        $user = $this->authToken($data['token']);
+    public function __construct(TableRepository $tableRepository)
+    {
+        $this->tableRepository = $tableRepository;
+    }
+
+    /**
+    * Get table by shop
+    * @Rest\Post("/get-by-shop", name="get_by_shop")
+    *
+    * @return Response
+    */
+    public function getAllTableOfMyShop(Request $request)
+    {
+        $user = $this->authToken($request->get('token'));
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
@@ -34,36 +41,22 @@ class TableController extends APIController
             );
         }
 
-        $restaurant = $user->getRestaurant();
-        if (empty($restaurant)) {
-            return $this->handleView(
-                $this->view([
-                    'status' => 'error',
-                    'message' => 'Cet utilisateur n\est dans aucun restaurant.'
-                ],
-                    Response::HTTP_BAD_REQUEST
-                ));
+        $tables = $this->tableRepository->findBy(['restaurant'=>$user->getRestaurant()->getId()]);
+        $tablesArray = [];
+        foreach ($tables as $key => $value) {
+            $tablesArray[] = [
+                'id'=>$value->getId(),
+                'name'=> $value->getNom(),
+                'description'=> $value->getDescription(),
+                'coord_x'=> $value->getCoordX(),
+                'coord_y'=> $value->getCoordY()
+            ];
         }
-        $restoId = $restaurant->getId();
-        $tables = $restaurant->getTables();
-        $res = [];
-        foreach ($tables as $k => $table) {
-            $tabTables['id'] = $table->getId();
-            $tabTables['nom'] = $table->getNom();
-            $tabTables['coord_x'] = $table->getCoordX();
-            $tabTables['coord_y'] = $table->getCoordY();
-            //$tabTables['serveur'] = $table->getUser();
 
-            $cmd = $this->getDoctrine()->getRepository(Commande::class)->findBy(['table' => $table->getId(), 'etat' => "en_cours"]);
-
-            if(empty($cmd)){
-                $tabTables['nb_commandes'] = 0;
-            }else{
-                $tabTables['nb_commandes'] = sizeof($cmd);
-            }
-
-            $res[] = $tabTables;
-        }
-        return $this->handleView($this->view($res, Response::HTTP_OK));
+        return $this->handleView($this->view(
+            $tablesArray, 
+            Response::HTTP_OK)
+        );
     }
+
 }
