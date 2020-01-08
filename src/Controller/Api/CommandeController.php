@@ -104,7 +104,6 @@ class CommandeController extends APIController
 
         return $this->handleView($this->view(
             [
-                'token'=> $request->get('token'),
                 'id'=> $commande->getId(),
                 'data'=> $commande->getDate()->format('Y-m-d H:i:s'),
                 'etat'=> $commande->getEtat(),
