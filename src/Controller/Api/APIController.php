@@ -40,7 +40,7 @@ class APIController extends FOSRestController
 
     public function authToken(Request $request)
     {
-        $token = explode(" ", $request->headers->get('Authorization'))[1];
+        $token = substr($request->headers->get('Authorization'), 7);
         $em = $this->getDoctrine()->getManager();
         if (empty($token)) {
             return [
