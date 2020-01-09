@@ -38,7 +38,7 @@ class ProduitController extends APIController
     */
     public function getProduitByCategory(Request $request)
     {
-        $user = $this->authToken($request->get('token'));
+        $user = $this->authToken($request);
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
@@ -54,7 +54,7 @@ class ProduitController extends APIController
                 'id'=>$value->getId(),
                 'name'=> $value->getNom(),
                 'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getImage(),
-                'qty'=>$value->getQuantite(),
+                'qty_stock'=>$value->getQuantite(),
                 'price'=>$value->getPrix(),
             ];
         }

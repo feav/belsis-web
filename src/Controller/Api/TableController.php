@@ -32,7 +32,7 @@ class TableController extends APIController
     */
     public function getAllTableOfMyShop(Request $request)
     {
-        $user = $this->authToken($request->get('token'));
+        $user = $this->authToken($request);
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(

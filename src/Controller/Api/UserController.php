@@ -86,7 +86,7 @@ class UserController extends APIController
      */
     public function getProfile(Request $request)
     {
-        $user = $this->authToken($request->get('token'));
+        $user = $this->authToken($request);
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
@@ -109,7 +109,7 @@ class UserController extends APIController
     public function update(Request $request, UserPasswordEncoderInterface $encoder)
     {
         $data = json_decode($request->getContent(), true);
-        $user = $this->authToken($request->get('token'));
+        $user = $this->authToken($request);
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
@@ -175,7 +175,7 @@ class UserController extends APIController
     public function newUser(Request $request, UserPasswordEncoderInterface $encoder)
     {
         $data = json_decode($request->getContent(), true);
-        $user = $this->authToken($request->get('token'));
+        $user = $this->authToken($request);
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
@@ -300,7 +300,7 @@ class UserController extends APIController
     public function getUsers(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-        $user = $this->authToken($request->get('token'));
+        $user = $this->authToken($request);
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(

@@ -29,7 +29,7 @@ class CategorieController extends APIController
     public function getCategorie(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-        $user = $this->authToken($request->get('token'));
+        $user = $this->authToken($request);
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
@@ -84,7 +84,7 @@ class CategorieController extends APIController
     public function getAll(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-        $user = $this->authToken($request->get('token'));
+        $user = $this->authToken($request);
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(

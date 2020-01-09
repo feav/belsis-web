@@ -47,7 +47,7 @@ class CommandeController extends APIController
      */
     public function deleteCommande(Request $request)
     {
-        $user = $this->authToken($request->get('token'));
+        $user = $this->authToken($request);
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
@@ -78,7 +78,7 @@ class CommandeController extends APIController
      */
     public function removeProduct(Request $request)
     {
-        $user = $this->authToken($request->get('token'));
+        $user = $this->authToken($request);
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
@@ -110,7 +110,7 @@ class CommandeController extends APIController
      */
     public function getProductByOrder(Request $request)
     {
-        $user = $this->authToken($request->get('token'));
+        $user = $this->authToken($request);
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
@@ -145,7 +145,7 @@ class CommandeController extends APIController
      */
     public function getCommandeById(Request $request)
     {
-        $user = $this->authToken($request->get('token'));
+        $user = $this->authToken($request);
         if (is_array($user)) {
             return $this->handleView(
                 $this->view(
