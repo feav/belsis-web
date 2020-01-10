@@ -212,8 +212,10 @@ class CommandeController extends APIController
                 'id'=> $value->getId(),
                 'date_create'=> $value->getDate()->format('Y-m-d H:i:s'),
                 'etat'=> $value->getEtat(),
-                'qty'=> "0",
-                'price'=> "0",
+                'name'=> $value->getCode(),
+                'table'=> $value->getTable()->getNom(),
+                'qty'=> $this->getDetailNbrCmd($value)['totalProduit'],
+                'price'=> $this->getDetailNbrCmd($value)['totalPrice'],
             ];
         }
 
@@ -221,6 +223,16 @@ class CommandeController extends APIController
             $commandesArray,
             Response::HTTP_OK)
         );
+    }
+
+    public function getDetailNbrCmd($commande){
+
+        $totalProduit = $totalPrice =0;
+        foreach ($commande->getCommandeProduit() as $key => $value) {
+            $totalProduit += $value->getQuantite();
+            $totalPrice += $value->getPrix() * $value->getQuantite();
+        }
+        return ['totalProduit'=> $totalProduit, 'totalPrice'=> $totalPrice ] ;
     }
 
     /**
@@ -247,8 +259,10 @@ class CommandeController extends APIController
                 'id'=> $value->getId(),
                 'date_create'=> $value->getDate()->format('Y-m-d H:i:s'),
                 'etat'=> $value->getEtat(),
-                'qty'=> "0",
-                'price'=> "0",
+                'name'=> $value->getCode(),
+                'table'=> $value->getTable()->getNom(),
+                'qty'=> $this->getDetailNbrCmd($value)['totalProduit'],
+                'price'=> $this->getDetailNbrCmd($value)['totalPrice'],
             ];
         }
 
