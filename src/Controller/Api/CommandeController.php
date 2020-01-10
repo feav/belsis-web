@@ -209,18 +209,29 @@ class CommandeController extends APIController
             $commandeProduit = [];
 
         $commandeProduitArray = [];
+        $totalProduit = $totalPrice =0;
         foreach ($commandeProduit as $key => $value) {
             $commandeProduitArray[] = [
-                'id'=> $value->getProduit()->getId(),
+                'id'=>$value->getId(),
                 'name'=> $value->getProduit()->getNom(),
                 'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
-                'price'=>$value->getProduit()->getPrix(),
-                'qty_stock'=>$value->getProduit()->getQuantite(),
+                'qty'=>$value->getQuantite(),
+                'price'=>$value->getPrix(),
+                'total_price'=>$value->getPrix() * $value->getQuantite(),
             ];
+            $totalProduit += $value->getQuantite();
+            $totalPrice += $value->getPrix() * $value->getQuantite();
         }
 
         return $this->handleView($this->view(
-            $commandeProduitArray, 
+            [
+                'id'=> $commande->getId(),
+                'date_create'=> $commande->getDate()->format('Y-m-d H:i:s'),
+                'etat'=> $commande->getEtat(),
+                'qty'=> $totalProduit,
+                'price'=> $totalPrice,
+                'detail'=> $commandeProduitArray
+            ],
             Response::HTTP_OK)
         );
     }
