@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * @Route("/mode/paiement")
+ * @Route("/dashboad/mode/paiement")
  */
 class ModePaiementController extends AbstractController
 {

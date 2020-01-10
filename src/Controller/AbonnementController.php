@@ -15,7 +15,7 @@ use Dompdf\Options;
 use Dompdf\Dompdf;
 
 /**
- * @Route("/abonnement")
+ * @Route("/dashboad/abonnement")
  */
 class AbonnementController extends AbstractController
 {

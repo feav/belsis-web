@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * @Route("/appareil")
+ * @Route("/dashboad/appareil")
  */
 class AppareilController extends AbstractController
 {

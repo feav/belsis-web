@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * @Route("/sortie/caisse")
+ * @Route("/dashboad/sortie/caisse")
  */
 class SortieCaisseController extends AbstractController
 {

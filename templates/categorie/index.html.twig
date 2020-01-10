@@ -16,7 +16,7 @@
                             <th>Nom</th>
                             <th>Description</th>
                             <th>Image</th>
-                            <th>Actio ations</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -27,7 +27,7 @@
                             <td>{{ categorie.description }}</td>
                             <td><img class="hg-35 in-table" src="{{ asset('images/uploads/categorie/' ~ categorie.image) }}" /></td>
                             <td>
-                                <a href="{{ path('categorie_show', {'id': categorie.id}) }}">show</a>
+                                <a href="{{ path('categorie_show', {'id': categorie.id}) }}">detail</a>
                                 <a href="{{ path('categorie_edit', {'id': categorie.id}) }}">edit</a>
                             </td>
                         </tr>

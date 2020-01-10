@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\AbonnementRepository;
 
 /**
- * @Route("/paiement")
+ * @Route("/dashboad/paiement")
  */
 class PaiementController extends AbstractController
 {

@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Service\GlobalService;
 
 /**
- * @Route("/restaurant")
+ * @Route("/dashboad/restaurant")
  */
 class RestaurantController extends AbstractController
 {

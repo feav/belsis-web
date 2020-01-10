@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * @Route("/table")
+ * @Route("/dashboad/table")
  */
 class TableController extends AbstractController
 {

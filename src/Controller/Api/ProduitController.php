@@ -32,7 +32,7 @@ class ProduitController extends APIController
 
     /**
     * Get Commandes id
-    * @Rest\Post("/get-by-categorie", name="get_by_categorie")
+    * @Rest\Get("/get-by-categorie", name="get_by_categorie")
     *
     * @return Response
     */

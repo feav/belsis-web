@@ -41,7 +41,7 @@ class CommandeController extends APIController
 
     /**
      *Get Commandes id.
-     * @Rest\Post("/delete", name="delete_order")
+     * @Rest\Get("/delete", name="delete_order")
      *
      * @return Response
      */
@@ -72,7 +72,7 @@ class CommandeController extends APIController
 
     /**
      *Remove product to commande.
-     * @Rest\Post("/remove-product", name="remove_product_commande")
+     * @Rest\Get("/remove-product", name="remove_product_commande")
      *
      * @return Response
      */
@@ -104,7 +104,7 @@ class CommandeController extends APIController
 
     /**
      *Remove product to commande.
-     * @Rest\Post("/get-product-by-order", name="get_product_by_order")
+     * @Rest\Get("/get-product-by-order", name="get_product_by_order")
      *
      * @return Response
      */
@@ -139,7 +139,7 @@ class CommandeController extends APIController
 
     /**
      *Get Commandes id
-     * @Rest\Post("/get", name="get_commande")
+     * @Rest\Get("/get", name="get_commande")
      *
      * @return Response
      */
@@ -185,4 +185,43 @@ class CommandeController extends APIController
         );
     }
 
+    /**
+     *Remove product to commande.
+     * @Rest\Get("/get-by-table", name="get_by_table")
+     *
+     * @return Response
+     */
+    public function getByTable(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $commande = $this->commandeRepository->findOneBy(['table'=>$request->get('table_id')]);
+        if(is_object($commande))
+            $commandeProduit = $commande->getCommandeProduit();
+        else
+            $commandeProduit = [];
+
+        $commandeProduitArray = [];
+        foreach ($commandeProduit as $key => $value) {
+            $commandeProduitArray[] = [
+                'id'=> $value->getProduit()->getId(),
+                'name'=> $value->getProduit()->getNom(),
+                'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
+                'price'=>$value->getProduit()->getPrix(),
+                'qty_stock'=>$value->getProduit()->getQuantite(),
+            ];
+        }
+
+        return $this->handleView($this->view(
+            $commandeProduitArray, 
+            Response::HTTP_OK)
+        );
+    }
 }

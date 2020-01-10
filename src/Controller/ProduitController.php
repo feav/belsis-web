@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * @Route("/produit")
+ * @Route("/dashboad/produit")
  */
 class ProduitController extends AbstractController
 {
