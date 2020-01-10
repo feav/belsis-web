@@ -26,7 +26,7 @@ class TableController extends APIController
 
     /**
     * Get table by shop
-    * @Rest\Post("/get-by-shop", name="get_by_shop")
+    * @Rest\Get("/get-by-shop", name="get_by_shop")
     *
     * @return Response
     */
@@ -49,7 +49,8 @@ class TableController extends APIController
                 'name'=> $value->getNom(),
                 'description'=> $value->getDescription(),
                 'coord_x'=> $value->getCoordX(),
-                'coord_y'=> $value->getCoordY()
+                'coord_y'=> $value->getCoordY(),
+                'commandes'=> count($value->getCommandes())
             ];
         }
 

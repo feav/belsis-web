@@ -13,10 +13,12 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  * @method Categorie[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class CategorieRepository extends ServiceEntityRepository
-{
+{   
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Categorie::class);
+        $this->em = $this->getEntityManager()->getConnection();
     }
 
     // /**
@@ -47,4 +49,23 @@ class CategorieRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function getByUser($user_id)
+    {
+        $sql = "
+            SELECT cat.id, cat.image, cat.description, cat.nom, prod.nom
+                FROM categorie as cat
+                inner join produit as prod
+                inner join restaurant as resto
+                inner join user as usr
+                WHERE  cat.id = prod.categorie_id
+                AND  prod.restaurant_id = resto.id
+                AND resto.id = usr.restaurant_id
+                AND usr.id = :user_id";
+        $commandes = $this->em->prepare($sql);
+        $commandes->execute(['user_id'=>$user_id]);
+        $commandes = $commandes->fetchAll();
+        return $commandes;
+    }
+
 }
