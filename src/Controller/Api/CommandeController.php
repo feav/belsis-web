@@ -6,6 +6,7 @@ use App\Entity\CommandeProduit;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\CategorieRepository;
 use App\Repository\CommandeRepository;
+use App\Repository\TableRepository;
 use App\Repository\ProduitRepository;
 use App\Repository\CommandeProduitRepository;
 use Symfony\Component\Routing\Generator\UrlGenerator;
@@ -29,14 +30,16 @@ class CommandeController extends APIController
 {
     private $commandeRepository;
     private $commandeProduitRepository;
+    private $tableRepository;
     private $produitRepository;
     private $doctrine;
 
-    public function __construct(CommandeRepository $commandeRepository, CommandeProduitRepository $commandeProduitRepository, ProduitRepository $produitRepository)
+    public function __construct(CommandeRepository $commandeRepository, CommandeProduitRepository $commandeProduitRepository, ProduitRepository $produitRepository, TableRepository $tableRepository)
     {
         $this->commandeRepository = $commandeRepository;
         $this->commandeProduitRepository = $commandeProduitRepository;
         $this->produitRepository = $produitRepository;
+        $this->tableRepository = $tableRepository;
     }
 
     /**
@@ -202,36 +205,20 @@ class CommandeController extends APIController
             );
         }
 
-        $commande = $this->commandeRepository->findOneBy(['table'=>$request->get('table_id')]);
-        if(is_object($commande))
-            $commandeProduit = $commande->getCommandeProduit();
-        else
-            $commandeProduit = [];
-
-        $commandeProduitArray = [];
-        $totalProduit = $totalPrice =0;
-        foreach ($commandeProduit as $key => $value) {
-            $commandeProduitArray[] = [
-                'id'=>$value->getId(),
-                'name'=> $value->getProduit()->getNom(),
-                'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
-                'qty'=>$value->getQuantite(),
-                'price'=>$value->getPrix(),
-                'total_price'=>$value->getPrix() * $value->getQuantite(),
+        $commandes = $this->commandeRepository->findBy(['table'=>$request->get('table_id')]);
+        $commandesArray = [];
+        foreach ($commandes as $key => $value) {
+            $commandesArray[] = [
+                'id'=> $value->getId(),
+                'date_create'=> $value->getDate()->format('Y-m-d H:i:s'),
+                'etat'=> $value->getEtat(),
+                'qty'=> "0",
+                'price'=> "0",
             ];
-            $totalProduit += $value->getQuantite();
-            $totalPrice += $value->getPrix() * $value->getQuantite();
         }
 
         return $this->handleView($this->view(
-            [
-                'id'=> $commande->getId(),
-                'date_create'=> $commande->getDate()->format('Y-m-d H:i:s'),
-                'etat'=> $commande->getEtat(),
-                'qty'=> $totalProduit,
-                'price'=> $totalPrice,
-                'detail'=> $commandeProduitArray
-            ],
+            $commandesArray,
             Response::HTTP_OK)
         );
     }
@@ -253,36 +240,20 @@ class CommandeController extends APIController
             );
         }
 
-        $commande = $this->commandeRepository->findOneBy(['user'=>$user->getId()]);
-        if(is_object($commande))
-            $commandeProduit = $commande->getCommandeProduit();
-        else
-            $commandeProduit = [];
-
-        $commandeProduitArray = [];
-        $totalProduit = $totalPrice =0;
-        foreach ($commandeProduit as $key => $value) {
-            $commandeProduitArray[] = [
-                'id'=>$value->getId(),
-                'name'=> $value->getProduit()->getNom(),
-                'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
-                'qty'=>$value->getQuantite(),
-                'price'=>$value->getPrix(),
-                'total_price'=>$value->getPrix() * $value->getQuantite(),
+        $commandes = $this->commandeRepository->findBy(['user'=>$user->getId()]);
+        $commandesArray = [];
+        foreach ($commandes as $key => $value) {
+            $commandesArray[] = [
+                'id'=> $value->getId(),
+                'date_create'=> $value->getDate()->format('Y-m-d H:i:s'),
+                'etat'=> $value->getEtat(),
+                'qty'=> "0",
+                'price'=> "0",
             ];
-            $totalProduit += $value->getQuantite();
-            $totalPrice += $value->getPrix() * $value->getQuantite();
         }
 
         return $this->handleView($this->view(
-            [
-                'id'=> $commande->getId(),
-                'date_create'=> $commande->getDate()->format('Y-m-d H:i:s'),
-                'etat'=> $commande->getEtat(),
-                'qty'=> $totalProduit,
-                'price'=> $totalPrice,
-                'detail'=> $commandeProduitArray
-            ],
+            $commandesArray,
             Response::HTTP_OK)
         );
     }
