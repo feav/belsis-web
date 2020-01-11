@@ -271,4 +271,42 @@ class CommandeController extends APIController
             Response::HTTP_OK)
         );
     }
+
+    /**
+     *Remove product to commande.
+     * @Rest\Get("/get-by-shop", name="get_by_shop")
+     *
+     * @return Response
+     */
+    public function getByShop(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $commandes = $this->commandeRepository->getCommandeAllByRestaurant($user->getRestaurant()->getId());
+        $commandesArray = [];
+        foreach ($commandes as $key => $value) {
+            $commandeItem = $this->commandeRepository->find($value['id']);
+            $commandesArray[] = [
+                'id'=> $value['id'],
+                'date'=> $value['date'],
+                'etat'=> $value['etat'],
+                'name'=> $value['code'],
+                'table'=> $commandeItem->getTable()->getNom(),
+                'qty'=> $this->getDetailNbrCmd($commandeItem)['totalProduit'],
+                'price'=> $this->getDetailNbrCmd($commandeItem)['totalPrice'],
+            ];
+        }
+
+        return $this->handleView($this->view(
+            $commandesArray,
+            Response::HTTP_OK)
+        );
+    }
 }

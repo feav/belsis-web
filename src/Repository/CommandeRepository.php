@@ -67,6 +67,25 @@ class CommandeRepository extends ServiceEntityRepository
         return $commandes;
     }
 
+    public function getCommandeAllByRestaurant($idrestaurant)
+    {
+        $sql = "
+            SELECT DISTINCT cmd.id, cmd.code, cmd.date, cmd.etat
+                FROM commande as cmd
+                inner join commande_produit as cmd_prod
+                inner join produit as prod
+                inner join restaurant as resto
+                WHERE  cmd.id = cmd_prod.commande_id
+                AND  cmd_prod.produit_id = prod.id
+                AND prod.restaurant_id = resto.id
+                AND resto.id = :idrestaurant
+                ORDER BY cmd.date DESC";
+        $commandes = $this->em->prepare($sql);
+        $commandes->execute(['idrestaurant'=>$idrestaurant]);
+        $commandes = $commandes->fetchAll();
+        return $commandes;
+    }
+
     public function getCommandeDetail($idCommande)
     {
         $sql = "
