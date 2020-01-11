@@ -29,7 +29,8 @@ class ProduitController extends AbstractController
      * @Route("/", name="produit_index", methods={"GET"})
      */
     public function index(ProduitRepository $produitRepository): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('produit/index.html.twig', [
             'produits' => $produitRepository->findAll(),
         ]);
@@ -39,7 +40,8 @@ class ProduitController extends AbstractController
      * @Route("/new", name="produit_new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
@@ -73,7 +75,8 @@ class ProduitController extends AbstractController
      * @Route("/{id}", name="produit_show", methods={"GET"})
      */
     public function show(Produit $produit): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('produit/show.html.twig', [
             'produit' => $produit,
         ]);
@@ -83,7 +86,8 @@ class ProduitController extends AbstractController
      * @Route("/{id}/edit", name="produit_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Produit $produit): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
@@ -110,7 +114,8 @@ class ProduitController extends AbstractController
      * @Route("/{id}", name="produit_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Produit $produit): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCsrfTokenValid('delete' . $produit->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($produit);

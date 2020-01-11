@@ -29,7 +29,8 @@ class SortieCaisseController extends AbstractController
      * @Route("/", name="sortie_caisse_index", methods={"GET"})
      */
     public function index(SortieCaisseRepository $sortieCaisseRepository): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('sortie_caisse/index.html.twig', [
             'sortie_caisses' => $sortieCaisseRepository->findAll(),
         ]);
@@ -39,7 +40,8 @@ class SortieCaisseController extends AbstractController
      * @Route("/new", name="sortie_caisse_new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');   
         $sortieCaisse = new SortieCaisse();
         $form = $this->createForm(SortieCaisseType::class, $sortieCaisse);
         $form->handleRequest($request);
@@ -63,7 +65,8 @@ class SortieCaisseController extends AbstractController
      * @Route("/{id}", name="sortie_caisse_show", methods={"GET"})
      */
     public function show(SortieCaisse $sortieCaisse): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('sortie_caisse/show.html.twig', [
             'sortie_caisse' => $sortieCaisse,
         ]);
@@ -73,7 +76,8 @@ class SortieCaisseController extends AbstractController
      * @Route("/{id}/edit", name="sortie_caisse_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, SortieCaisse $sortieCaisse): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $form = $this->createForm(SortieCaisseType::class, $sortieCaisse);
         $form->handleRequest($request);
 
@@ -93,7 +97,8 @@ class SortieCaisseController extends AbstractController
      * @Route("/{id}", name="sortie_caisse_delete", methods={"DELETE"})
      */
     public function delete(Request $request, SortieCaisse $sortieCaisse): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCsrfTokenValid('delete'.$sortieCaisse->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($sortieCaisse);

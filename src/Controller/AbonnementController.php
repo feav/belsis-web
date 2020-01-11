@@ -35,6 +35,7 @@ class AbonnementController extends AbstractController
      */
     public function index(AbonnementRepository $abonnementRepository): Response
     {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $abonnements = $abonnementRepository->findAll();
         $abonnementsArray = [];
         foreach ($abonnements as $key => $value) {
@@ -65,7 +66,8 @@ class AbonnementController extends AbstractController
      * @Route("/new", name="abonnement_new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $abonnement = new Abonnement();
         $form = $this->createForm(AbonnementType::class, $abonnement);
         $form->handleRequest($request);
@@ -96,6 +98,7 @@ class AbonnementController extends AbstractController
      */
     public function show(Abonnement $abonnement): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('abonnement/show.html.twig', [
             'abonnement' => $abonnement,
         ]);
@@ -106,6 +109,7 @@ class AbonnementController extends AbstractController
      */
     public function edit(Request $request, Abonnement $abonnement): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $form = $this->createForm(AbonnementType::class, $abonnement);
         $form->handleRequest($request);
 
@@ -131,6 +135,7 @@ class AbonnementController extends AbstractController
      */
     public function delete(Request $request, Abonnement $abonnement): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCsrfTokenValid('delete'.$abonnement->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($abonnement);
@@ -145,6 +150,7 @@ class AbonnementController extends AbstractController
      */
     public function exporteFacture($id, GlobalService $global_s, AbonnementRepository $abonnementRepository){
 
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $abonnement = $abonnementRepository->find($id);
         $abonnementArray = [
             'data'=>$abonnement,

@@ -39,6 +39,7 @@ class RestaurantController extends AbstractController
     public
     function index(RestaurantRepository $restaurantRepository): Response
     {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('restaurant/index.html.twig', [
             'restaurants' => $restaurantRepository->findAll(),
         ]);
@@ -50,6 +51,7 @@ class RestaurantController extends AbstractController
     public
     function new(Request $request): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $restaurant = new Restaurant();
         $form = $this->createForm(RestaurantType::class, $restaurant);
         $form->handleRequest($request);
@@ -84,6 +86,7 @@ class RestaurantController extends AbstractController
      */
     public function show(Restaurant $restaurant): Response
     {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('restaurant/show.html.twig', [
             'restaurant' => $restaurant,
             'nbrCommande' => $this->commandeRepository->getCommandeRestaurant($restaurant->getId())
@@ -94,7 +97,8 @@ class RestaurantController extends AbstractController
      * @Route("/change-status/{id}", name="restaurant_status", methods={"GET"})
      */
     public function changeStatus(Request $request, Restaurant $restaurant): Response
-    {   
+    {      
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if($restaurant->getStatus())
             $restaurant->setStatus(false);
         else
@@ -107,7 +111,8 @@ class RestaurantController extends AbstractController
      * @Route("/{id}/edit", name="restaurant_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Restaurant $restaurant): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $form = $this->createForm(RestaurantType::class, $restaurant);
         $form->handleRequest($request);
 
@@ -137,7 +142,8 @@ class RestaurantController extends AbstractController
      * @Route("/{id}", name="restaurant_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Restaurant $restaurant): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCsrfTokenValid('delete' . $restaurant->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($restaurant);

@@ -25,7 +25,8 @@ class StockController extends AbstractController
      * @Route("/", name="stock_index", methods={"GET"})
      */
     public function index(StockRepository $stockRepository): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('stock/index.html.twig', [
             'stocks' => $stockRepository->findAll(),
         ]);
@@ -35,7 +36,8 @@ class StockController extends AbstractController
      * @Route("/new", name="stock_new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $stock = new Stock();
         $form = $this->createForm(StockType::class, $stock);
         $form->handleRequest($request);
@@ -60,7 +62,8 @@ class StockController extends AbstractController
      * @Route("/{id}", name="stock_show", methods={"GET"})
      */
     public function show(Stock $stock): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('stock/show.html.twig', [
             'stock' => $stock,
         ]);
@@ -70,7 +73,8 @@ class StockController extends AbstractController
      * @Route("/{id}/edit", name="stock_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Stock $stock): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $form = $this->createForm(StockType::class, $stock);
         $form->handleRequest($request);
 
@@ -90,7 +94,8 @@ class StockController extends AbstractController
      * @Route("/{id}", name="stock_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Stock $stock): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCsrfTokenValid('delete'.$stock->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($stock);

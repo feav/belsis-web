@@ -26,7 +26,8 @@ class PaiementController extends AbstractController
      * @Route("/new", name="paiement_new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $paiement = new Paiement();
         $form = $this->createForm(PaiementType::class, $paiement);
         $form->handleRequest($request);
@@ -49,7 +50,8 @@ class PaiementController extends AbstractController
      * @Route("/{id}", name="paiement_index", methods={"GET"})
      */
     public function index(PaiementRepository $paiementRepository, $id = null): Response
-    {   
+    {      
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if (!is_null($id)) {
             $paiements = $this->abonnementRepository->find($id)->getPaiements();
         }
@@ -80,7 +82,8 @@ class PaiementController extends AbstractController
      * @Route("/{id}/create", name="create_paiement", methods={"GET"})
      */
     public function create(Request $request, $id): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $abonnement = $this->abonnementRepository->find($id);
         $paiement = new Paiement();
         $paiement->setAbonnement($abonnement);
@@ -97,7 +100,8 @@ class PaiementController extends AbstractController
      * @Route("/{id}/detail", name="paiement_show", methods={"GET"})
      */
     public function show(Paiement $paiement): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('paiement/show.html.twig', [
             'paiement' => $paiement,
         ]);
@@ -107,7 +111,8 @@ class PaiementController extends AbstractController
      * @Route("/{id}/edit", name="paiement_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Paiement $paiement): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $form = $this->createForm(PaiementType::class, $paiement);
         $form->handleRequest($request);
 
@@ -127,7 +132,8 @@ class PaiementController extends AbstractController
      * @Route("/{id}/delete", name="paiement_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Paiement $paiement): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCsrfTokenValid('delete'.$paiement->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($paiement);

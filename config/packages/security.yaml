@@ -40,6 +40,7 @@ security:
             anonymous:  false
 
     access_control:
+        - { path: ^/dashboard, roles: [ IS_AUTHENTICATED_FULLY ] }
         - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
@@ -55,4 +56,4 @@ security:
         - { path: ^/sortie/caisse, role: ROLE_USER }
         - { path: ^/mode/paiement, role: ROLE_USER }
         - { path: ^/createClient, roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] }
-        - { path: ^/dashboard, roles: [ IS_AUTHENTICATED_FULLY ] }
+        

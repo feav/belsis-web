@@ -25,7 +25,8 @@ class AppareilController extends AbstractController
      * @Route("/", name="appareil_index", methods={"GET"})
      */
     public function index(AppareilRepository $appareilRepository): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('appareil/index.html.twig', [
             'appareils' => $appareilRepository->findAll(),
         ]);
@@ -35,7 +36,8 @@ class AppareilController extends AbstractController
      * @Route("/new", name="appareil_new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $appareil = new Appareil();
         $form = $this->createForm(AppareilType::class, $appareil);
         $form->handleRequest($request);
@@ -60,7 +62,8 @@ class AppareilController extends AbstractController
      * @Route("/{id}", name="appareil_show", methods={"GET"})
      */
     public function show(Appareil $appareil): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('appareil/show.html.twig', [
             'appareil' => $appareil,
         ]);
@@ -70,7 +73,8 @@ class AppareilController extends AbstractController
      * @Route("/{id}/edit", name="appareil_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Appareil $appareil): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $form = $this->createForm(AppareilType::class, $appareil);
         $form->handleRequest($request);
 
@@ -90,7 +94,8 @@ class AppareilController extends AbstractController
      * @Route("/{id}", name="appareil_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Appareil $appareil): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCsrfTokenValid('delete'.$appareil->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($appareil);

@@ -19,7 +19,8 @@ class PlanController extends AbstractController
      * @Route("/", name="plan_index", methods={"GET"})
      */
     public function index(PlanRepository $planRepository): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('plan/index.html.twig', [
             'plans' => $planRepository->findAll(),
         ]);
@@ -29,7 +30,8 @@ class PlanController extends AbstractController
      * @Route("/new", name="plan_new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $plan = new Plan();
         $form = $this->createForm(PlanType::class, $plan);
         $form->handleRequest($request);
@@ -59,6 +61,7 @@ class PlanController extends AbstractController
      */
     public function show(Plan $plan): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('plan/show.html.twig', [
             'plan' => $plan,
         ]);
@@ -68,7 +71,8 @@ class PlanController extends AbstractController
      * @Route("/{id}/edit", name="plan_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Plan $plan): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $form = $this->createForm(PlanType::class, $plan);
         $form->handleRequest($request);
 
@@ -94,7 +98,8 @@ class PlanController extends AbstractController
      * @Route("/{id}", name="plan_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Plan $plan): Response
-    {
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCsrfTokenValid('delete'.$plan->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($plan);
