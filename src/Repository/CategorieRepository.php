@@ -53,7 +53,7 @@ class CategorieRepository extends ServiceEntityRepository
     public function getByUser($user_id)
     {
         $sql = "
-            SELECT cat.id, cat.image, cat.description, cat.nom, prod.nom
+            SELECT DISTINCT cat.id, cat.image, cat.description, cat.nom
                 FROM categorie as cat
                 inner join produit as prod
                 inner join restaurant as resto
