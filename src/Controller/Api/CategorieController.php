@@ -46,10 +46,19 @@ class CategorieController extends APIController
             );
         }
 
-        $categorie = $this->categorieRepository->getByUser($user->getId());
+        $categories = $this->categorieRepository->findBy(['restaurant'=>$user->getRestaurant()]);
+        $categoriesArray = [];
 
+        foreach ($categories as $key => $value) {
+            $categoriesArray[] = [
+                'id'=>$value->getId(),
+                'nom'=>$value->getNom(),
+                'image'=>$value->getImage(),
+                'description'=>$value->getDescription(),
+            ];
+        }
         return $this->handleView($this->view(
-            $categorie, 
+            $categoriesArray, 
             Response::HTTP_OK)
         );
     }
