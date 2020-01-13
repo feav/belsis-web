@@ -73,7 +73,7 @@ class CommandeController extends APIController
             $entityManager->persist($commandeProduit);
         }
         else{
-            $produit = $this->produitRepository->find($request->get('product_id');
+            $produit = $this->produitRepository->find($request->get('product_id'));
             $commande = new Commande();
             $commande->setEtat(0); 
             $commande->setDate( new \Datetime() ); 
@@ -82,7 +82,7 @@ class CommandeController extends APIController
             $commande->setUser($user);
 
             $commandeProduit = new CommandeProduit();
-            $commandeProduit->setProduit($produit));
+            $commandeProduit->setProduit($produit);
             $commandeProduit->setCommande($commande);
             $commandeProduit->setQuantite($request->get('qty'));
             $commandeProduit->setPrix( ($request->get('qty')*$produit->getPrix()) );
