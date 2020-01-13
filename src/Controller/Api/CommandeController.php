@@ -44,7 +44,7 @@ class CommandeController extends APIController
 
     /**
      *Get Commandes id.
-     * @Rest\Post("/add", name="new")
+     * @Rest\Post("/add", name="new_one")
      *
      * @return Response
      */
