@@ -43,15 +43,17 @@
                     <tr>
                         <th>Produit</th>
                         <th>Quantite</th>
-                        <th>prix</th>
+                        <th>prix unitaire</th>
+                        <th>prix total</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for cmd in commandeProduit %}
                         <tr>
                             <td>{{cmd.produit.nom}}</td>
-                            <td>{{cmd.produit.quantite}}</td>
+                            <td>{{cmd.quantite}}</td>
                             <td>{{cmd.produit.prix}}</td>
+                            <td>{{cmd.prix}}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
