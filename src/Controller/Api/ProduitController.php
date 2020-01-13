@@ -50,11 +50,13 @@ class ProduitController extends APIController
         $produits = $this->produitRepository->findBy(['categorie'=>$request->get('cat_id')]);
         $produitsArray = [];
         foreach ($produits as $key => $value) {
+            $produit = $this->produitRepository->find($value->getId());
             $produitsArray[] = [
                 'id'=>$value->getId(),
                 'name'=> $value->getNom(),
                 'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getImage(),
                 'qty_stock'=>$value->getQuantite(),
+                'qty'=>0,
                 'price'=>$value->getPrix(),
             ];
         }
