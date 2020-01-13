@@ -1,11 +1,15 @@
-{% extends 'base.html.twig' %}
+{% extends 'backOffice/layout.html.twig' %}
 
-{% block title %}New Categorie{% endblock %}
+{% block title %}{{parent()}} | creation d'un categorie{% endblock %}
+{% block datatables_css %}{% endblock %}
 
-{% block body %}
-    <h1>Create new Categorie</h1>
-
-    {{ include('categorie/_form.html.twig') }}
-
-    <a href="{{ path('categorie_index') }}">back to list</a>
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Nouveau categorie</h1> <a href="{{path('categorie_index')}}" class="call-action btn">Liste categorie</a>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+    	{{ include('categorie/_form.html.twig') }}
+	    </div>
+	</div>
 {% endblock %}

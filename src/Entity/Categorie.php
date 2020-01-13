@@ -55,14 +55,6 @@ class Categorie
      */
     private $produits;
 
-    /**
-     * @ORM\Column(type="datetime")
-     *
-     * @var \DateTime
-     * * @Expose
-     */
-    private $updatedAt;
-
     public function __construct()
     {
         $this->produits = new ArrayCollection();
