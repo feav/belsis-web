@@ -82,7 +82,7 @@ class CommandeController extends APIController
                     $commandeProduit =  new CommandeProduit();
 
             $commande = new Commande();
-            $commande->setEtat(0); 
+            $commande->setEtat("en_cours"); 
             $commande->setDate( new \Datetime() ); 
             $commande->setUser($user); 
             $commande->setTable($this->tableRepository->find($request->get('table_id')));
@@ -360,6 +360,7 @@ class CommandeController extends APIController
                 'etat'=> $commande->getEtat(),
                 'qty'=> $totalProduit,
                 'price'=> $totalPrice,
+                'table'=> $commande->getTable()->getId(),
                 'detail'=> $commandeProduitArray
             ], 
             Response::HTTP_OK)
