@@ -167,6 +167,37 @@ class CommandeController extends APIController
     }
 
     /**
+     * @Rest\Get("/change-etat", name="change_etat")
+     *
+     * @return Response
+     */
+    public function changeEtat(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $commande = $this->commandeRepository->find($request->get('order_id'));
+        $commande->setEtat($request->get('etat'));
+
+        $entityManager->flush();
+
+        return $this->handleView($this->view(
+            [
+                'status' => 'success',
+                'message' => "Etat modifié"
+            ], 
+            Response::HTTP_OK)
+        );
+    }
+
+    /**
      *Remove product to commande.
      * @Rest\Get("/get-product-by-order", name="get_product_by_order")
      *
