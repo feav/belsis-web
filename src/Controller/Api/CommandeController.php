@@ -105,6 +105,85 @@ class CommandeController extends APIController
 
     /**
      *Get Commandes id.
+     * @Rest\Post("/add-many", name="new")
+     *
+     * @return Response
+     */
+    public function newManyCommande(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $entityManager = $this->getDoctrine()->getManager();
+        $productsCmd = $data['products_cmd'];   
+        $priceAdd = 0;
+        if($data['order_id']){
+            $commande = $this->commandeRepository->find($data['order_id']);
+            foreach ($productsCmd as $key => $value) {
+
+                $produit = $this->produitRepository->find($value['id']);
+                $commandeProduit = $this->isProductInCmd($value['id'], $data['order_id']);
+                if(is_null($commandeProduit))
+                    $commandeProduit =  new CommandeProduit();
+
+                $commandeProduit->setProduit($produit);
+                $commandeProduit->setCommande($commande);
+                $commandeProduit->setQuantite($value['qty']);
+                $commandeProduit->setPrix( ($value['qty']*$produit->getPrix()) );
+                $entityManager->persist($commandeProduit);                
+                $priceAdd += $commandeProduit->getPrix();
+            }
+            $commande->setMontant( $commande->getMontant() + $priceAdd );
+        }
+        else{
+            $commande = new Commande();
+            $commande->setEtat("en_cour"); 
+            $commande->setDate( new \Datetime() ); 
+            $commande->setUser($user); 
+            $commande->setTable($this->tableRepository->find($request->get('table_id')));
+            $commande->setUser($user);
+            $entityManager->persist($commande);
+
+            foreach ($productsCmd as $key => $value) {
+                $produit = $this->produitRepository->find($value['id']);
+                $commandeProduit = $this->isProductInCmd($value['id'], $data['order_id']);
+                if(is_null($commandeProduit))
+                    $commandeProduit =  new CommandeProduit();
+
+                $commandeProduit->setProduit($produit);
+                $commandeProduit->setCommande($commande);
+                $commandeProduit->setQuantite($value['qty']);
+                $commandeProduit->setPrix( ($value['qty']*$produit->getPrix()) );
+                $entityManager->persist($commandeProduit);                
+                $priceAdd += $commandeProduit->getPrix();
+            }
+            $commande->setMontant( $commande->getMontant() + $priceAdd );
+            $entityManager->persist($commande);
+        }
+
+        $entityManager->flush();
+
+        return $this->handleView($this->view(
+            $commande->getId(), 
+            Response::HTTP_OK)
+        );
+    }
+
+    public function isProductInCmd($produit_id, $commande_id){
+        $commandeProduit = $this->commandeProduitRepository ->findOneBy(['produit'=>$produit_id, 'commande'=>$commande_id]);
+
+        return $commandeProduit;
+    }
+
+    /**
+     *Get Commandes id.
      * @Rest\Get("/delete", name="delete_order")
      *
      * @return Response
