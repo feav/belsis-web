@@ -63,7 +63,10 @@ class CommandeController extends APIController
         if($request->get('order_id')){
             $commande = $this->commandeRepository->find($request->get('order_id'));
             $produit = $this->produitRepository->find($request->get('product_id'));
-            $commandeProduit = new CommandeProduit();
+            $commandeProduit = $this->isProductInCmd($request->get('product_id'), $request->get('order_id'));
+            if(is_null($commandeProduit))
+                $commandeProduit =  new CommandeProduit();
+
             $commandeProduit->setProduit($produit);
             $commandeProduit->setCommande($commande);
             $commandeProduit->setQuantite($request->get('qty'));
@@ -74,6 +77,10 @@ class CommandeController extends APIController
         }
         else{
             $produit = $this->produitRepository->find($request->get('product_id'));
+            $commandeProduit = $this->isProductInCmd($request->get('product_id'), $request->get('order_id'));
+                if(is_null($commandeProduit))
+                    $commandeProduit =  new CommandeProduit();
+
             $commande = new Commande();
             $commande->setEtat(0); 
             $commande->setDate( new \Datetime() ); 
@@ -81,7 +88,6 @@ class CommandeController extends APIController
             $commande->setTable($this->tableRepository->find($request->get('table_id')));
             $commande->setUser($user);
 
-            $commandeProduit = new CommandeProduit();
             $commandeProduit->setProduit($produit);
             $commandeProduit->setCommande($commande);
             $commandeProduit->setQuantite($request->get('qty'));
@@ -335,7 +341,8 @@ class CommandeController extends APIController
         $totalProduit = $totalPrice =0;
         foreach ($commandeProduit as $key => $value) {
             $commandeProduitArray[] = [
-                'id'=>$value->getId(),
+                'id'=>$value->getProduit()->getId(),
+                'detail_id'=>$value->getProduit()->getId(),
                 'name'=> $value->getProduit()->getNom(),
                 'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
                 'qty'=>$value->getQuantite(),
