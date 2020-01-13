@@ -13,6 +13,7 @@
                     <thead>
                         <tr>
                             <th>Id</th>
+                            <th>Restaurant</th>
                             <th>Nom</th>
                             <th>Description</th>
                             <th>Image</th>
@@ -23,6 +24,7 @@
                     {% for categorie in categories %}
                         <tr>
                             <td>{{ categorie.id }}</td>
+                            <td>{{ categorie.restaurant.nom }}</td>
                             <td>{{ categorie.nom }}</td>
                             <td>{{ categorie.description }}</td>
                             <td><img class="hg-35 in-table" src="{{ asset('images/uploads/categorie/' ~ categorie.image) }}" /></td>

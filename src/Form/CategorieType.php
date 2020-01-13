@@ -16,6 +16,7 @@ class CategorieType extends AbstractType
         $builder
             ->add('nom')
             ->add('description')
+            ->add('restaurant')
             ->add('image', FileType::class, [
                 // unmapped means that this field is not associated to any entity property
                 'mapped' => false,
