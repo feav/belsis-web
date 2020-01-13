@@ -35,6 +35,7 @@ class Commande
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\ModePaiement", inversedBy="commandes")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $modepaiement;
 

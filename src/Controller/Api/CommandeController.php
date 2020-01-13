@@ -44,6 +44,66 @@ class CommandeController extends APIController
 
     /**
      *Get Commandes id.
+     * @Rest\Post("/add", name="new")
+     *
+     * @return Response
+     */
+    public function newCommande(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        if($request->get('order_id')){
+            $commande = $this->commandeRepository->find($request->get('order_id'));
+            $produit = $this->produitRepository->find($request->get('product_id'));
+            $commandeProduit = new CommandeProduit();
+            $commandeProduit->setProduit($produit);
+            $commandeProduit->setCommande($commande);
+            $commandeProduit->setQuantite($request->get('qty'));
+            $commandeProduit->setPrix( ($request->get('qty')*$request->get('price')) );
+
+            $commande->setMontant( ($commande->getMontant() + $commandeProduit->getPrix()) );
+            $entityManager->persist($commandeProduit);
+        }
+        else{
+            $commande = new Commande();
+            $commande->setEtat(0); 
+            $commande->setDate( new \Datetime() ); 
+            $commande->setUser($user); 
+            $commande->setTable($this->tableRepository->find($request->get('table_id')));
+            $commande->setUser($user);
+
+            $commandeProduit = new CommandeProduit();
+            $commandeProduit->setProduit($this->produitRepository->find($request->get('product_id')));
+            $commandeProduit->setCommande($commande);
+            $commandeProduit->setQuantite($request->get('qty'));
+            $commandeProduit->setPrix( ($request->get('qty')*$request->get('price')) );
+            
+            $commande->setMontant( ($commande->getMontant() + $commandeProduit->getPrix()) );
+            $entityManager->persist($commande);
+            $entityManager->persist($commandeProduit);
+        }
+
+        $entityManager->flush();
+
+        return $this->handleView($this->view(
+            [
+                'status' => 'success',
+                'message' => "Commande ajoutée"
+            ], 
+            Response::HTTP_OK)
+        );
+    }
+
+    /**
+     *Get Commandes id.
      * @Rest\Get("/delete", name="delete_order")
      *
      * @return Response
