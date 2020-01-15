@@ -82,7 +82,7 @@ class CommandeController extends APIController
                     $commandeProduit =  new CommandeProduit();
 
             $commande = new Commande();
-            $commande->setEtat("en_cours"); 
+            $commande->setEtat("edition"); 
             $commande->setDate( new \Datetime() ); 
             $commande->setUser($user); 
             $commande->setTable($this->tableRepository->find($request->get('table_id')));
@@ -150,7 +150,7 @@ class CommandeController extends APIController
         }
         else{
             $commande = new Commande();
-            $commande->setEtat("en_cours"); 
+            $commande->setEtat("edition"); 
             $commande->setDate( new \Datetime() ); 
             $commande->setUser($user); 
             $commande->setTable($this->tableRepository->find($request->get('table_id')));
