@@ -439,7 +439,7 @@ class CommandeController extends APIController
                 'date_create'=> $value->getDate()->format('Y-m-d H:i:s'),
                 'etat'=> $value->getEtat(),
                 'name'=> $value->getCode(),
-                'table'=> $value->getTable()->getNom(),
+                'table'=> is_null($value->getTable()) ? "" : $value->getTable()->getNom(),
                 'qty'=> $this->getDetailNbrCmd($value)['totalProduit'],
                 'price'=> $this->getDetailNbrCmd($value)['totalPrice'],
             ];
