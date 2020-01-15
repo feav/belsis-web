@@ -360,7 +360,7 @@ class CommandeController extends APIController
                 'etat'=> $commande->getEtat(),
                 'qty'=> $totalProduit,
                 'price'=> $totalPrice,
-                'table'=> $commande->getTable()->getId(),
+                'table'=> is_null($commande->getTable()) ? "" : $commande->getTable()->getNom(),
                 'detail'=> $commandeProduitArray
             ], 
             Response::HTTP_OK)
@@ -477,7 +477,7 @@ class CommandeController extends APIController
                 'date'=> $value['date'],
                 'etat'=> $value['etat'],
                 'name'=> $value['code'],
-                'table'=> $commandeItem->getTable()->getNom(),
+                'table'=> is_null($commandeItem->getTable()) ? "" : $commandeItem->getTable()->getNom(),
                 'qty'=> $this->getDetailNbrCmd($commandeItem)['totalProduit'],
                 'price'=> $this->getDetailNbrCmd($commandeItem)['totalPrice'],
             ];
