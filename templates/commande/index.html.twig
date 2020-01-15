@@ -16,7 +16,6 @@
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Restaurant</th>
                             <th>Code</th>
                             <th>Date</th>
                             <th>Etat</th>
@@ -27,7 +26,6 @@
                     {% for commande in commandes %}
                         <tr>
                             <td>{{ commande.id }}</td>
-                            <td>{{ commande.restaurant_nom }}</td>
                             <td>{{ commande.code }}</td>
                             <td>{{ commande.date ? commande.date|date('d-m-Y H:i') : '' }}</td>
                             <td>{{ commande.etat }}</td>

@@ -61,7 +61,7 @@ class CommandeController extends Controller
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('commande/show.html.twig', [
             'commandeProduit'=> $commandeProduitRepository->findBy(['commande'=>$commande]),
-            'commande' => $commandeRepository->getCommandeDetail($commande->getId()),
+            'commande' => $commandeRepository->find($commande->getId()),
         ]);
     }
 

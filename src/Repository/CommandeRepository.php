@@ -52,7 +52,7 @@ class CommandeRepository extends ServiceEntityRepository
     public function getCommandeAll()
     {
         $sql = "
-            SELECT DISTINCT cmd.id, cmd.code, cmd.date, cmd.etat, prod.nom as produit_nom, resto.nom as restaurant_nom
+            SELECT DISTINCT cmd.id, cmd.code, cmd.date, cmd.etat
                 FROM commande as cmd
                 inner join commande_produit as cmd_prod
                 inner join produit as prod
@@ -64,6 +64,7 @@ class CommandeRepository extends ServiceEntityRepository
         $commandes = $this->em->prepare($sql);
         $commandes->execute();
         $commandes = $commandes->fetchAll();
+
         return $commandes;
     }
 
