@@ -62,6 +62,7 @@ class UserController extends APIController
               'email' => $user->getEmail(),
               'nom' => $user->getNom(),
               'prenom' => $user->getPrenom()
+              'role' => $user->getRole()
           ];
     }
 
