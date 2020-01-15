@@ -350,7 +350,7 @@ class CommandeController extends APIController
                 'price'=>$value->getPrix(),
             ];
             $totalProduit += $value->getQuantite();
-            $totalPrice += $value->getPrix() * $value->getQuantite();
+            $totalPrice += $value->getPrix();
         }
 
         return $this->handleView($this->view(
@@ -409,7 +409,7 @@ class CommandeController extends APIController
         $totalProduit = $totalPrice =0;
         foreach ($commande->getCommandeProduit() as $key => $value) {
             $totalProduit += $value->getQuantite();
-            $totalPrice += $value->getPrix() * $value->getQuantite();
+            $totalPrice += $value->getPrix();
         }
         return ['totalProduit'=> $totalProduit, 'totalPrice'=> $totalPrice ] ;
     }
