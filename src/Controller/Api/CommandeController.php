@@ -306,7 +306,7 @@ class CommandeController extends APIController
                 'id'=> $value->getProduit()->getId(),
                 'name'=> $value->getProduit()->getNom(),
                 'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
-                'price'=>$value->getPrix(),
+                'price'=>$value->getProduit()->getPrix(),
                 'qty_stock'=>$value->getProduit()->getQuantite(),
             ];
         }
