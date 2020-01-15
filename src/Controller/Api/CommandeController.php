@@ -306,7 +306,7 @@ class CommandeController extends APIController
                 'id'=> $value->getProduit()->getId(),
                 'name'=> $value->getProduit()->getNom(),
                 'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
-                'price'=>$value->getProduit()->getPrix(),
+                'price'=>$value->getPrix(),
                 'qty_stock'=>$value->getProduit()->getQuantite(),
             ];
         }
@@ -348,7 +348,6 @@ class CommandeController extends APIController
                 'qty'=>$value->getQuantite(),
                 'qty_stock'=>$value->getProduit()->getQuantite(),
                 'price'=>$value->getPrix(),
-                'total_price'=>$value->getPrix() * $value->getQuantite(),
             ];
             $totalProduit += $value->getQuantite();
             $totalPrice += $value->getPrix() * $value->getQuantite();
