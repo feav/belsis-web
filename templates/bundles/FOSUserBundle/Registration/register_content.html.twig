@@ -12,25 +12,25 @@
 			    </div>	
 			    <h1>Inscription</h1>
 			    <div>
-                	{{ form_widget(form.username, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+                	{{ form_widget(form.username, { 'attr': {'class': 'form-control', 'placeholder': "nom d'utilisateur",  'required':'required'}} ) }}
                 </div>
                 <div>
                 	{{ form_errors(form.username) }}
                 </div>
                 <div>
-                	{{ form_widget(form.email, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+                	{{ form_widget(form.email, { 'attr': {'class': 'form-control', 'placeholder': "email", 'required':'required'}} ) }}
                 </div>
                 <div>
                 	{{ form_errors(form.email) }}
                 </div>
                 <div>
-                	{{ form_widget(form.plainPassword.first, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+                	{{ form_widget(form.plainPassword.first, { 'attr': {'class': 'form-control', 'placeholder': "mot de passe", 'required':'required'}} ) }}
                 </div>
                 <div>
                 	{{ form_errors(form.plainPassword.first) }}
                 </div>
                 <div>
-                	{{ form_widget(form.plainPassword.second, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+                	{{ form_widget(form.plainPassword.second, { 'attr': {'class': 'form-control', 'placeholder': "confirmer le mot de passe", 'required':'required'}} ) }}
                 </div>
                 <div>
                 	{{ form_errors(form.plainPassword.second) }}
@@ -40,7 +40,7 @@
 
               <div class="separator">
                 <p class="change_link">Vous avez déjà un compte?&nbsp&nbsp&nbsp
-                  <a href="{{path('fos_user_registration_register')}}" class="to_register"> connectez-vous </a>
+                  <a href="{{path('fos_user_security_login')}}" class="to_register"> connectez-vous </a>
                 </p>
 
                 <div class="clearfix"></div>
