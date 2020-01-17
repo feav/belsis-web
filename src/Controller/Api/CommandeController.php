@@ -22,6 +22,7 @@ use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use App\Service\ProduitService;
 /**
  * API Controller.
  * @Route("/api/commande", name="api_order_")
@@ -33,13 +34,15 @@ class CommandeController extends APIController
     private $tableRepository;
     private $produitRepository;
     private $doctrine;
+    private $produit_s;
 
-    public function __construct(CommandeRepository $commandeRepository, CommandeProduitRepository $commandeProduitRepository, ProduitRepository $produitRepository, TableRepository $tableRepository)
+    public function __construct(CommandeRepository $commandeRepository, CommandeProduitRepository $commandeProduitRepository, ProduitRepository $produitRepository, TableRepository $tableRepository, ProduitService $produit_s)
     {
         $this->commandeRepository = $commandeRepository;
         $this->commandeProduitRepository = $commandeProduitRepository;
         $this->produitRepository = $produitRepository;
         $this->tableRepository = $tableRepository;
+        $this->produit_s = $produit_s;
     }
 
     /**
@@ -66,6 +69,12 @@ class CommandeController extends APIController
             $commandeProduit = $this->isProductInCmd($request->get('product_id'), $request->get('order_id'));
             if(is_null($commandeProduit))
                 $commandeProduit =  new CommandeProduit();
+            else{
+                $commande->setMontant($commande->getMontant() - $commandeProduit->getPrix() );
+                if($commande->getEtat() == "en_cours"){
+                    $this->produit_s->changeStock("add", $commandeProduit->getQuantite(), $request->get('product_id'));
+                }
+            }
 
             $commandeProduit->setProduit($produit);
             $commandeProduit->setCommande($commande);
@@ -73,6 +82,8 @@ class CommandeController extends APIController
             $commandeProduit->setPrix( ($request->get('qty')*$produit->getPrix()) );
 
             $commande->setMontant( ($commande->getMontant() + $commandeProduit->getPrix()) );
+            if($commande->getEtat() == "en_cours")
+                $this->produit_s->changeStock("remove", $request->get('qty'), $request->get('product_id') );
             $entityManager->persist($commandeProduit);
         }
         else{
@@ -130,23 +141,34 @@ class CommandeController extends APIController
         $entityManager = $this->getDoctrine()->getManager();
         $productsCmd = $data['products_cmd'];   
         $priceAdd = 0;
+        $qtyAdd = 0;
         if($data['order_id']){
             $commande = $this->commandeRepository->find($data['order_id']);
             foreach ($productsCmd as $key => $value) {
-
                 $produit = $this->produitRepository->find($value['id']);
                 $commandeProduit = $this->isProductInCmd($value['id'], $data['order_id']);
-                if(is_null($commandeProduit))
+                if(is_null($commandeProduit)){
                     $commandeProduit =  new CommandeProduit();
+                }
+                else{
+                    $commande->setMontant($commande->getMontant() - $commandeProduit->getPrix() );
+                    if($commande->getEtat() == "en_cours"){
+                        $this->produit_s->changeStock("add", $commandeProduit->getQuantite(), $value['id']);
+                    }
+                }
 
                 $commandeProduit->setProduit($produit);
                 $commandeProduit->setCommande($commande);
                 $commandeProduit->setQuantite($value['qty']);
                 $commandeProduit->setPrix( ($value['qty']*$produit->getPrix()) );
-                $entityManager->persist($commandeProduit);                
+                $entityManager->persist($commandeProduit); 
+
                 $priceAdd += $commandeProduit->getPrix();
+                if($commande->getEtat() == "en_cours")
+                    $this->produit_s->changeStock("remove", $value['qty'], $value['id']);
             }
             $commande->setMontant( $commande->getMontant() + $priceAdd );
+            
         }
         else{
             $commande = new Commande();
@@ -207,6 +229,7 @@ class CommandeController extends APIController
 
         $entityManager = $this->getDoctrine()->getManager();
         $commande = $this->commandeRepository->find($request->get('order_id'));
+
         $entityManager->remove($commande);
         $entityManager->flush();
 
@@ -217,6 +240,15 @@ class CommandeController extends APIController
             ], 
             Response::HTTP_OK)
         );
+    }
+
+    public function updateStockChangeCmd($commande, $request){
+        foreach ($commande->getCommandeProduit() as $key => $value) {
+            if( $request->get('etat') == "en_cours"  ){
+                $this->produit_s->changeStock("remove", $value->getQuantite(), $value->getProduit()->getId() );
+            }
+        }
+        return 1;
     }
 
     /**
@@ -238,6 +270,11 @@ class CommandeController extends APIController
 
         $entityManager = $this->getDoctrine()->getManager();
         $commandeProduit = $this->commandeProduitRepository->findOneBy(['produit'=>$request->get('product_id'), 'commande'=>$request->get('order_id')]);
+
+        $commande = $this->commandeRepository->find($request->get('order_id'));
+        if( $commande->getEtat() == "en_cours"  )
+            $this->produit_s->changeStock("add", $commandeProduit->getQuantite(), $request->get('product_id') );
+        $commande->setMontant($commande->getMontant() - $commandeProduit->getPrix());
 
         $entityManager->remove($commandeProduit);
         $entityManager->flush();
@@ -269,8 +306,8 @@ class CommandeController extends APIController
 
         $entityManager = $this->getDoctrine()->getManager();
         $commande = $this->commandeRepository->find($request->get('order_id'));
+        $this->updateStockChangeCmd($commande, $request);
         $commande->setEtat($request->get('etat'));
-
         $entityManager->flush();
 
         return $this->handleView($this->view(

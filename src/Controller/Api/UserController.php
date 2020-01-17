@@ -6,6 +6,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repository\CommandeRepository;
+use App\Repository\RestaurantRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -26,11 +27,13 @@ class UserController extends APIController
     private $commandeRepository;
     private $userRepository;
     private $encoderFactory;
+    private $restaurantRepository;
     
-    public function __construct(UserRepository $userRepository, EncoderFactoryInterface $encoderFactory, CommandeRepository $commandeRepository){
+    public function __construct(UserRepository $userRepository, EncoderFactoryInterface $encoderFactory, CommandeRepository $commandeRepository, RestaurantRepository $restaurantRepository){
       $this->userRepository = $userRepository;
       $this->encoderFactory = $encoderFactory;
       $this->commandeRepository = $commandeRepository;
+      $this->restaurantRepository = $restaurantRepository;
     }
 
     /**
@@ -53,6 +56,29 @@ class UserController extends APIController
         $infos = $this->getUserEssential($user);
 
         return $this->handleView($this->view($infos, Response::HTTP_OK));
+    }
+
+      /**
+     * @Rest\Get("/get-by-restaurant", name="get_by_restaurant")
+     *
+     * @return Response
+     */
+    public function getByResto(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        $users = $this->restaurantRepository->find($request->get('restaurant_id'))->getUsers();
+        $usersArray = [];
+        foreach ($users as $key => $value) {
+          $usersArray[] = $this->getUserEssential($value);
+        }
+        return $this->handleView($this->view($usersArray, Response::HTTP_OK));
     }
 
     public function getUserEssential(User $user){

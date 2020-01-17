@@ -1,8 +1,59 @@
-{% trans_default_domain 'FOSUserBundle' %}
+{% extends "@FOSUser/layout.html.twig" %}
 
-{{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register'}}) }}
-    {{ form_widget(form) }}
+{% block fos_user_content %}
+  {% trans_default_domain 'FOSUserBundle' %}
     <div>
-        <input type="submit" value="{{ 'registration.submit'|trans }}" />
+      <div class="login_wrapper">
+        <div class="animate form login_form">
+          <section class="login_content">
+		    {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register'}}) }}
+	    		<div class="my-custom-class-for-errors">
+			        {{ form_errors(form) }}
+			    </div>	
+			    <h1>Inscription</h1>
+			    <div>
+                	{{ form_widget(form.username, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+                </div>
+                <div>
+                	{{ form_errors(form.username) }}
+                </div>
+                <div>
+                	{{ form_widget(form.email, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+                </div>
+                <div>
+                	{{ form_errors(form.email) }}
+                </div>
+                <div>
+                	{{ form_widget(form.plainPassword.first, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+                </div>
+                <div>
+                	{{ form_errors(form.plainPassword.first) }}
+                </div>
+                <div>
+                	{{ form_widget(form.plainPassword.second, { 'attr': {'class': 'form-control', 'required':'required'}} ) }}
+                </div>
+                <div>
+                	{{ form_errors(form.plainPassword.second) }}
+                </div>
+
+               <div class="clearfix"></div>
+
+              <div class="separator">
+                <p class="change_link">Vous avez déjà un compte?&nbsp&nbsp&nbsp
+                  <a href="{{path('fos_user_registration_register')}}" class="to_register"> connectez-vous </a>
+                </p>
+
+                <div class="clearfix"></div>
+                <div>
+                	<input type="submit" value="{{ 'registration.submit'|trans }}" class="btn btn-info" />
+                </div>
+              </div>
+			{{ form_end(form) }}
+
+          </section>
+        </div>
+      </div>
     </div>
-{{ form_end(form) }}
+
+{% endblock fos_user_content %}
+

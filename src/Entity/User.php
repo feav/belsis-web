@@ -37,7 +37,7 @@ class User extends BaseUser
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Restaurant", inversedBy="users")
-     * @ORM\JoinColumn(nullable=false,onDelete="CASCADE")
+     * @ORM\JoinColumn(nullable=true,onDelete="CASCADE")
      */
     protected $restaurant;
 
@@ -62,6 +62,7 @@ class User extends BaseUser
     {
         parent::__construct();
         $this->commandes = new ArrayCollection();
+        $this->role = "serveur";
     }
 
     public function getId()

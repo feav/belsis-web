@@ -71,7 +71,7 @@ class UserController extends AbstractController
                 return $this->render('user/new.html.twig', [
                     'user' => $user,
                     'form' => $form->createView(),
-                    'array_roles'=>['serveur', 'admin', 'superadmin']
+                    'array_roles'=>['serveur', 'admin', 'superadmin', 'gestionnaire']
                 ]);
             }
             $userNameExist = $userManager->findUserByUsername($form->getData()->getUsername());
@@ -80,7 +80,7 @@ class UserController extends AbstractController
                 return $this->render('user/new.html.twig', [
                     'user' => $user,
                     'form' => $form->createView(),
-                    'array_roles'=>['serveur', 'admin', 'superadmin']
+                    'array_roles'=>['serveur', 'admin', 'superadmin', 'gestionnaire']
                 ]);
             }
 
@@ -102,7 +102,7 @@ class UserController extends AbstractController
         return $this->render('user/new.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
-            'array_roles'=>['serveur', 'admin', 'superadmin']
+            'array_roles'=>['serveur', 'admin', 'superadmin', 'gestionnaire']
         ]);
     }
 
@@ -142,7 +142,7 @@ class UserController extends AbstractController
         return $this->render('user/edit.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
-            'array_roles'=>['serveur', 'admin', 'superadmin']
+            'array_roles'=>['serveur', 'admin', 'superadmin', 'gestionnaire']
         ]);
     }
 
