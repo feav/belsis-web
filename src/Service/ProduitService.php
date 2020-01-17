@@ -3,6 +3,7 @@ namespace App\Service;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Security;
+use App\Repository\ProduitRepository;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -13,13 +14,14 @@ use App\Entity\Produit;
 
 class ProduitService{
     
-    public function __construct(ManagerRegistry $registry, RegistryInterface $doctrine){
-        $this->doctrine = $doctrine;
+    private $produitRepository;
+    public function __construct(ManagerRegistry $registry, ProduitRepository $produitRepository){
+        $this->produitRepository = $produitRepository;
     }
 
     public function changeStock($action, $qty, $id){
         
-        $produit = $this->doctrine->getRepository(Produit::class)->find($id);
+        $produit = $this->produitRepository->find($id);
         if($action == "add")
             $produit->setQuantite( $produit->getQuantite() + $qty);
         else
