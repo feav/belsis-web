@@ -60,6 +60,11 @@ class Commande
      */
     private $montant;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $cuisinier;
+
     public function __construct()
     {
         $this->commandeProduit = new ArrayCollection();
@@ -180,6 +185,18 @@ class Commande
     public function setMontant(int $montant): self
     {
         $this->montant = $montant;
+
+        return $this;
+    }
+
+    public function getCuisinier(): ?int
+    {
+        return $this->cuisinier;
+    }
+
+    public function setCuisinier(?int $cuisinier): self
+    {
+        $this->cuisinier = $cuisinier;
 
         return $this;
     }

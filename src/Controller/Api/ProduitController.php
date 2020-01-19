@@ -6,6 +6,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use App\Repository\ProduitRepository;
+use App\Repository\CategorieRepository;
+use App\Service\FileUploader;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Repository\RestaurantRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -27,12 +30,14 @@ class ProduitController extends APIController
     private $produitRepository;
     private $doctrine;
     private $restaurantRepository;
+    private $categorieRepository;
     private $produit_s;
 
-    public function __construct(ProduitRepository $produitRepository, RestaurantRepository $restaurantRepository, ProduitService $produit_s)
+    public function __construct(ProduitRepository $produitRepository, RestaurantRepository $restaurantRepository, ProduitService $produit_s, CategorieRepository $categorieRepository)
     {
         $this->produitRepository = $produitRepository;
         $this->restaurantRepository = $restaurantRepository;
+        $this->categorieRepository = $categorieRepository;
         $this->produit_s = $produit_s;
     }
 
@@ -76,7 +81,7 @@ class ProduitController extends APIController
 
       /**
      *Get User profile info.
-     * @Rest\Get("/get-by-restaurant", name="get_by_restaurant")
+     * @Rest\Get("/get-by-user-restaurant", name="get_by_user_restaurant")
      *
      * @return Response
      */
@@ -90,7 +95,7 @@ class ProduitController extends APIController
                     Response::HTTP_UNAUTHORIZED)
             );
         }
-        $produits = $this->restaurantRepository->find($request->get('restaurant_id'))->getProduits();
+        $produits = $this->restaurantRepository->find($user->getRestaurant()->getId())->getProduits();
         $produitsArray = [];
         foreach ($produits as $key => $value) {
           $produitsArray[] = [
@@ -129,5 +134,49 @@ class ProduitController extends APIController
 
         $entityManager->flush();
         return $this->handleView($this->view($produit->getId(), Response::HTTP_OK));
+    }
+
+    /**
+     * @Rest\Post("/add-product", name="add_product")
+     *
+     * @return Response
+     */
+    public function addProduct(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $produit = new Produit();
+        if($request->get('product_id'))
+            $produit = $this->produitRepository->find($request->get('product_id'));
+
+        $produit->setNom($request->get('nom'));
+        $produit->setPrix($request->get('prix'));
+        $produit->setCategorie($this->categorieRepository->find($request->get('categorie')));
+        $produit->setRestaurant($this->restaurantRepository->find($request->get('restaurant')));
+        $produit->setQuantite($request->get('quantite'));
+        /** @var UploadedFile $image */
+        $image = $request->get('image');
+        if ($image) {
+            $fileUploader = new FileUploader($this->getParameter("produits_directory"));
+            $newFilename = $fileUploader->upload($image);
+            $produit->setImage($newFilename);
+        }
+        
+        $entityManager->persist($produit);
+        $entityManager->flush();
+
+        return $this->handleView($this->view(
+            $produit->getId(), 
+            Response::HTTP_OK)
+        );
     }
 }

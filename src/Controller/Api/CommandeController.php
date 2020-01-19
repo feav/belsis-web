@@ -308,6 +308,9 @@ class CommandeController extends APIController
         $commande = $this->commandeRepository->find($request->get('order_id'));
         $this->updateStockChangeCmd($commande, $request);
         $commande->setEtat($request->get('etat'));
+        if($request->get('etat') == "prete")
+            $commande->setCuisinier($user->getId());
+
         $entityManager->flush();
 
         return $this->handleView($this->view(
@@ -525,4 +528,5 @@ class CommandeController extends APIController
             Response::HTTP_OK)
         );
     }
+
 }
