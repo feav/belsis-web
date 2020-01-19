@@ -399,7 +399,7 @@ class CommandeController extends APIController
                 'date_create'=> $commande->getDate()->format('Y-m-d H:i:s'),
                 'etat'=> $commande->getEtat(),
                 'qty'=> $totalProduit,
-                'cuisinier'=> $commande->getCuisinier(),
+                'cuisinier'=> $commande->getCuisinier()->getId(),
                 'price'=> $totalPrice,
                 'table'=> is_null($commande->getTable()) ? "" : $commande->getTable()->getNom(),
                 'detail'=> $commandeProduitArray
@@ -435,7 +435,7 @@ class CommandeController extends APIController
                 'name'=> $value->getCode(),
                 'table'=> $value->getTable()->getNom(),
                 'qty'=> $this->getDetailNbrCmd($value)['totalProduit'],
-                'cuisinier'=> $value->getCuisinier(),
+                'cuisinier'=> $value->getCuisinier()->getId(),
                 'price'=> $this->getDetailNbrCmd($value)['totalPrice'],
             ];
         }
@@ -484,7 +484,7 @@ class CommandeController extends APIController
                 'table'=> is_null($value->getTable()) ? "" : $value->getTable()->getNom(),
                 'qty'=> $this->getDetailNbrCmd($value)['totalProduit'],
                 'price'=> $this->getDetailNbrCmd($value)['totalPrice'],
-                'cuisinier'=> $value->getCuisinier(),
+                'cuisinier'=> $value->getCuisinier()->getId(),
             ];
         }
 
@@ -523,7 +523,7 @@ class CommandeController extends APIController
                 'table'=> is_null($commandeItem->getTable()) ? "" : $commandeItem->getTable()->getNom(),
                 'qty'=> $this->getDetailNbrCmd($commandeItem)['totalProduit'],
                 'price'=> $this->getDetailNbrCmd($commandeItem)['totalPrice'],
-                'cuisinier'=> $value->getCuisinier(),
+                'cuisinier'=> $value->getCuisinier()->getId(),
             ];
         }
 
