@@ -168,7 +168,7 @@ class ProduitController extends APIController
     }
 
     /**
-     * @Rest\Post("/add-product", name="add_product")
+     * @Rest\Post("/add", name="add_product")
      *
      * @return Response
      */
