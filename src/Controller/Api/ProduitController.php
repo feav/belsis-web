@@ -68,6 +68,8 @@ class ProduitController extends APIController
                 'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getImage(),
                 'qty_stock'=>$value->getQuantite(),
                 'qty'=>0,
+                'description'=> $value->getDescription(),
+
                 'price'=>$value->getPrix(),
             ];
         }
@@ -103,10 +105,39 @@ class ProduitController extends APIController
             'name'=> $value->getNom(),
             'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getImage(),
             'price'=>$value->getPrix(),
+            'description'=>$value->getDescription(),
             'qty_stock'=>$value->getQuantite(),
           ];
         }
         return $this->handleView($this->view($produitsArray, Response::HTTP_OK));
+    }
+
+      /**
+     * @Rest\Get("/get-by-id", name="get_by_id")
+     *
+     * @return Response
+     */
+    public function getById(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        $produit = $this->produitRepository->find($request->get('product_id'));
+        $produitArray = [
+            'id'=> $produit->getId(),
+            'name'=> $produit->getNom(),
+            'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$produit->getImage(),
+            'price'=>$produit->getPrix(),
+            'description'=>$produit->getDescription(),
+            'qty_stock'=>$produit->getQuantite(),
+        ];
+        
+        return $this->handleView($this->view($produitArray, Response::HTTP_OK));
     }
 
       /**
@@ -163,12 +194,17 @@ class ProduitController extends APIController
         $produit->setCategorie($this->categorieRepository->find($request->get('categorie')));
         $produit->setRestaurant($this->restaurantRepository->find($request->get('restaurant')));
         $produit->setQuantite($request->get('quantite'));
-        /** @var UploadedFile $image */
-        $image = $request->get('image');
-        if ($image) {
-            $fileUploader = new FileUploader($this->getParameter("produits_directory"));
-            $newFilename = $fileUploader->upload($image);
-            $produit->setImage($newFilename);
+        $produit->setDescription($request->get('description'));
+        
+        if ($request->get('image')) {
+            $base64_string = $request->get('image');
+            $nameImage = Date("Yds").".png";
+            $savePath = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath()."/uploads/produits/".$nameImage;
+            $savePath = $request->server->get('DOCUMENT_ROOT')."/uploads/produits/".$nameImage;
+            //$savePath = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$nameImage;
+            $data = explode( ',', $base64_string );
+            file_put_contents($savePath, base64_decode($data[1]));
+            $produit->setImage($nameImage);
         }
         
         $entityManager->persist($produit);
