@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Commande;
 use App\Form\CommandeType;
 use App\Repository\CommandeRepository;
+use App\Repository\RestaurantRepository;
+use App\Repository\UserRepository;
 use App\Repository\CommandeProduitRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,9 +25,14 @@ class CommandeController extends Controller
     public function index(CommandeRepository $commandeRepository): Response
     {      
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        //var_dump($commandeRepository->getCommandeAll());
+        $user = $this->getUser();
+        if($user->getRole() == "super_admin")
+            $commandes = $commandeRepository->getCommandeAll();
+        elseif($this->getUser()->getRole() == "admin")
+            $commandes = $commandeRepository->findBy(['restaurant'=>$user->getRestaurant()]);
+
         return $this->render('commande/index.html.twig', [
-            'commandes' => $commandeRepository->getCommandeAll(),
+            'commandes' => $commandes,
         ]);
     }
 
@@ -56,12 +63,14 @@ class CommandeController extends Controller
     /**
      * @Route("/{id}", name="commande_show", methods={"GET"})
      */
-    public function show(Commande $commande, CommandeRepository $commandeRepository, CommandeProduitRepository $commandeProduitRepository): Response
+    public function show(Commande $commande, CommandeRepository $commandeRepository, CommandeProduitRepository $commandeProduitRepository, RestaurantRepository $restaurantRepository, UserRepository $userRepository): Response
     {   
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('commande/show.html.twig', [
             'commandeProduit'=> $commandeProduitRepository->findBy(['commande'=>$commande]),
             'commande' => $commandeRepository->find($commande->getId()),
+            'restaurant' => $commande->getRestaurant() ? $restaurantRepository->find($commande->getRestaurant())->getNom() : "",
+            'cuisinier' => $commande->getCuisinier() ? $userRepository->find($commande->getCuisinier())->getNom() : "",
         ]);
     }
 

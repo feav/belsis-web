@@ -6,6 +6,7 @@ use App\Entity\Categorie;
 use App\Entity\Commande;
 use App\Repository\CategorieRepository;
 use App\Repository\RestaurantRepository;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 use App\Entity\User;
 use App\Entity\Restaurant;
 use App\Form\RestaurantType;
@@ -53,10 +54,15 @@ class CategorieController extends APIController
         $categoriesArray = [];
 
         foreach ($categories as $key => $value) {
+            if($value->getImage())
+                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getImage();
+            else
+                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg";
+
             $categoriesArray[] = [
                 'id'=>$value->getId(),
                 'nom'=>$value->getNom(),
-                'image'=>$value->getImage(),
+                'image'=>$image,
                 'description'=>$value->getDescription(),
             ];
         }
@@ -90,7 +96,7 @@ class CategorieController extends APIController
             $categorie = $this->categorieRepository->find($request->get('categorie_id'));
 
         $categorie->setNom($request->get('nom'));
-        $categorie->setRestaurant($this->restaurantRepository->find($request->get('restaurant')));
+        $categorie->setRestaurant($this->restaurantRepository->find($user->getRestaurant()->getId()));
         $categorie->setDescription($request->get('description'));
         
         if ($request->get('image')) {

@@ -6,15 +6,19 @@
 {% block bo_content %}
     <div class="row-title">
         <h1 class="title">Edition d'un abonnement</h1> 
-        <a href="{{path('abonnement_index')}}" class="call-action btn">Liste abonnement</a>
+        {% if app.user.role == "super_admin" %}
+        	<a href="{{path('abonnement_index')}}" class="call-action btn">Liste abonnement</a>
+        {% endif %}
     </div>
     <div class="x_panel">
         <div class="x_content">
 
 		    {{ include('abonnement/_form.html.twig', {'button_label': 'Modifier'}) }}
-			<div class="offset-md-3 btn-dlt-p-edit">
-		    	{{ include('abonnement/_delete_form.html.twig') }}
-		    </div>
+		    {% if app.user.role == "super_admin" %}
+				<div class="offset-md-3 btn-dlt-p-edit">
+			    	{{ include('abonnement/_delete_form.html.twig') }}
+			    </div>
+			{% endif %}
 		</div>
 	</div>
 {% endblock %}

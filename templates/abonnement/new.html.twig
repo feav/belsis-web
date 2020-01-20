@@ -5,7 +5,10 @@
 
 {% block bo_content %}
     <div class="row-title">
-        <h1 class="title">Nouveau abonnement</h1> <a href="{{path('abonnement_index')}}" class="call-action btn">Liste abonnement</a>
+        <h1 class="title">Nouveau abonnement</h1> 
+        {% if app.user.role == "super_admin" %}
+        	<a href="{{path('abonnement_index')}}" class="call-action btn">Liste abonnement</a>
+        {% endif %}
     </div>
     <div class="x_panel">
         <div class="x_content">

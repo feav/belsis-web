@@ -16,7 +16,6 @@
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Code</th>
                             <th>Date</th>
                             <th>Etat</th>
                             <th>actions</th>
@@ -26,7 +25,6 @@
                     {% for commande in commandes %}
                         <tr>
                             <td>{{ commande.id }}</td>
-                            <td>{{ commande.code }}</td>
                             <td>{{ commande.date ? commande.date|date('d-m-Y H:i') : '' }}</td>
                             <td>{{ commande.etat }}</td>
                             <td>
@@ -42,3 +40,8 @@
 {% endblock %}
 {% block validation_js %}
 {% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        $('.nav.side-menu .item-menu-commande').addClass('active');
+    </script>
+{% endblock %} 

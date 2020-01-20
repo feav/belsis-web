@@ -96,6 +96,7 @@ class CommandeController extends APIController
             $commande->setEtat("edition"); 
             $commande->setDate( new \Datetime() ); 
             $commande->setUser($user); 
+            $commande->setRestaurant($user->getRestaurant()->getId()); 
             $commande->setTable($this->tableRepository->find($request->get('table_id')));
             $commande->setUser($user);
 
@@ -175,6 +176,7 @@ class CommandeController extends APIController
             $commande->setEtat("edition"); 
             $commande->setDate( new \Datetime() ); 
             $commande->setUser($user); 
+            $commande->setRestaurant($user->getRestaurant()->getId()); 
             $commande->setTable($this->tableRepository->find($request->get('table_id')));
             $commande->setUser($user);
             $entityManager->persist($commande);
@@ -342,10 +344,15 @@ class CommandeController extends APIController
         $commandeProduit = $this->commandeProduitRepository->findBy(['commande'=>$request->get('order_id')]);
         $commandeProduitArray = [];
         foreach ($commandeProduit as $key => $value) {
+            if($value->getProduit()->getImage())
+                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage();
+            else
+                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg";
+
             $commandeProduitArray[] = [
                 'id'=> $value->getProduit()->getId(),
                 'name'=> $value->getProduit()->getNom(),
-                'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
+                'icon'=> $image,
                 'price'=>$value->getProduit()->getPrix(),
                 'qty_stock'=>$value->getProduit()->getQuantite(),
             ];
@@ -380,11 +387,16 @@ class CommandeController extends APIController
         $commandeProduitArray = [];
         $totalProduit = $totalPrice =0;
         foreach ($commandeProduit as $key => $value) {
+            if($value->getProduit()->getImage())
+                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage();
+            else
+                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg";
+            
             $commandeProduitArray[] = [
                 'id'=>$value->getProduit()->getId(),
                 'detail_id'=>$value->getId(),
                 'name'=> $value->getProduit()->getNom(),
-                'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage(),
+                'icon'=> $image,
                 'qty'=>$value->getQuantite(),
                 'qty_stock'=>$value->getProduit()->getQuantite(),
                 'price'=>$value->getPrix(),

@@ -31,8 +31,14 @@ class ProduitController extends AbstractController
     public function index(ProduitRepository $produitRepository): Response
     {   
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $user = $this->getUser();
+        if($user->getRole() == "super_admin")
+            $produits = $produitRepository->findAll();
+        elseif($this->getUser()->getRole() == "admin")
+            $produits = $produitRepository->findBy(['restaurant'=>$user->getRestaurant()]);
+
         return $this->render('produit/index.html.twig', [
-            'produits' => $produitRepository->findAll(),
+            'produits' => $produits
         ]);
     }
 

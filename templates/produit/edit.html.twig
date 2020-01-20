@@ -12,7 +12,7 @@
         <div class="x_content">
 		    {{ include('produit/_form.html.twig', {'button_label': 'Modifier'}) }}
 			<div class="offset-md-3 btn-dlt-p-edit">
-		    	{{ include('produit/_delete_form.html.twig') }}
+		    	{# {{ include('produit/_delete_form.html.twig') }} #}
 		    </div>
 		</div>
 	</div>
@@ -21,3 +21,8 @@
 
 {% block validation_js %}{% endblock %}
 {% block datatables_js %}{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        $('.nav.side-menu .item-menu-produit').addClass('active');
+    </script>
+{% endblock %} 

@@ -27,6 +27,7 @@ class PaiementController extends AbstractController
      */
     public function new(Request $request): Response
     {   
+        return new Response("Vous devez passer par une api");
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $paiement = new Paiement();
         $form = $this->createForm(PaiementType::class, $paiement);
@@ -52,11 +53,12 @@ class PaiementController extends AbstractController
     public function index(PaiementRepository $paiementRepository, $id = null): Response
     {      
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        if (!is_null($id)) {
+        if (!is_null($id) && $this->getUser()->getRole() != "super_admin") {
             $paiements = $this->abonnementRepository->find($id)->getPaiements();
         }
-        else
+        else{
             $paiements = $paiementRepository->findAll();
+        }
 
         $paiementsArray = [];
         foreach ($paiements as $key => $value) {
@@ -83,6 +85,7 @@ class PaiementController extends AbstractController
      */
     public function create(Request $request, $id): Response
     {   
+        return new Response("Vous devez passer par une api");
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $abonnement = $this->abonnementRepository->find($id);
         $paiement = new Paiement();
@@ -112,6 +115,7 @@ class PaiementController extends AbstractController
      */
     public function edit(Request $request, Paiement $paiement): Response
     {   
+        return new Response("Vous devez passer par une api");
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $form = $this->createForm(PaiementType::class, $paiement);
         $form->handleRequest($request);
@@ -133,6 +137,7 @@ class PaiementController extends AbstractController
      */
     public function delete(Request $request, Paiement $paiement): Response
     {   
+        return new Response("Vous devez passer par une api");
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCsrfTokenValid('delete'.$paiement->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();

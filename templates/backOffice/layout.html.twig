@@ -82,9 +82,11 @@
                       <li><a href="index.html">Dashboard</a></li>
                     </ul>#}
                   </li>
+                  {% if app.user.role == "super_admin" %}
                   <li class="item-menu-paiement">
                     <a href="{{path('paiement_index')}}">Paiement</a>
                   </li>
+                  {% endif %}
                   <li>
                   <li class="item-menu-abonnement">
                     <a href="{{path('abonnement_index')}}">Abonnement</a>

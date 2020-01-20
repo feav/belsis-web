@@ -6,8 +6,9 @@
 
 {% block bo_content %}
     <div class="row-title">
+        <h1 class="title">Restaurants</h1> 
         {% if app.user.role == "super_admin" %}
-            <h1 class="title">Restaurants</h1> <a href="{{path('restaurant_index')}}" class="call-action btn">Liste restaurant</a>
+            <a href="{{path('restaurant_index')}}" class="call-action btn">Liste restaurant</a>
         {% endif %}
     </div>
     <div class="x_panel">

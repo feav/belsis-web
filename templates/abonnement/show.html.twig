@@ -6,7 +6,13 @@
 
 {% block bo_content %}
     <div class="row-title">
-        <h1 class="title">Abonnements</h1> <a href="{{path('abonnement_index')}}" class="call-action btn">Liste abonnement</a>
+        <h1 class="title">Abonnements</h1> 
+        <div>
+            <a href="{{ path('paiement_index', {'id': abonnement.id}) }}" class="btn call-action">liste paiements</a>
+            {% if app.user.role == "super_admin" %}
+            <a href="{{path('abonnement_index')}}" class="call-action btn">Liste abonnement</a>
+            {% endif %}
+        </div>
     </div>
     <div class="x_panel">
         <div class="x_content">
@@ -39,7 +45,9 @@
 
     <div class="detail-group-btn">
         <a href="{{ path('abonnement_edit', {'id': abonnement.id}) }}" class="btn call-action">Modifier</a>
-        {{ include('abonnement/_delete_form.html.twig') }}
+        {#
+            {{ include('abonnement/_delete_form.html.twig') }}
+        #}
     </div>
 {% endblock %}
 

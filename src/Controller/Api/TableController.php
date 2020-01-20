@@ -88,7 +88,7 @@ class TableController extends APIController
         $table->setNom($request->get('nom'));
         $table->setDescription($request->get('description'));
         $table->setNumero($request->get('numero'));
-        $table->setRestaurant($this->restaurantRepository->find($request->get('restaurant')));
+        $table->setRestaurant($this->restaurantRepository->find($user->getRestaurant()->getId()));
         
         $entityManager->persist($table);
         $entityManager->flush();

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Abonnement;
 use App\Form\AbonnementType;
 use App\Repository\AbonnementRepository;
+use App\Repository\RestaurantRepository;
 use App\Repository\PlanRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,10 +23,12 @@ class AbonnementController extends AbstractController
 
     private $planRepository;
     private $abonnementRepository;
+    private $restaurantRepository;
     private $global_s;
     
-    public function __construct(AbonnementRepository $abonnementRepository, PlanRepository $planRepository, GlobalService $global_s){
+    public function __construct(AbonnementRepository $abonnementRepository, PlanRepository $planRepository, GlobalService $global_s, RestaurantRepository $restaurantRepository){
       $this->abonnementRepository = $abonnementRepository;
+      $this->restaurantRepository = $restaurantRepository;
       $this->planRepository = $planRepository;
       $this->global_s = $global_s;
     }
@@ -36,7 +39,12 @@ class AbonnementController extends AbstractController
     public function index(AbonnementRepository $abonnementRepository): Response
     {   
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $abonnements = $abonnementRepository->findAll();
+        if($this->getUser()->getRole() == "super_admin")
+            $abonnements = $abonnementRepository->findAll();
+        elseif ($this->getUser()->getRole() == "admin") {
+            return $this->redirectToRoute('abonnement_detail_admin', ['id'=>$this->getUser()->getRestaurant()->getId()]);
+        }
+
         $abonnementsArray = [];
         foreach ($abonnements as $key => $value) {
             $abonnementsArray[] =[
@@ -101,6 +109,18 @@ class AbonnementController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('abonnement/show.html.twig', [
             'abonnement' => $abonnement,
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/infos", name="abonnement_detail_admin", methods={"GET"})
+     */
+    public function infos($id): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $restaurant = $this->restaurantRepository->find($id);
+        return $this->render('abonnement/show.html.twig', [
+            'abonnement' => $this->abonnementRepository->findOneBy(['restaurant'=>$restaurant]) ,
         ]);
     }
 

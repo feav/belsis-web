@@ -17,8 +17,12 @@
                         <td>{{ commande.id }}</td>
                     </tr>
                     <tr>
-                        <th>Code</th>
-                        <td>{{ commande.code }}</td>
+                        <th>Restaurant</th>
+                        <td>{{ restaurant }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cuisinier</th>
+                        <td>{{ cuisinier }}</td>
                     </tr>
                     <tr>
                         <th>Date</th>
@@ -58,10 +62,15 @@
     </div>
 
     <div class="detail-group-btn">
-        {#<a href="{{ path('commande_edit', {'id': commande.id}) }}" class="btn call-action">Modifier</a>#}
-        {{ include('commande/_delete_form.html.twig') }}
+        <a href="{{ path('commande_edit', {'id': commande.id}) }}" class="btn call-action">Modifier</a>
+        {#{{ include('commande/_delete_form.html.twig') }}#}
     </div>
 {% endblock %}
 
 {% block validation_js %}{% endblock %}
 {% block datatables_js %}{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        $('.nav.side-menu .item-menu-commande').addClass('active');
+    </script>
+{% endblock %} 

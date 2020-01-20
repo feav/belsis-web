@@ -42,7 +42,6 @@ class ProduitController extends APIController
     }
 
     /**
-    * Get Commandes id
     * @Rest\Get("/get-by-categorie", name="get_by_categorie")
     *
     * @return Response
@@ -62,10 +61,15 @@ class ProduitController extends APIController
         $produitsArray = [];
         foreach ($produits as $key => $value) {
             $produit = $this->produitRepository->find($value->getId());
+            if($value->getImage())
+                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getImage();
+            else
+                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg";
+
             $produitsArray[] = [
                 'id'=>$value->getId(),
                 'name'=> $value->getNom(),
-                'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getImage(),
+                'icon'=> $image,
                 'qty_stock'=>$value->getQuantite(),
                 'qty'=>0,
                 'description'=> $value->getDescription(),
@@ -100,10 +104,14 @@ class ProduitController extends APIController
         $produits = $this->restaurantRepository->find($user->getRestaurant()->getId())->getProduits();
         $produitsArray = [];
         foreach ($produits as $key => $value) {
+            if($value->getImage())
+                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getImage();
+            else
+                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg";
           $produitsArray[] = [
             'id'=> $value->getId(),
             'name'=> $value->getNom(),
-            'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getImage(),
+            'icon'=> $image,
             'price'=>$value->getPrix(),
             'description'=>$value->getDescription(),
             'qty_stock'=>$value->getQuantite(),
@@ -128,10 +136,15 @@ class ProduitController extends APIController
             );
         }
         $produit = $this->produitRepository->find($request->get('product_id'));
+        if($produit->getImage())
+            $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$produit->getImage();
+        else
+            $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg";
+
         $produitArray = [
             'id'=> $produit->getId(),
             'name'=> $produit->getNom(),
-            'icon'=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$produit->getImage(),
+            'icon'=> $image,
             'price'=>$produit->getPrix(),
             'description'=>$produit->getDescription(),
             'qty_stock'=>$produit->getQuantite(),
@@ -192,7 +205,7 @@ class ProduitController extends APIController
         $produit->setNom($request->get('nom'));
         $produit->setPrix($request->get('prix'));
         $produit->setCategorie($this->categorieRepository->find($request->get('categorie')));
-        $produit->setRestaurant($this->restaurantRepository->find($request->get('restaurant')));
+        $produit->setRestaurant($this->restaurantRepository->find($user->getRestaurant()->getId()));
         $produit->setQuantite($request->get('quantite'));
         $produit->setDescription($request->get('description'));
         

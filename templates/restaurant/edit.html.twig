@@ -6,7 +6,9 @@
 {% block bo_content %}
     <div class="row-title">
         <h1 class="title">Edition d'un restaurant</h1> 
-        <a href="{{path('restaurant_index')}}" class="call-action btn">Liste restaurants</a>
+        {% if app.user.role == "super_admin" %}
+        	<a href="{{path('restaurant_index')}}" class="call-action btn">Liste restaurants</a>
+        {% endif %}
     </div>
     <div class="x_panel">
         <div class="x_content">
@@ -23,3 +25,8 @@
 
 {% block validation_js %}{% endblock %}
 {% block datatables_js %}{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        $('.nav.side-menu .item-menu-trafic').addClass('active');
+    </script>
+{% endblock %} 
