@@ -25,17 +25,17 @@ class Table
     private $nom;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $description;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="float", nullable=true)
      */
     private $coord_x;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="float", nullable=true)
      */
     private $coord_y;
 
@@ -49,6 +49,11 @@ class Table
      * @ORM\OneToMany(targetEntity="Commande", mappedBy="table", cascade={"remove"})
      */
     private $commandes;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $numero;
 
     public function __construct()
     {
@@ -72,12 +77,12 @@ class Table
         return $this;
     }
 
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription($description)
+    public function setDescription(string $description): self
     {
         $this->description = $description;
 
@@ -151,6 +156,18 @@ class Table
                 $commande->setTable(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNumero(): ?int
+    {
+        return $this->numero;
+    }
+
+    public function setNumero(?int $numero): self
+    {
+        $this->numero = $numero;
 
         return $this;
     }

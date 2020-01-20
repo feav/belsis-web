@@ -2,8 +2,9 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\Commande;
+use App\Entity\Table;
 use App\Repository\TableRepository;
+use App\Repository\RestaurantRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,11 +18,13 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 class TableController extends APIController
 {
     private $tableRepository;
+    private $restaurantRepository;
     private $doctrine;
 
-    public function __construct(TableRepository $tableRepository)
+    public function __construct(TableRepository $tableRepository, RestaurantRepository $restaurantRepository)
     {
         $this->tableRepository = $tableRepository;
+        $this->restaurantRepository = $restaurantRepository;
     }
 
     /**
@@ -56,6 +59,42 @@ class TableController extends APIController
 
         return $this->handleView($this->view(
             $tablesArray, 
+            Response::HTTP_OK)
+        );
+    }
+
+    /**
+     * @Rest\Post("/add", name="add_table")
+     *
+     * @return Response
+     */
+    public function addTable(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $table = new Table();
+        if($request->get('table_id'))
+            $table = $this->tableRepository->find($request->get('table_id'));
+
+        $table->setNom($request->get('nom'));
+        $table->setDescription($request->get('description'));
+        $table->setNumero($request->get('numero'));
+        $table->setRestaurant($this->restaurantRepository->find($request->get('restaurant')));
+        
+        $entityManager->persist($table);
+        $entityManager->flush();
+
+        return $this->handleView($this->view(
+            $table->getId(), 
             Response::HTTP_OK)
         );
     }

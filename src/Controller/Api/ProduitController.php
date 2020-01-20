@@ -199,9 +199,7 @@ class ProduitController extends APIController
         if ($request->get('image')) {
             $base64_string = $request->get('image');
             $nameImage = Date("Yds").".png";
-            $savePath = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath()."/uploads/produits/".$nameImage;
             $savePath = $request->server->get('DOCUMENT_ROOT')."/uploads/produits/".$nameImage;
-            //$savePath = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$nameImage;
             $data = explode( ',', $base64_string );
             file_put_contents($savePath, base64_decode($data[1]));
             $produit->setImage($nameImage);

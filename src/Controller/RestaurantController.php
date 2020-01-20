@@ -40,9 +40,15 @@ class RestaurantController extends AbstractController
     function index(RestaurantRepository $restaurantRepository): Response
     {   
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        return $this->render('restaurant/index.html.twig', [
+        if ($this->getUser()->getRole() == "super_admin") {
+           return $this->render('restaurant/index.html.twig', [
             'restaurants' => $restaurantRepository->findAll(),
-        ]);
+           ]);
+        }
+        elseif ($this->getUser()->getRole() == "admin") {
+            return $this->redirectToRoute('restaurant_detail_admin', ['id'=>$this->getUser()->getRestaurant()->getId()]);
+        }
+        return new Response('Vous n etes pas autorisé à acceder à cette page');
     }
 
     /**
@@ -91,10 +97,24 @@ class RestaurantController extends AbstractController
             'restaurant' => $restaurant,
             'nbrCommande' => $this->commandeRepository->getCommandeRestaurant($restaurant->getId())
         ]);
+    }   
+
+    /**
+     * @Route("/{id}/detail", name="restaurant_detail_admin", methods={"GET"})
+     */
+    public function detail($id, RestaurantRepository $restaurantRepository): Response
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $restaurant = $restaurantRepository->find($id);
+        return $this->render('restaurant/show.html.twig', [
+            'restaurant' => $restaurant,
+            'nbrCommande' => $this->commandeRepository->getCommandeRestaurant($restaurant->getId())
+        ]);
     }    
 
     /**
-     * @Route("/change-status/{id}", name="restaurant_status", methods={"GET"})
+     * @Route("/{id}/change-status", name="restaurant_status", methods={"GET"})
      */
     public function changeStatus(Request $request, Restaurant $restaurant): Response
     {      

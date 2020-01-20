@@ -17,7 +17,7 @@ class RestaurantType extends AbstractType
             ->add('nom')
             ->add('adresse')
             ->add('chiffreAffaire')
-            ->add('status', null, ['required' => false])
+            //->add('status', null, ['required' => false])
             ->add('logo', FileType::class, [
                 // unmapped means that this field is not associated to any entity property
                 'mapped' => false,

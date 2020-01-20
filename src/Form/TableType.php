@@ -14,8 +14,10 @@ class TableType extends AbstractType
         $builder
             ->add('nom')
             ->add('description')
-            ->add('coord_x')
-            ->add('coord_y')
+            ->add('coord_x', null, ['required' => false])
+            ->add('coord_y', null, ['required' => false])
+            ->add('numero')
+            ->add('restaurant')
         ;
     }
 

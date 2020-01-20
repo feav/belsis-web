@@ -32,13 +32,6 @@
         </div>
     </div>
     <div class="item form-group">
-        <label class="col-form-label col-md-3 col-sm-3 label-align" for="email">Activer <span class="required">*</span>
-        </label>
-        <div class="col-md-6 col-sm-6">
-            {{ form_widget(form.status, { 'attr': {'class': 'form-control', 'required':'required', 'style': 'width:18px'}} ) }}
-        </div>
-    </div>
-    <div class="item form-group">
         <label class="col-form-label col-md-3 col-sm-3 label-align" for="email">Logo <span class="required">*</span>
         </label>
         <div class="col-md-6 col-sm-6">
@@ -56,11 +49,13 @@
 	<div class="form-group">
 		<div class="offset-md-3">
 		  <button class="btn call-action">{{ button_label|default('Enregistrer') }}</button>
+          {% if app.user.role == "super_admin" %}
             {% if restaurant.id != "" %}
                 <a href="{{ path('restaurant_status', {'id': restaurant.id}) }}" class="btn btn-primary">
                 {{ restaurant.status ? 'Bloquer' : 'Activer' }}
                 </a>
             {% endif %}
+          {% endif %}
 		</div>
 	</div>
 {{ form_end(form) }}

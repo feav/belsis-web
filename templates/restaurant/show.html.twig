@@ -6,7 +6,9 @@
 
 {% block bo_content %}
     <div class="row-title">
-        <h1 class="title">Restaurants</h1> <a href="{{path('restaurant_index')}}" class="call-action btn">Liste restaurant</a>
+        {% if app.user.role == "super_admin" %}
+            <h1 class="title">Restaurants</h1> <a href="{{path('restaurant_index')}}" class="call-action btn">Liste restaurant</a>
+        {% endif %}
     </div>
     <div class="x_panel">
         <div class="x_content">
@@ -53,13 +55,22 @@
 
     <div class="detail-group-btn">
         <a href="{{ path('restaurant_edit', {'id': restaurant.id}) }}" class="btn call-action">Modifier</a>
-
-        <a href="{{ path('restaurant_status', {'id': restaurant.id}) }}" class="btn btn-primary">
-            {{ restaurant.status ? 'Bloquer' : 'Activer' }}
-        </a>
-        {{ include('restaurant/_delete_form.html.twig') }}
+        {% if app.user.role == "super_admin" %}
+            <a href="{{ path('restaurant_status', {'id': restaurant.id}) }}" class="btn btn-primary">
+                {{ restaurant.status ? 'Bloquer' : 'Activer' }}
+            </a>
+            {#
+            {{ include('restaurant/_delete_form.html.twig') }}
+            #}
+        {% endif %}
     </div>
 {% endblock %}
 
 {% block validation_js %}{% endblock %}
 {% block datatables_js %}{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        $('.nav.side-menu .item-menu-trafic').addClass('active');
+    </script>
+{% endblock %} 
+

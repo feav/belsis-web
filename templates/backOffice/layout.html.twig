@@ -68,45 +68,57 @@
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
               <div class="menu_section">
                 <h3></h3>
+                {% if app.user.role == "super_admin" or app.user.role == "admin" %}
                 <ul class="nav side-menu">
-                  <li>
-                    <a href="{{path('restaurant_index')}}">Trafic</a>
+                  <li class="item-menu-trafic">
+                    <a href="{{path('restaurant_index')}}">
+                      {% if app.user.role == "super_admin" %}
+                        Trafic
+                      {% elseif app.user.role == "admin" %}
+                        Accueil
+                      {% endif %}
+                    </a>
                     {#<ul class="nav child_menu" style="display: none;">
                       <li><a href="index.html">Dashboard</a></li>
                     </ul>#}
                   </li>
-                  <li>
+                  <li class="item-menu-paiement">
                     <a href="{{path('paiement_index')}}">Paiement</a>
                   </li>
                   <li>
-                  <li>
+                  <li class="item-menu-abonnement">
                     <a href="{{path('abonnement_index')}}">Abonnement</a>
                   </li>
-                  <li>
+                  {% if app.user.role == "super_admin" %}
+                  <li class="item-menu-plan">
                     <a href="{{path('plan_index')}}">Plan</a>
                   </li>
-                  <li>
+                  {% endif %}
+                  <li class="item-menu-produit">
                     <a href="{{path('produit_index')}}">Produit</a>
                   </li>
-                  <li>
+                  <li class="item-menu-commande">
                     <a href="{{path('commande_index')}}">commande</a>
                   </li>
-                  <li>
+                  {% if app.user.role == "super_admin" %}
+                  <li class="item-menu-modePaiement">
                     <a href="{{path('mode_paiement_index')}}">Mode paiement</a>
                   </li>
-                  <li>
+                  {% endif %}
+                  <li class="item-menu-categorie">
                     <a href="{{path('categorie_index')}}">Categorie</a>
                   </li>
-                  <li>
+                  <li class="item-menu-user">
                     <a href="{{path('user_index')}}">Utilisateurs</a>
                   </li>
-                  <li>
+                  <li class="item-menu-table">
                     <a href="{{path('table_index')}}">Table</a>
                   </li>
-                  <li>
+                  <li class="item-menu-appareil">
                     <a href="{{path('appareil_index')}}">Appareil</a>
                   </li>
                 </ul>
+                {% endif %}
               </div>
 
             </div>
@@ -171,6 +183,8 @@
     {% block validation_js %}
       <script src="{{asset('assets/theme/vendors/validator/validator.js')}}"></script>
     {% endblock %}  
+
+    {% block script %} {% endblock %} 
 
     <!-- Custom Theme Scripts -->
     <script src="{{asset('assets/custom/js/custom.min.js')}}"></script>

@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\Categorie;
 use App\Entity\Commande;
 use App\Repository\CategorieRepository;
+use App\Repository\RestaurantRepository;
 use App\Entity\User;
 use App\Entity\Restaurant;
 use App\Form\RestaurantType;
@@ -22,11 +23,13 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class CategorieController extends APIController
 {
     private $categorieRepository;
+    private $restaurantRepository;
     private $doctrine;
 
-    public function __construct(CategorieRepository $categorieRepository)
+    public function __construct(CategorieRepository $categorieRepository, RestaurantRepository $restaurantRepository)
     {
         $this->categorieRepository = $categorieRepository;
+        $this->restaurantRepository = $restaurantRepository;
     }
 
     /**
@@ -62,4 +65,50 @@ class CategorieController extends APIController
             Response::HTTP_OK)
         );
     }
+
+
+    /**
+     * @Rest\Post("/add", name="add_categorie")
+     *
+     * @return Response
+     */
+    public function addCategorie(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $categorie = new Categorie();
+        if($request->get('categorie_id'))
+            $categorie = $this->categorieRepository->find($request->get('categorie_id'));
+
+        $categorie->setNom($request->get('nom'));
+        $categorie->setRestaurant($this->restaurantRepository->find($request->get('restaurant')));
+        $categorie->setDescription($request->get('description'));
+        
+        if ($request->get('image')) {
+            $base64_string = $request->get('image');
+            $nameImage = Date("Yds").".png";
+            $savePath = $request->server->get('DOCUMENT_ROOT')."/images/uploads/categorie/".$nameImage;
+            $data = explode( ',', $base64_string );
+            file_put_contents($savePath, base64_decode($data[1]));
+            $categorie->setImage($nameImage);
+        }
+        
+        $entityManager->persist($categorie);
+        $entityManager->flush();
+
+        return $this->handleView($this->view(
+            $categorie->getId(), 
+            Response::HTTP_OK)
+        );
+    }
+
 }
