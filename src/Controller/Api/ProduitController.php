@@ -105,11 +105,11 @@ class ProduitController extends APIController
         $produitsArray = [];
         foreach ($produits as $key => $value) {
             if($value->getImage())
-                $image = str_replace("index.php", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getImage());
+                $image = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getImage());
                  
             else
-                $image = str_replace("index.php", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg");
-            
+                $image = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg");
+
           $produitsArray[] = [
             'id'=> $value->getId(),
             'name'=> $value->getNom(),

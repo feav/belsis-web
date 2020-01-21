@@ -50,11 +50,15 @@ class RestaurantController extends APIController
         }
 
         $restaurant = $user->getRestaurant();
+        if($value->getImage())
+          $image = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/uploads/restaurant/".$restaurant->getLogo());
+        else
+          $image = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg");
         $restaurantArray = [
           "id"=> $restaurant->getId(),
           "nom"=> $restaurant->getNom(),
           "adresse"=> $restaurant->getAdresse(),
-          "logo"=> $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/uploads/restaurant/".$restaurant->getLogo(),
+          "logo"=> $image,
           "devise"=> $restaurant->getDevise(),
           "chiffre_affaire"=> $restaurant->getChiffreAffaire(),
           "status"=> $restaurant->getStatus(),
