@@ -133,16 +133,16 @@ class UserController extends APIController
 
     public function getUserEssential(User $user){
 
-      $commandeProduit = [];
+      $commandes = [];
       if($user->getRole() == "cuisinier")
-        $commandeProduit = $this->commandeRepository->getByCuisinier($user->getId());
+        $commandes = $this->commandeRepository->getByCuisinier($user->getId());
       elseif($user->getRole() == "serveur")
-        $commandeProduit = $this->commandeRepository->getByServeur($user->getId());
+        $commandes = $this->commandeRepository->getByServeur($user->getId());
       
-      $totalProduit = $totalPrice =0;
-      foreach ($commandeProduit as $key => $value) {
-        $totalProduit += $value['quantite'];
-        $totalPrice += $value['prix'];
+      $totalCommande = $totalPrice =0;
+      foreach ($commandes as $key => $value) {
+        $totalCommande++;
+        $totalPrice += $value['montant'];
       }
       return [
               'id' => $user->getId(),
@@ -152,7 +152,7 @@ class UserController extends APIController
               'prenom' => $user->getPrenom(),
               'role' => $user->getRole(),
               'avatar' => $user->getAvatar(),
-              'totalProduit' => $totalProduit,
+              'totalProduit' => $totalCommande,
               'totalPrice' => $totalPrice
           ];
     }

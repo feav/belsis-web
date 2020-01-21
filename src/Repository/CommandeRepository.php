@@ -90,30 +90,26 @@ class CommandeRepository extends ServiceEntityRepository
     public function getByCuisinier($cuisinier_id)
     {
         $sql = "
-            SELECT cmd_prod.quantite, cmd_prod.prix
-                FROM commande_produit as cmd_prod
-                inner join commande as cmd
-                WHERE  cmd.id = cmd_prod.commande_id
-                AND cmd.cuisinier = :cuisinier_id
+            SELECT cmd.montant
+                FROM commande as cmd
+                WHERE cmd.cuisinier = :cuisinier_id
                 AND cmd.etat != :etat";
-        $commandesProduit = $this->em->prepare($sql);
-        $commandesProduit->execute(['cuisinier_id'=>$cuisinier_id, 'etat'=>"corbeille"]);
-        $commandesProduit = $commandesProduit->fetchAll();
-        return $commandesProduit;
+        $commandes = $this->em->prepare($sql);
+        $commandes->execute(['cuisinier_id'=>$cuisinier_id, 'etat'=>"corbeille"]);
+        $commandes = $commandes->fetchAll();
+        return $commandes;
     }
     public function getByServeur($user_id)
     {
         $sql = "
-            SELECT cmd_prod.quantite, cmd_prod.prix
-                FROM commande_produit as cmd_prod
-                inner join commande as cmd
-                WHERE  cmd.id = cmd_prod.commande_id
-                AND cmd.user_id = :user_id
+            SELECT cmd.montant
+                FROM commande as cmd
+                WHERE  cmd.user_id = :user_id
                 AND cmd.etat != :etat";
-        $commandesProduit = $this->em->prepare($sql);
-        $commandesProduit->execute(['user_id'=>$user_id, 'etat'=>"corbeille"]);
-        $commandesProduit = $commandesProduit->fetchAll();
-        return $commandesProduit;
+        $commandes = $this->em->prepare($sql);
+        $commandes->execute(['user_id'=>$user_id, 'etat'=>"corbeille"]);
+        $commandes = $commandes->fetchAll();
+        return $commandes;
     }
 
     public function getCommandeDetail($user_id)
