@@ -144,6 +144,12 @@ class UserController extends APIController
         $totalCommande++;
         $totalPrice += $value['montant'];
       }
+
+      if($user->getAvatar())
+            $avatar = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/dynamiques/profile/".$user->getAvatar();
+        else
+            $avatar = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/dynamiques/profile/user.png";
+
       return [
               'id' => $user->getId(),
               'username' => $user->getUserName(),
@@ -151,10 +157,100 @@ class UserController extends APIController
               'nom' => $user->getNom(),
               'prenom' => $user->getPrenom(),
               'role' => $user->getRole(),
-              'avatar' => $user->getAvatar(),
+              'avatar' => $avatar,
               'totalCommande' => $totalCommande,
               'totalPrice' => $totalPrice
           ];
     }
 
+    /**
+     * @Rest\Post("/add", name="add_user")
+     *
+     * @return Response
+     */
+    public function addUser(Request $request, UserManagerInterface $userManager)
+    {
+        $userConnect = $this->authToken($request);
+        if (is_array($userConnect)) {
+            return $this->handleView(
+                $this->view(
+                    $userConnect,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $user = new User();
+        if($request->get('user_id'))
+          $user = $this->userRepository->find($request->get('user_id'));
+
+        $existEmail = $userManager->findUserByEmail($request->get('email'));
+        if(!is_null($existEmail) && !$request->get('user_id')){
+            return $this->handleView(
+                $this->view(
+                    [
+                      "status" => "error",
+                      "message"=> "Un utilisateur existe déjà avec cet email."
+                    ],
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        $userNameExist = $userManager->findUserByUsername($request->get('username'));
+        if(!is_null($userNameExist) && !$request->get('user_id')){
+            return $this->handleView(
+                $this->view(
+                    [
+                      "status" => "error",
+                      "message"=> "Un utilisateur existe déjà avec ce nom d\'utilisateur."
+                    ],
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        $role = $request->get('role');
+        if($role){
+            $user->setRoles(['ROLE_'.strtolower($role)]); 
+            $user->setRole($role);
+        }
+        if($request->get('password'))
+            $user->setPlainPassword($request->get('password'));
+
+        $user->setNom($request->get('nom'));
+        $user->setPrenom($request->get('prenom'));
+        $user->setUsername($request->get('username'));
+        $user->setUsernameCanonical($request->get('username'));
+        $user->setEmail($request->get('email'));
+        $user->setEmailCanonical($request->get('email'));
+        $user->setEnabled(true);
+        $user->setRestaurant($this->restaurantRepository->find($userConnect->getRestaurant()->getId()));
+        
+        if ($request->get('avatar')) {
+            $nameImage = "avatar-".Date("Yds").".png";
+            $savePath = $request->server->get('DOCUMENT_ROOT')."/images/dynamiques/profile/".$nameImage;
+
+            if(strpos($request->get('avatar'), "data:image/") !== false ){
+                $base64_string = $request->get('avatar');
+                $data = explode( ',', $base64_string );
+                file_put_contents($savePath, base64_decode($data[1]));
+            }
+            else{
+                $ch = curl_init($request->get('avatar'));
+                $fp = fopen($savePath, 'wb');
+                curl_setopt($ch, CURLOPT_FILE, $fp);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_exec($ch);
+                curl_close($ch);
+                fclose($fp);
+            }
+            $user->setAvatar($nameImage);
+        }
+        
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return $this->handleView($this->view(
+            $user->getId(), 
+            Response::HTTP_OK)
+        );
+    }
 }
