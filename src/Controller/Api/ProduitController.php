@@ -152,7 +152,7 @@ class ProduitController extends APIController
             'price'=>$produit->getPrix(),
             'description'=>$produit->getDescription(),
             'qty_stock'=>$produit->getQuantite(),
-            'can_delete' =>  count($this->commandeProduitRepository->findBy(['produit'=>$produit->getId()])),
+            'in_commande' =>  count($this->commandeProduitRepository->findBy(['produit'=>$produit->getId()])),
         ];
         
         return $this->handleView($this->view($produitArray, Response::HTTP_OK));
