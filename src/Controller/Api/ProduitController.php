@@ -39,6 +39,7 @@ class ProduitController extends APIController
     {
         $this->produitRepository = $produitRepository;
         $this->restaurantRepository = $restaurantRepository;
+        $this->commandeProduitRepository = $commandeProduitRepository;
         $this->categorieRepository = $categorieRepository;
         $this->produit_s = $produit_s;
     }
