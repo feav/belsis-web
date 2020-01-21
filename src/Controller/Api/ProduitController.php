@@ -156,6 +156,40 @@ class ProduitController extends APIController
     }
 
       /**
+     * @Rest\Get("/get-by-categorie", name="get_by_categorie")
+     *
+     * @return Response
+     */
+    public function getByCategorie(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        $produits = $this->produitRepository->findBy(['categorie'=>$request->get('categorie_id')]);
+        $produitsArray = [];
+        foreach ($produits as $key => $value) {
+            if($value->getImage())
+                $image = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getImage());
+            else
+                $image = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg");
+            $produitsArray[] = [
+                'id'=> $value->getId(),
+                'name'=> $value->getNom(),
+                'icon'=> $image,
+                'price'=>$value->getPrix(),
+                'description'=>$value->getDescription(),
+                'qty_stock'=>$value->getQuantite(),
+            ];
+        }
+        return $this->handleView($this->view($produitsArray, Response::HTTP_OK));
+    }
+
+      /**
      *Get User profile info.
      * @Rest\Get("/edit-stock", name="edit_stock")
      *
