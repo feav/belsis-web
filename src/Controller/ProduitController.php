@@ -36,22 +36,10 @@ class ProduitController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user = $this->getUser();
         if($user->getRole() == "super_admin")
-            $produits = $produitRepository->findAll();
+            $produits = $produitRepository->findBy(['is_delete'=>false]);
         elseif($this->getUser()->getRole() == "admin")
-            $produits = $produitRepository->findBy(['restaurant'=>$user->getRestaurant()]);
-
-
-        $entityManager = $this->getDoctrine()->getManager();
-        foreach ($produits as $key => $value) {
-            if(is_null($value->getIsDelete())){
-                $value->setIsDelete(false);
-                $entityManager->persist($value);
-            }
-        }
-        $entityManager->flush();
-
-
-
+            $produits = $produitRepository->findBy(['restaurant'=>$user->getRestaurant(), 'is_delete'=>false]);
+        
         return $this->render('produit/index.html.twig', [
             'produits' => $produits
         ]);

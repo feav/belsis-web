@@ -112,14 +112,14 @@ class ProduitController extends APIController
             else
                 $image = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg");
 
-          $produitsArray[] = [
-            'id'=> $value->getId(),
-            'name'=> $value->getNom(),
-            'icon'=> $image,
-            'price'=>$value->getPrix(),
-            'description'=>$value->getDescription(),
-            'qty_stock'=>$value->getQuantite(),
-          ];
+            $produitsArray[] = [
+                'id'=> $value->getId(),
+                'name'=> $value->getNom(),
+                'icon'=> $image,
+                'price'=>$value->getPrix(),
+                'description'=>$value->getDescription(),
+                'qty_stock'=>$value->getQuantite(),
+            ];
         }
         return $this->handleView($this->view($produitsArray, Response::HTTP_OK));
     }
@@ -221,6 +221,17 @@ class ProduitController extends APIController
             $data = explode( ',', $base64_string );
             file_put_contents($savePath, base64_decode($data[1]));
             $produit->setImage($nameImage);
+        }
+        elseif ($request->get('image_url')) {
+            $nameImage = Date("Yds").".png";
+            $savePath = $request->server->get('DOCUMENT_ROOT')."/uploads/produits/".$nameImage;
+            $ch = curl_init($request->get('image_url'));
+            $fp = fopen($savePath, 'wb');
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_exec($ch);
+            curl_close($ch);
+            fclose($fp);
         }
         
         $entityManager->persist($produit);
