@@ -345,9 +345,9 @@ class CommandeController extends APIController
         $commandeProduitArray = [];
         foreach ($commandeProduit as $key => $value) {
             if($value->getProduit()->getImage())
-                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage();
+                $image = str_replace("index.php", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage());
             else
-                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg";
+                $image = str_replace("index.php", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg");
 
             $commandeProduitArray[] = [
                 'id'=> $value->getProduit()->getId(),
@@ -391,7 +391,7 @@ class CommandeController extends APIController
                 $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getProduit()->getImage();
             else
                 $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg";
-            
+
             $commandeProduitArray[] = [
                 'id'=>$value->getProduit()->getId(),
                 'detail_id'=>$value->getId(),
