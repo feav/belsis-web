@@ -5,6 +5,7 @@ use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 use App\Repository\CommandeRepository;
 use App\Repository\CommandeProduitRepository;
 use App\Repository\RestaurantRepository;
