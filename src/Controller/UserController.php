@@ -30,24 +30,6 @@ class UserController extends AbstractController
     public function index(UserRepository $userRepository): Response
     {   
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $users = $userRepository->findAll();
-        foreach ($users as $key => $value) {
-            if($this->user_s->getSuperRole($value->getRoles()) == "ROLE_SUPER_ADMIN"){
-                $value->setRole("super_admin");
-            }
-            elseif($this->user_s->getSuperRole($value->getRoles()) == "SERVEUR"){
-                $value->setRole("serveur");
-            }
-            elseif($this->user_s->getSuperRole($value->getRoles()) == "ROLE_SERVEUR"){
-                $value->setRole("serveur");
-            }
-            elseif($this->user_s->getSuperRole($value->getRoles()) == "ROLE_ADMIN"){
-                $value->setRole("admin");
-            }
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->flush();
-        }
 
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAll(),
@@ -71,7 +53,7 @@ class UserController extends AbstractController
                 return $this->render('user/new.html.twig', [
                     'user' => $user,
                     'form' => $form->createView(),
-                    'array_roles'=>['serveur', 'admin', 'superadmin', 'gestionnaire']
+                    'array_roles'=>['serveur', 'admin', 'superadmin', 'gestionnaire', 'cuisinier', 'barman']
                 ]);
             }
             $userNameExist = $userManager->findUserByUsername($form->getData()->getUsername());
@@ -80,7 +62,7 @@ class UserController extends AbstractController
                 return $this->render('user/new.html.twig', [
                     'user' => $user,
                     'form' => $form->createView(),
-                    'array_roles'=>['serveur', 'admin', 'superadmin', 'gestionnaire']
+                    'array_roles'=>['serveur', 'admin', 'superadmin', 'gestionnaire', 'cuisinier', 'barman']
                 ]);
             }
 
@@ -102,7 +84,7 @@ class UserController extends AbstractController
         return $this->render('user/new.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
-            'array_roles'=>['serveur', 'admin', 'superadmin', 'gestionnaire']
+            'array_roles'=>['serveur', 'admin', 'superadmin', 'gestionnaire', 'cuisinier', 'barman']
         ]);
     }
 
@@ -142,7 +124,7 @@ class UserController extends AbstractController
         return $this->render('user/edit.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
-            'array_roles'=>['serveur', 'admin', 'superadmin', 'gestionnaire']
+            'array_roles'=>['serveur', 'admin', 'superadmin', 'gestionnaire', 'cuisinier', 'barman']
         ]);
     }
 

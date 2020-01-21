@@ -46,6 +46,11 @@ class User extends BaseUser
      */
     private $role;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $avatar;
+
     public function getRestaurant()
     {
         return $this->restaurant;
@@ -137,6 +142,18 @@ class User extends BaseUser
     public function setRole(string $role): self
     {
         $this->role = $role;
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
+
         return $this;
     }
 }

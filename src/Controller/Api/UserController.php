@@ -6,6 +6,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repository\CommandeRepository;
+use App\Repository\CommandeProduitRepository;
 use App\Repository\RestaurantRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\FOSRestController;
@@ -14,6 +15,7 @@ use FOS\UserBundle\Model\UserManagerInterface;
 
 use App\Entity\Commande;
 use App\Entity\User;
+use App\Entity\CommandeProduit;
 use App\Entity\Restaurant;
 use App\Form\RestaurantType;
 use App\Repository\UserRepository;
@@ -28,12 +30,14 @@ class UserController extends APIController
     private $userRepository;
     private $encoderFactory;
     private $restaurantRepository;
+    private $commandeProduitRepository;
     
-    public function __construct(UserRepository $userRepository, EncoderFactoryInterface $encoderFactory, CommandeRepository $commandeRepository, RestaurantRepository $restaurantRepository){
+    public function __construct(UserRepository $userRepository, EncoderFactoryInterface $encoderFactory, CommandeRepository $commandeRepository, RestaurantRepository $restaurantRepository, CommandeProduitRepository $commandeProduitRepository){
       $this->userRepository = $userRepository;
       $this->encoderFactory = $encoderFactory;
       $this->commandeRepository = $commandeRepository;
       $this->restaurantRepository = $restaurantRepository;
+      $this->commandeProduitRepository = $commandeProduitRepository;
     }
 
     /**
@@ -81,14 +85,75 @@ class UserController extends APIController
         return $this->handleView($this->view($usersArray, Response::HTTP_OK));
     }
 
+      /**
+     * @Rest\Get("/get-by-user-restaurant", name="get_by_user_restaurant")
+     *
+     * @return Response
+     */
+    public function getByUserResto(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        $users = $user->getRestaurant()->getUsers();
+        $usersArray = [];
+        foreach ($users as $key => $value) {
+          $usersArray[] = $this->getUserEssential($value);
+        }
+        return $this->handleView($this->view($usersArray, Response::HTTP_OK));
+    }
+
+    /**
+     * @Rest\Get("/get-by-role", name="get_by_role")
+     *
+     * @return Response
+     */
+    public function getByRole(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        $users = $this->userRepository->findBy(['restaurant'=>$request->get('restaurant_id'), 'role'=>$request->get('role')]);
+        $usersArray = [];
+        foreach ($users as $key => $value) {
+          $usersArray[] = $this->getUserEssential($value);
+        }
+        return $this->handleView($this->view($usersArray, Response::HTTP_OK));
+    }
+
     public function getUserEssential(User $user){
+
+      $commandeProduit = [];
+      if($user->getRole() == "cuisinier")
+        $commandeProduit = $this->commandeRepository->getByCuisinier($user->getId());
+      elseif($user->getRole() == "serveur")
+        $commandeProduit = $this->commandeRepository->getByServeur($user->getId());
+      
+      $totalProduit = $totalPrice =0;
+      foreach ($commandeProduit as $key => $value) {
+        $totalProduit += $value['quantite'];
+        $totalPrice += $value['prix'];
+      }
       return [
               'id' => $user->getId(),
               'username' => $user->getUserName(),
               'email' => $user->getEmail(),
               'nom' => $user->getNom(),
               'prenom' => $user->getPrenom(),
-              'role' => $user->getRole()
+              'role' => $user->getRole(),
+              'avatar' => $user->getAvatar(),
+              'totalProduit' => $totalProduit,
+              'totalPrice' => $totalPrice
           ];
     }
 
