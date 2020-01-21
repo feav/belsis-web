@@ -59,6 +59,11 @@ class Produit
      */
     private $description;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $is_delete;
+
     public function __construct()
     {
         $this->commandeProduit = new ArrayCollection();
@@ -186,6 +191,18 @@ class Produit
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getIsDelete(): ?bool
+    {
+        return $this->is_delete;
+    }
+
+    public function setIsDelete(?bool $is_delete): self
+    {
+        $this->is_delete = $is_delete;
 
         return $this;
     }

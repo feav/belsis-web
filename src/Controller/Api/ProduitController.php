@@ -251,7 +251,11 @@ class ProduitController extends APIController
 
         $produit = $this->produitRepository->find($request->get('product_id'));
         $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($produit);
+        if(count($this->commandeProduitRepository->findBy(['produit'=>$produit->getId()])))
+            $produit->setIsDelete(true);
+        else
+            $entityManager->remove($produit);
+
         $entityManager->flush();
         return $this->handleView($this->view(
             [

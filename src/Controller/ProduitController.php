@@ -129,7 +129,11 @@ class ProduitController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCsrfTokenValid('delete' . $produit->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($produit);
+            if(count($this->commandeProduitRepository->findBy(['produit'=>$produit->getId()])))
+                $produit->setIsDelete(true);
+            else
+                $entityManager->remove($produit);
+
             $entityManager->flush();
             $this->addFlash('success', 'Suppression réussite');
         }

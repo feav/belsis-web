@@ -12,9 +12,7 @@
         <div class="x_content">
 		    {{ include('produit/_form.html.twig', {'button_label': 'Modifier'}) }}
 			<div class="offset-md-3 btn-dlt-p-edit">
-                {% if is_in_commande == 0 %}
-		    	 {{ include('produit/_delete_form.html.twig') }}
-                {% endif %}
+		      {{ include('produit/_delete_form.html.twig') }}
 		    </div>
 		</div>
 	</div>

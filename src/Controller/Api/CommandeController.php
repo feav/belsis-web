@@ -355,6 +355,7 @@ class CommandeController extends APIController
                 'icon'=> $image,
                 'price'=>$value->getProduit()->getPrix(),
                 'qty_stock'=>$value->getProduit()->getQuantite(),
+                'is_delete'=>$value->getProduit()->getIsDelete()
             ];
         }
 
@@ -399,6 +400,7 @@ class CommandeController extends APIController
                 'icon'=> $image,
                 'qty'=>$value->getQuantite(),
                 'qty_stock'=>$value->getProduit()->getQuantite(),
+                'is_delete'=>$value->getProduit()->getIsDelete(),
                 'price'=>$value->getPrix(),
             ];
             $totalProduit += $value->getQuantite();
