@@ -152,7 +152,7 @@ class UserController extends APIController
               'prenom' => $user->getPrenom(),
               'role' => $user->getRole(),
               'avatar' => $user->getAvatar(),
-              'totalProduit' => $totalCommande,
+              'totalCommande' => $totalCommande,
               'totalPrice' => $totalPrice
           ];
     }
