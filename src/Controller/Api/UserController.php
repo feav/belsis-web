@@ -123,7 +123,7 @@ class UserController extends APIController
                     Response::HTTP_UNAUTHORIZED)
             );
         }
-        $users = $this->userRepository->findBy(['restaurant'=>$request->get('restaurant_id'), 'role'=>$request->get('role')]);
+        $users = $this->userRepository->findBy(['restaurant'=>$user->getRestaurant()->getId() , 'role'=>$request->get('role')]);
         $usersArray = [];
         foreach ($users as $key => $value) {
           $usersArray[] = $this->getUserEssential($value);
