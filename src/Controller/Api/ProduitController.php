@@ -75,7 +75,6 @@ class ProduitController extends APIController
                 'qty_stock'=>$value->getQuantite(),
                 'qty'=>0,
                 'description'=> $value->getDescription(),
-
                 'price'=>$value->getPrix(),
             ];
         }
