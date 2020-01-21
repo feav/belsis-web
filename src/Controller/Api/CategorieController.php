@@ -55,7 +55,7 @@ class CategorieController extends APIController
 
         foreach ($categories as $key => $value) {
             if($value->getImage())
-                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$value->getImage();
+                $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/uploads/categorie/".$value->getImage();
             else
                 $image = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg";
 
