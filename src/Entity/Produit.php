@@ -68,6 +68,7 @@ class Produit
     {
         $this->commandeProduit = new ArrayCollection();
         $this->quantite = 0;
+        $this->is_delete = false;
     }
 
     public function getId()

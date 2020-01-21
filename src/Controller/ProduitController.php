@@ -40,6 +40,18 @@ class ProduitController extends AbstractController
         elseif($this->getUser()->getRole() == "admin")
             $produits = $produitRepository->findBy(['restaurant'=>$user->getRestaurant()]);
 
+
+        $entityManager = $this->getDoctrine()->getManager();
+        foreach ($produits as $key => $value) {
+            if(is_null($value->getIsDelete())){
+                $value->setIsDelete(false);
+                $entityManager->persist($value);
+            }
+        }
+        $entityManager->flush();
+
+
+
         return $this->render('produit/index.html.twig', [
             'produits' => $produits
         ]);

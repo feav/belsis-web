@@ -60,7 +60,7 @@ class ProduitController extends APIController
             );
         }
 
-        $produits = $this->produitRepository->findBy(['categorie'=>$request->get('cat_id')]);
+        $produits = $this->produitRepository->findBy(['categorie'=>$request->get('cat_id'), 'is_delete'=>false]);
         $produitsArray = [];
         foreach ($produits as $key => $value) {
             $produit = $this->produitRepository->find($value->getId());
@@ -103,7 +103,7 @@ class ProduitController extends APIController
                     Response::HTTP_UNAUTHORIZED)
             );
         }
-        $produits = $this->restaurantRepository->find($user->getRestaurant()->getId())->getProduits();
+        $produits =  $this->produitRepository->findBy(['restaurant'=>$user->getRestaurant()->getId(), 'is_delete'=>false]);
         $produitsArray = [];
         foreach ($produits as $key => $value) {
             if($value->getImage())
