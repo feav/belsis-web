@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Produit;
 use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
+use App\Repository\CommandeProduitRepository;
 use App\Service\FileUploader;
 use Behat\Transliterator\Transliterator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,10 +20,12 @@ use Symfony\Component\Security\Core\Security;
  * @Route("/dashboad/produit")
  */
 class ProduitController extends AbstractController
-{
-    public function __construct(Security $security)
+{   
+    private $commandeProduitRepository;
+    public function __construct(Security $security, CommandeProduitRepository $commandeProduitRepository)
     {
         $this->security = $security;
+        $this->commandeProduitRepository = $commandeProduitRepository;
     }
 
     /**
@@ -85,6 +88,7 @@ class ProduitController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('produit/show.html.twig', [
             'produit' => $produit,
+            'is_in_commande' =>  count($this->commandeProduitRepository->findBy(['produit'=>$produit->getId()]))
         ]);
     }
 
@@ -112,6 +116,7 @@ class ProduitController extends AbstractController
 
         return $this->render('produit/edit.html.twig', [
             'produit' => $produit,
+            'is_in_commande' =>  count($this->commandeProduitRepository->findBy(['produit'=>$produit->getId()])),
             'form' => $form->createView(),
         ]);
     }
@@ -126,8 +131,6 @@ class ProduitController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($produit);
             $entityManager->flush();
-
-            $flashBag = $this->get('session')->getFlashBag()->clear();
             $this->addFlash('success', 'Suppression réussite');
         }
 

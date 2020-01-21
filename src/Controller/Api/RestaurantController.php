@@ -50,7 +50,7 @@ class RestaurantController extends APIController
         }
 
         $restaurant = $user->getRestaurant();
-        if($value->getImage())
+        if($restaurant->getLogo())
           $image = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/uploads/restaurant/".$restaurant->getLogo());
         else
           $image = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg");
@@ -65,4 +65,38 @@ class RestaurantController extends APIController
         ];
         return $this->handleView($this->view($restaurantArray, Response::HTTP_OK));
     }
+
+      /**
+     * @Rest\Get("/get-by-id", name="get_by_id")
+     *
+     * @return Response
+     */
+    public function getById(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        $restaurant = $this->restaurantRepository->find($request->get('restaurant_id'));
+        if($restaurant->getLogo())
+          $image = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/uploads/restaurant/".$restaurant->getLogo());
+        else
+          $image = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg");
+
+        $restaurantArray = [
+          "id"=> $restaurant->getId(),
+          "nom"=> $restaurant->getNom(),
+          "adresse"=> $restaurant->getAdresse(),
+          "logo"=> $image,
+          "devise"=> $restaurant->getDevise(),
+          "chiffre_affaire"=> $restaurant->getChiffreAffaire(),
+          "status"=> $restaurant->getStatus(),
+        ];
+        return $this->handleView($this->view($restaurantArray, Response::HTTP_OK));
+    }
+
 }

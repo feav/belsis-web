@@ -39,7 +39,9 @@
     </div>
     <div class="detail-group-btn">
         <a href="{{ path('produit_edit', {'id': produit.id}) }}" class="btn call-action">Modifier</a>
-        {# {{ include('produit/_delete_form.html.twig') }} #}
+        {% if is_in_commande == 0 %}
+            {{ include('produit/_delete_form.html.twig') }} 
+        {% endif %}
     </div>
 {% endblock %}
 {% block validation_js %}{% endblock %}

@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use App\Repository\ProduitRepository;
 use App\Repository\CategorieRepository;
+use App\Repository\CommandeProduitRepository;
 use App\Service\FileUploader;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Repository\RestaurantRepository;
@@ -31,9 +32,10 @@ class ProduitController extends APIController
     private $doctrine;
     private $restaurantRepository;
     private $categorieRepository;
+    private $commandeProduitRepository;
     private $produit_s;
 
-    public function __construct(ProduitRepository $produitRepository, RestaurantRepository $restaurantRepository, ProduitService $produit_s, CategorieRepository $categorieRepository)
+    public function __construct(ProduitRepository $produitRepository, RestaurantRepository $restaurantRepository, ProduitService $produit_s, CategorieRepository $categorieRepository, CommandeProduitRepository $commandeProduitRepository)
     {
         $this->produitRepository = $produitRepository;
         $this->restaurantRepository = $restaurantRepository;
@@ -150,6 +152,7 @@ class ProduitController extends APIController
             'price'=>$produit->getPrix(),
             'description'=>$produit->getDescription(),
             'qty_stock'=>$produit->getQuantite(),
+            'can_delete' =>  count($this->commandeProduitRepository->findBy(['produit'=>$produit->getId()])),
         ];
         
         return $this->handleView($this->view($produitArray, Response::HTTP_OK));
@@ -228,4 +231,33 @@ class ProduitController extends APIController
             Response::HTTP_OK)
         );
     }
+
+
+    /**
+     * @Rest\Get("/delete", name="delete_produit")
+     *
+     * @return Response
+     */
+    public function deleteProduit(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $produit = $this->produitRepository->find($request->get('product_id'));
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($produit);
+        $entityManager->flush();
+        return $this->handleView($this->view(
+            [
+                'status' => 'success',
+                'message' => "Produit supprimé"
+            ], Response::HTTP_OK));
+    }
+
 }
