@@ -107,6 +107,18 @@ class CategorieController extends APIController
             file_put_contents($savePath, base64_decode($data[1]));
             $categorie->setImage($nameImage);
         }
+        elseif ($request->get('image_url')) {
+            $nameImage = Date("Yds").".png";
+            $savePath = $request->server->get('DOCUMENT_ROOT')."/images/uploads/categorie/".$nameImage;
+            $ch = curl_init($request->get('image_url'));
+            $fp = fopen($savePath, 'wb');
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_exec($ch);
+            curl_close($ch);
+            fclose($fp);
+            $categorie->setImage($nameImage);
+        }
         
         $entityManager->persist($categorie);
         $entityManager->flush();

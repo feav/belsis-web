@@ -232,6 +232,7 @@ class ProduitController extends APIController
             curl_exec($ch);
             curl_close($ch);
             fclose($fp);
+            $produit->setImage($nameImage);
         }
         
         $entityManager->persist($produit);
