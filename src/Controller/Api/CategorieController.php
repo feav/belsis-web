@@ -99,24 +99,25 @@ class CategorieController extends APIController
         $categorie->setRestaurant($this->restaurantRepository->find($user->getRestaurant()->getId()));
         $categorie->setDescription($request->get('description'));
         
+
         if ($request->get('image')) {
-            $base64_string = $request->get('image');
             $nameImage = Date("Yds").".png";
             $savePath = $request->server->get('DOCUMENT_ROOT')."/images/uploads/categorie/".$nameImage;
-            $data = explode( ',', $base64_string );
-            file_put_contents($savePath, base64_decode($data[1]));
-            $categorie->setImage($nameImage);
-        }
-        elseif ($request->get('image_url')) {
-            $nameImage = Date("Yds").".png";
-            $savePath = $request->server->get('DOCUMENT_ROOT')."/images/uploads/categorie/".$nameImage;
-            $ch = curl_init($request->get('image_url'));
-            $fp = fopen($savePath, 'wb');
-            curl_setopt($ch, CURLOPT_FILE, $fp);
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            curl_exec($ch);
-            curl_close($ch);
-            fclose($fp);
+
+            if(strpos($request->get('image'), "data:image/") !== false ){
+                $base64_string = $request->get('image');
+                $data = explode( ',', $base64_string );
+                file_put_contents($savePath, base64_decode($data[1]));
+            }
+            else{
+                $ch = curl_init($request->get('image'));
+                $fp = fopen($savePath, 'wb');
+                curl_setopt($ch, CURLOPT_FILE, $fp);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_exec($ch);
+                curl_close($ch);
+                fclose($fp);
+            }
             $categorie->setImage($nameImage);
         }
         
