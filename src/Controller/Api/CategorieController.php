@@ -109,15 +109,6 @@ class CategorieController extends APIController
                 $data = explode( ',', $base64_string );
                 file_put_contents($savePath, base64_decode($data[1]));
             }
-            else{
-                $ch = curl_init($request->get('image'));
-                $fp = fopen($savePath, 'wb');
-                curl_setopt($ch, CURLOPT_FILE, $fp);
-                curl_setopt($ch, CURLOPT_HEADER, 0);
-                curl_exec($ch);
-                curl_close($ch);
-                fclose($fp);
-            }
             $categorie->setImage($nameImage);
         }
         

@@ -255,7 +255,7 @@ class UserController extends APIController
                 $data = explode( ',', $base64_string );
                 file_put_contents($savePath, base64_decode($data[1]));
             }
-            else{
+            /*else{
                 $ch = curl_init($request->get('avatar'));
                 $fp = fopen($savePath, 'wb');
                 curl_setopt($ch, CURLOPT_FILE, $fp);
@@ -263,7 +263,7 @@ class UserController extends APIController
                 curl_exec($ch);
                 curl_close($ch);
                 fclose($fp);
-            }
+            }*/
             $user->setAvatar($nameImage);
         }
         
