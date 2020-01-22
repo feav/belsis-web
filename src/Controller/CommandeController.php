@@ -26,8 +26,8 @@ class CommandeController extends Controller
     {      
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user = $this->getUser();
-        if($user->getRole() == "super_admin")
-            $commandes = $commandeRepository->getCommandeAll();
+        if($user->getRole() == "superadmin")
+            $commandes = $commandeRepository->findAll();
         elseif($this->getUser()->getRole() == "admin")
             $commandes = $commandeRepository->findBy(['restaurant'=>$user->getRestaurant()]);
 

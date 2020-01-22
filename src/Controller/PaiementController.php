@@ -53,7 +53,7 @@ class PaiementController extends AbstractController
     public function index(PaiementRepository $paiementRepository, $id = null): Response
     {      
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        if (!is_null($id) && $this->getUser()->getRole() != "super_admin") {
+        if (!is_null($id) && $this->getUser()->getRole() != "superadmin") {
             $paiements = $this->abonnementRepository->find($id)->getPaiements();
         }
         else{

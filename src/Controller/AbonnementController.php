@@ -39,7 +39,7 @@ class AbonnementController extends AbstractController
     public function index(AbonnementRepository $abonnementRepository): Response
     {   
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        if($this->getUser()->getRole() == "super_admin")
+        if($this->getUser()->getRole() == "superadmin")
             $abonnements = $abonnementRepository->findAll();
         elseif ($this->getUser()->getRole() == "admin") {
             return $this->redirectToRoute('abonnement_detail_admin', ['id'=>$this->getUser()->getRestaurant()->getId()]);

@@ -40,7 +40,7 @@ class RestaurantController extends AbstractController
     function index(RestaurantRepository $restaurantRepository): Response
     {   
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        if ($this->getUser()->getRole() == "super_admin") {
+        if ($this->getUser()->getRole() == "superadmin") {
            return $this->render('restaurant/index.html.twig', [
             'restaurants' => $restaurantRepository->findAll(),
            ]);

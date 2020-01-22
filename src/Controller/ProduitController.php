@@ -35,7 +35,7 @@ class ProduitController extends AbstractController
     {   
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user = $this->getUser();
-        if($user->getRole() == "super_admin")
+        if($user->getRole() == "superadmin")
             $produits = $produitRepository->findBy(['is_delete'=>false]);
         elseif($this->getUser()->getRole() == "admin")
             $produits = $produitRepository->findBy(['restaurant'=>$user->getRestaurant(), 'is_delete'=>false]);

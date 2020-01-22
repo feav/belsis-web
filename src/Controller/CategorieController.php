@@ -30,8 +30,15 @@ class CategorieController extends AbstractController
     public function index(CategorieRepository $categorieRepository): Response
     {   
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        
+        $user = $this->getUser();
+        if($user->getRole() == "superadmin")
+            $categories = $categorieRepository->findAll();
+        elseif($this->getUser()->getRole() == "admin")
+            $categories = $categorieRepository->findBy(['restaurant'=>$user->getRestaurant()]);
+
         return $this->render('categorie/index.html.twig', [
-            'categories' => $categorieRepository->findAll(),
+            'categories' => $categories,
         ]);
     }
 

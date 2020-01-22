@@ -168,9 +168,52 @@ class UserController extends APIController
       }
 
       if($user->getAvatar())
-            $avatar = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/dynamiques/profile/".$user->getAvatar();
+            $avatar = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/dynamiques/profile/".$user->getAvatar());
         else
-            $avatar = $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/dynamiques/profile/user.png";
+            $avatar = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/dynamiques/profile/user.png");
+
+
+      $commandes = $this->commandeRepository->findBy(['restaurant'=>$user->getRestaurant()->getId()]);
+      $activity = $activity[]['edition'] = $activity[]['prete'] = $activity[]['en_cours'] = $activity[]['remove'] = $activity[]['paye'] = [];
+
+      $cmd_edition = $cmd_prete = $cmd_cours = $cmd_delete = $cmd_paye =  $price_cmd_cours = $price_cmd_delete = $price_cmd_paye = $price_cmd_edition = $price_cmd_prete= 0;
+      foreach ($commandes as $key => $value) {
+          if($value->getEtat() == "edition"){
+              $price_cmd_cours += $value->getMontant();
+              $activity['edition'] = [
+                  'totalCommande'=> ++$cmd_edition,
+                  'totalPrice'=> $price_cmd_prete
+              ];
+          } 
+          if($value->getEtat() == "prete"){
+              $price_cmd_cours += $value->getMontant();
+              $activity['prete'] = [
+                  'totalCommande'=> ++$cmd_prete,
+                  'totalPrice'=> $price_cmd_cours
+              ];
+          } 
+          if($value->getEtat() == "en_cours"){
+              $price_cmd_cours += $value->getMontant();
+              $activity['en_cours'] = [
+                  'totalCommande'=> ++$cmd_cours,
+                  'totalPrice'=> $price_cmd_cours
+              ];
+          } 
+          elseif($value->getEtat() == "remove"){
+              $price_cmd_delete += $value->getMontant();
+              $activity['remove'] = [
+                  'totalCommande'=> ++$cmd_delete,
+                  'totalPrice'=> $price_cmd_delete
+              ];
+          } 
+          elseif($value->getEtat() == "paye"){
+              $price_cmd_paye += $value->getMontant();
+              $activity['paye'] = [
+                  'totalCommande'=> ++$cmd_paye,
+                  'totalPrice'=> $price_cmd_paye
+              ];
+          } 
+      }
 
       return [
               'id' => $user->getId(),
@@ -181,7 +224,9 @@ class UserController extends APIController
               'role' => $user->getRole(),
               'avatar' => $avatar,
               'totalCommande' => $totalCommande,
-              'totalPrice' => $totalPrice
+              'totalPrice' => $totalPrice,
+              'activity' => $activity,
+              'chiffreAffaire' => $price_cmd_paye
           ];
     }
 
