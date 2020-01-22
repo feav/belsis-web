@@ -563,10 +563,24 @@ class CommandeController extends APIController
         }
 
         $commandes = $this->commandeRepository->findBy(['restaurant'=>$user->getRestaurant()->getId()]);
-        $activity = $activity[]['en_cours'] = $activity[]['remove'] = $activity[]['paye'] = [];
+        $activity = $activity[]['edition'] = $activity[]['prete'] = $activity[]['en_cours'] = $activity[]['remove'] = $activity[]['paye'] = [];
 
-        $cmd_cours = $cmd_delete = $cmd_paye =  $price_cmd_cours = $price_cmd_delete = $price_cmd_paye = 0;
+        $cmd_edition = $cmd_prete = $cmd_cours = $cmd_delete = $cmd_paye =  $price_cmd_cours = $price_cmd_delete = $price_cmd_paye = $price_cmd_edition = $price_cmd_prete= 0;
         foreach ($commandes as $key => $value) {
+            if($value->getEtat() == "edition"){
+                $price_cmd_cours += $value->getMontant();
+                $activity['edition'] = [
+                    'totalCommande'=> ++$cmd_edition,
+                    'totalPrice'=> $price_cmd_prete
+                ];
+            } 
+            if($value->getEtat() == "prete"){
+                $price_cmd_cours += $value->getMontant();
+                $activity['prete'] = [
+                    'totalCommande'=> ++$cmd_prete,
+                    'totalPrice'=> $price_cmd_cours
+                ];
+            } 
             if($value->getEtat() == "en_cours"){
                 $price_cmd_cours += $value->getMontant();
                 $activity['en_cours'] = [
@@ -593,10 +607,79 @@ class CommandeController extends APIController
         return $this->handleView($this->view(
             [
                 'activity' => $activity,
-                'chiffreAffaire' => $activity['paye']['totalPrice']
+                'chiffreAffaire' => $price_cmd_paye
             ],
             Response::HTTP_OK)
         );
     }
 
+    /**
+     * @Rest\Get("/get-user-activity", name="get_user_activity")
+     *
+     * @return Response
+     */
+    public function getByUserActivity(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $commandes = [];
+        if($user->getRole() == "serveur")
+            $commandes = $this->commandeRepository->findBy(['user'=>$user->getId(), 'restaurant'=>$user->getRestaurant()->getId()]);
+
+        $activity = $activity[]['edition'] = $activity[]['prete'] = $activity[]['en_cours'] = $activity[]['remove'] = $activity[]['paye'] = [];
+
+        $cmd_edition = $cmd_prete = $cmd_cours = $cmd_delete = $cmd_paye =  $price_cmd_cours = $price_cmd_delete = $price_cmd_paye = $price_cmd_edition = $price_cmd_prete= 0;
+        foreach ($commandes as $key => $value) {
+            if($value->getEtat() == "edition"){
+                $price_cmd_cours += $value->getMontant();
+                $activity['edition'] = [
+                    'totalCommande'=> ++$cmd_edition,
+                    'totalPrice'=> $price_cmd_prete
+                ];
+            } 
+            if($value->getEtat() == "prete"){
+                $price_cmd_cours += $value->getMontant();
+                $activity['prete'] = [
+                    'totalCommande'=> ++$cmd_prete,
+                    'totalPrice'=> $price_cmd_cours
+                ];
+            } 
+            if($value->getEtat() == "en_cours"){
+                $price_cmd_cours += $value->getMontant();
+                $activity['en_cours'] = [
+                    'totalCommande'=> ++$cmd_cours,
+                    'totalPrice'=> $price_cmd_cours
+                ];
+            } 
+            elseif($value->getEtat() == "remove"){
+                $price_cmd_delete += $value->getMontant();
+                $activity['remove'] = [
+                    'totalCommande'=> ++$cmd_delete,
+                    'totalPrice'=> $price_cmd_delete
+                ];
+            } 
+            elseif($value->getEtat() == "paye"){
+                $price_cmd_paye += $value->getMontant();
+                $activity['paye'] = [
+                    'totalCommande'=> ++$cmd_paye,
+                    'totalPrice'=> $price_cmd_paye
+                ];
+            } 
+        }
+
+        return $this->handleView($this->view(
+            [
+                'activity' => $activity,
+                'chiffreAffaire' => $price_cmd_paye
+            ],
+            Response::HTTP_OK)
+        );
+    }
 }
