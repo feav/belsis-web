@@ -156,15 +156,19 @@ class UserController extends APIController
     public function getUserEssential(User $user){
 
       $commandes = [];
-      if($user->getRole() == "cuisinier")
-        $commandes = $this->commandeRepository->getByCuisinier($user->getId());
-      elseif($user->getRole() == "serveur")
-        $commandes = $this->commandeRepository->getByServeur($user->getId());
+      if($user->getRole() == "cuisinier"){
+        //$commandes = $this->commandeRepository->getByCuisinier($user->getId());
+        $commandes = $this->commandeRepository->findBy(['cuisinier'=>$user->getRestaurant()->getId()]);
+      }
+      elseif($user->getRole() == "serveur"){
+        //$commandes = $this->commandeRepository->getByServeur($user->getId());
+        $commandes = $this->commandeRepository->findBy(['user'=>$user->getId()]);
+      }
       
       $totalCommande = $totalPrice =0;
       foreach ($commandes as $key => $value) {
         $totalCommande++;
-        $totalPrice += $value['montant'];
+        $totalPrice += $value->getMontant();
       }
 
       if($user->getAvatar())
@@ -173,7 +177,7 @@ class UserController extends APIController
             $avatar = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/dynamiques/profile/user.png");
 
 
-      $commandes = $this->commandeRepository->findBy(['restaurant'=>$user->getRestaurant()->getId()]);
+      
       $activity = $this->initActivity();
       $cmd_edition = $cmd_prete = $cmd_cours = $cmd_delete = $cmd_paye =  $price_cmd_cours = $price_cmd_delete = $price_cmd_paye = $price_cmd_edition = $price_cmd_prete= 0;
 
@@ -232,7 +236,7 @@ class UserController extends APIController
     }
 
     public function initActivity(){
-      
+
       $activity = $activity[]['edition'] = $activity[]['prete'] = $activity[]['en_cours'] = $activity[]['remove'] = $activity[]['paye'] = [];
       $activity['edition'] = [
           'totalCommande'=> 0,
