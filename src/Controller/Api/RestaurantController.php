@@ -6,6 +6,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repository\RestaurantRepository;
+use App\Repository\CommandeRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -27,10 +28,11 @@ class RestaurantController extends APIController
     private $userRepository;
     private $encoderFactory;
     
-    public function __construct(UserRepository $userRepository, EncoderFactoryInterface $encoderFactory, RestaurantRepository $restaurantRepository){
+    public function __construct(UserRepository $userRepository, EncoderFactoryInterface $encoderFactory, RestaurantRepository $restaurantRepository, CommandeRepository $commandeRepository){
       $this->userRepository = $userRepository;
       $this->encoderFactory = $encoderFactory;
       $this->restaurantRepository = $restaurantRepository;
+      $this->commandeRepository = $commandeRepository;
     }
 
     /**
@@ -98,5 +100,4 @@ class RestaurantController extends APIController
         ];
         return $this->handleView($this->view($restaurantArray, Response::HTTP_OK));
     }
-
 }

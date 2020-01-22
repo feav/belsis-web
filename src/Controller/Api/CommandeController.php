@@ -525,18 +525,17 @@ class CommandeController extends APIController
             );
         }
 
-        $commandes = $this->commandeRepository->getCommandeAllByRestaurant($user->getRestaurant()->getId());
+        $commandes = $this->commandeRepository->findBy(['restaurant'=>$user->getRestaurant()->getId()]);
         $commandesArray = [];
         foreach ($commandes as $key => $value) {
-            $commandeItem = $this->commandeRepository->find($value['id']);
             $commandesArray[] = [
-                'id'=> $value['id'],
-                'date'=> $value['date'],
-                'etat'=> $value['etat'],
-                'name'=> $value['code'],
-                'table'=> is_null($commandeItem->getTable()) ? "" : $commandeItem->getTable()->getNom(),
-                'qty'=> $this->getDetailNbrCmd($commandeItem)['totalProduit'],
-                'price'=> $this->getDetailNbrCmd($commandeItem)['totalPrice'],
+                'id'=> $value->getId(),
+                'date'=> $value->getDate(),
+                'etat'=> $value->getEtat(),
+                'name'=> $value->getCode(),
+                'table'=> is_null($value->getTable()) ? "" : $value->getTable()->getNom(),
+                'qty'=> $this->getDetailNbrCmd($value)['totalProduit'],
+                'price'=> $this->getDetailNbrCmd($value)['totalPrice'],
                 'cuisinier'=> $value->getCuisinier(),
             ];
         }
@@ -547,5 +546,57 @@ class CommandeController extends APIController
         );
     }
 
+    /**
+     * @Rest\Get("/get-shop-activity", name="get_shop_activity")
+     *
+     * @return Response
+     */
+    public function getByShopActivity(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $commandes = $this->commandeRepository->findBy(['restaurant'=>$user->getRestaurant()->getId()]);
+        $activity = $activity[]['en_cours'] = $activity[]['remove'] = $activity[]['paye'] = [];
+
+        $cmd_cours = $cmd_delete = $cmd_paye =  $price_cmd_cours = $price_cmd_delete = $price_cmd_paye = 0;
+        foreach ($commandes as $key => $value) {
+            if($value->getEtat() == "en_cours"){
+                $price_cmd_cours += $value->getMontant();
+                $activity['en_cours'] = [
+                    'totalCommande'=> ++$cmd_cours,
+                    'totalPrice'=> $price_cmd_cours
+                ];
+            } 
+            elseif($value->getEtat() == "remove"){
+                $price_cmd_delete += $value->getMontant();
+                $activity['remove'] = [
+                    'totalCommande'=> ++$cmd_delete,
+                    'totalPrice'=> $price_cmd_delete
+                ];
+            } 
+            elseif($value->getEtat() == "paye"){
+                $price_cmd_paye += $value->getMontant();
+                $activity['paye'] = [
+                    'totalCommande'=> ++$cmd_paye,
+                    'totalPrice'=> $price_cmd_paye
+                ];
+            } 
+        }
+
+        return $this->handleView($this->view(
+            [
+                'activity' => $activity,
+                'chiffreAffaire' => $activity['paye']['totalPrice']
+            ],
+            Response::HTTP_OK)
+        );
+    }
 
 }
