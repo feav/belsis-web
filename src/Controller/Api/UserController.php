@@ -175,8 +175,6 @@ class UserController extends APIController
             $avatar = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/dynamiques/profile/".$user->getAvatar());
         else
             $avatar = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/dynamiques/profile/user.png");
-
-
       
       $activity = $this->initActivity();
       $cmd_edition = $cmd_prete = $cmd_cours = $cmd_delete = $cmd_paye =  $price_cmd_cours = $price_cmd_delete = $price_cmd_paye = $price_cmd_edition = $price_cmd_prete= 0;
