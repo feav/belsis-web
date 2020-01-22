@@ -63,6 +63,27 @@ class UserController extends APIController
         return $this->handleView($this->view($infos, Response::HTTP_OK));
     }
 
+    /**
+     * @Rest\Get("/get-by-id", name="get_by_id")
+     *
+     * @return Response
+     */
+    public function getById(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        $userFind = $this->userRepository->find($request->get('user_id'));
+        $infos = $this->getUserEssential($userFind);
+
+        return $this->handleView($this->view($infos, Response::HTTP_OK));
+    }
+
       /**
      * @Rest\Get("/get-by-restaurant", name="get_by_restaurant")
      *
