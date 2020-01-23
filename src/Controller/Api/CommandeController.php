@@ -598,14 +598,35 @@ class CommandeController extends APIController
         }
 
         $dateNow = new \Datetime();
-        $day = $dateNow->format('D');
         $finalActivity = [];
         if($request->get('echeance') == "semaine"){
+            $day = $dateNow->format('D');
             $tabWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
             $dayRang = array_search($day, $tabWeek);
             array_splice($tabWeek, ($dayRang+1));
             $dateStart = date('Y-m-d',strtotime($dateNow->format('Y-m-d') . "-".$dayRang." days"));
-            foreach ($tabWeek as $value) {
+            $finalActivity = $this->buildActivityEcheance($dateStart, $tabWeek, $user);
+        }
+        elseif($request->get('echeance') == "mois"){
+            $day = $dateNow->format('d');
+            $tabMois = [];
+            for($i = 1; $i <= 31; $i++)
+                $tabMois[] = $i;
+
+            $dayRang = array_search($day, $tabMois);
+            array_splice($tabMois, ($dayRang+1));
+            $dateStart = date('Y-m-d',strtotime($dateNow->format('Y-m-d') . "-".$dayRang." days"));
+            $finalActivity = $this->buildActivityEcheance($dateStart, $tabMois, $user);
+        }/*
+        elseif($request->get('echeance') == "annee"){
+            $month = $dateNow->format('m');
+            $tabAnnee = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            $monthRang = array_search($month, $tabAnnee);
+            array_splice($tabAnnee, ($monthRang+1));
+            $dateStart = date('Y-m-d',strtotime($dateNow->format('Y-m-d') . "-".$monthRang." days"));
+        
+            foreach ($tabEchantillons as $value) {
                 $commandes = $this->commandeRepository->getByShopActivityByDatePaye(
                 $user->getRestaurant()->getId(), new \Datetime($dateStart." 00:00:00"), 
                 new \Datetime($dateStart." 23:59:59"));
@@ -625,13 +646,13 @@ class CommandeController extends APIController
                 ];
                 $dateStart = date('Y-m-d',strtotime($dateStart . "+1 days"));
             }
-        }
-        elseif($request->get('echeance') == "mois"){
-            # code...
-        }
-        elseif($request->get('echeance') == "annee"){
-            $commandes = $this->commandeRepository->findBy(['restaurant'=>$user->getRestaurant()->getId()]);
-        }
+
+
+            $finalActivity = $this->buildActivityEcheance($dateStart, $tabAnnee, $user);
+
+            $d=cal_days_in_month(CAL_GREGORIAN,10,2005);
+            echo "There was $d days in October 2005";
+        }*/
 
         return $this->handleView($this->view(
             $finalActivity,
@@ -710,6 +731,33 @@ class CommandeController extends APIController
             } 
         }
         return ['activity'=>$activity, 'chiffreAffaire'=>$price_cmd_paye];
+    }
+
+    public function buildActivityEcheance($dateStart, $tabEchantillons, $user){
+
+        $finalActivity = [];
+        foreach ($tabEchantillons as $value) {
+            $commandes = $this->commandeRepository->getByShopActivityByDatePaye(
+            $user->getRestaurant()->getId(), new \Datetime($dateStart." 00:00:00"), 
+            new \Datetime($dateStart." 23:59:59"));
+
+            $totalCommande = $totalPrice = $totalProduit = 0;
+            foreach ($commandes as $key => $val) {
+                $totalCommande++;
+                $totalPrice += $val->getMontant();
+                foreach ($val->getCommandeProduit() as $key => $vl) {
+                    $totalProduit += $vl->getQuantite();
+                }
+            }
+            $finalActivity[] = [
+                'label'=> $value,
+                'nbr_commande_paye'=> $totalCommande,
+                'somme_commande_paye'=> $totalPrice,
+                'total_produit'=> $totalProduit
+            ];
+            $dateStart = date('Y-m-d',strtotime($dateStart . "+1 days"));
+        }
+        return $finalActivity;
     }
 
     public function initActivity(){
