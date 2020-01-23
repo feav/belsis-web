@@ -155,9 +155,9 @@ class CommandeRepository extends ServiceEntityRepository
     public function getByShopActivityByDate($restaurant, $dateStart, $dateEnd)
     {
         return $this->createQueryBuilder('c')
-            ->where('c.restaurant = restaurant_id')
-            ->andWhere('c.date <= :dateStart')
-            ->andWhere('c.date >= :dateEnd')
+            ->where('c.restaurant = :restaurant')
+            ->andWhere('c.date >= :dateStart')
+            ->andWhere('c.date <= :dateEnd')
             //->orderBy('c.date', 'ASC')
             ->setParameter('restaurant', $restaurant)
             ->setParameter('dateStart', $dateStart)

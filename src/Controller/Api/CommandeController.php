@@ -562,9 +562,15 @@ class CommandeController extends APIController
             );
         }
 
-        $commandes = $this->commandeRepository->findBy(['restaurant'=>$user->getRestaurant()->getId()]);
-        $activity = $activity[]['edition'] = $activity[]['prete'] = $activity[]['en_cours'] = $activity[]['remove'] = $activity[]['paye'] = [];
+        if($request->get('dateStart') && $request->get('dateEnd'))
+            $commandes = $this->commandeRepository->getByShopActivityByDate(
+                $user->getRestaurant()->getId(), new \Datetime($request->get('dateStart')), 
+                new \Datetime($request->get('dateEnd'))
+            );
+        else
+            $commandes = $this->commandeRepository->findBy(['restaurant'=>$user->getRestaurant()->getId()]);
 
+        $activity = $this->initActivity();
         $cmd_edition = $cmd_prete = $cmd_cours = $cmd_delete = $cmd_paye =  $price_cmd_cours = $price_cmd_delete = $price_cmd_paye = $price_cmd_edition = $price_cmd_prete= 0;
         foreach ($commandes as $key => $value) {
             if($value->getEtat() == "edition"){
@@ -633,7 +639,7 @@ class CommandeController extends APIController
         if($user->getRole() == "serveur")
             $commandes = $this->commandeRepository->findBy(['user'=>$user->getId(), 'restaurant'=>$user->getRestaurant()->getId()]);
 
-        $activity = $activity[]['edition'] = $activity[]['prete'] = $activity[]['en_cours'] = $activity[]['remove'] = $activity[]['paye'] = [];
+        $activity = $this->initActivity();
 
         $cmd_edition = $cmd_prete = $cmd_cours = $cmd_delete = $cmd_paye =  $price_cmd_cours = $price_cmd_delete = $price_cmd_paye = $price_cmd_edition = $price_cmd_prete= 0;
         foreach ($commandes as $key => $value) {
@@ -682,4 +688,32 @@ class CommandeController extends APIController
             Response::HTTP_OK)
         );
     }
+
+    public function initActivity(){
+
+      $activity = $activity[]['edition'] = $activity[]['prete'] = $activity[]['en_cours'] = $activity[]['remove'] = $activity[]['paye'] = [];
+      $activity['edition'] = [
+          'totalCommande'=> 0,
+          'totalPrice'=> 0
+      ];
+      $activity['prete'] = [
+          'totalCommande'=> 0,
+          'totalPrice'=> 0
+      ];
+      $activity['en_cours'] = [
+          'totalCommande'=> 0,
+          'totalPrice'=> 0
+      ];
+      $activity['remove'] = [
+          'totalCommande'=> 0,
+          'totalPrice'=> 0
+      ];
+      $activity['paye'] = [
+          'totalCommande'=> 0,
+          'totalPrice'=> 0
+      ];
+
+      return $activity;
+    }
+
 }
