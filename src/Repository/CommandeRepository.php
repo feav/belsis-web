@@ -164,5 +164,20 @@ class CommandeRepository extends ServiceEntityRepository
             ->setParameter('dateEnd', $dateEnd)
             ->getQuery()
             ->execute();
+    }    
+    public function getByShopActivityByDatePaye($restaurant, $dateStart, $dateEnd)
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.restaurant = :restaurant')
+            //->andWhere('c.etat = :etat')
+            ->andWhere('c.date >= :dateStart')
+            ->andWhere('c.date <= :dateEnd')
+            //->orderBy('c.date', 'ASC')
+            ->setParameter('restaurant', $restaurant)
+            //->setParameter('etat', "paye")
+            ->setParameter('dateStart', $dateStart)
+            ->setParameter('dateEnd', $dateEnd)
+            ->getQuery()
+            ->execute();
     }
 }

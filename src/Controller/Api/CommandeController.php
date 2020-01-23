@@ -562,59 +562,79 @@ class CommandeController extends APIController
             );
         }
 
-        if($request->get('dateStart') && $request->get('dateEnd'))
+        if($request->get('dateStart') && $request->get('dateEnd')){
             $commandes = $this->commandeRepository->getByShopActivityByDate(
                 $user->getRestaurant()->getId(), new \Datetime($request->get('dateStart')), 
                 new \Datetime($request->get('dateEnd'))
             );
-        else
+        }
+        else{
             $commandes = $this->commandeRepository->findBy(['restaurant'=>$user->getRestaurant()->getId()]);
+        }
+        $activity = $this->buildActivity($commandes);
+        return $this->handleView($this->view(
+            [
+                'activity' => $activity['activity'],
+                'chiffreAffaire' => $activity['chiffreAffaire']
+            ],
+            Response::HTTP_OK)
+        );
+    }
 
-        $activity = $this->initActivity();
-        $cmd_edition = $cmd_prete = $cmd_cours = $cmd_delete = $cmd_paye =  $price_cmd_cours = $price_cmd_delete = $price_cmd_paye = $price_cmd_edition = $price_cmd_prete= 0;
-        foreach ($commandes as $key => $value) {
-            if($value->getEtat() == "edition"){
-                $price_cmd_cours += $value->getMontant();
-                $activity['edition'] = [
-                    'totalCommande'=> ++$cmd_edition,
-                    'totalPrice'=> $price_cmd_prete
+    /**
+     * @Rest\Get("/get-shop-activity-by-echeance", name="get_shop_activity_by_echeance")
+     *
+     * @return Response
+     */
+    public function getByShopActivityByEcheance(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $dateNow = new \Datetime();
+        $day = $dateNow->format('D');
+        $finalActivity = [];
+        if($request->get('echeance') == "semaine"){
+            $tabWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            $dayRang = array_search($day, $tabWeek);
+            array_splice($tabWeek, ($dayRang+1));
+            $dateStart = date('Y-m-d',strtotime($dateNow->format('Y-m-d') . "-".$dayRang." days"));
+            foreach ($tabWeek as $value) {
+                $commandes = $this->commandeRepository->getByShopActivityByDatePaye(
+                $user->getRestaurant()->getId(), new \Datetime($dateStart." 00:00:00"), 
+                new \Datetime($dateStart." 23:59:59"));
+
+                $totalCommande = $totalPrice = $totalProduit = 0;
+                foreach ($commandes as $key => $val) {
+                    $totalCommande++;
+                    $totalPrice += $val->getMontant();
+                    foreach ($val->getCommandeProduit() as $key => $vl) {
+                        $totalProduit += $vl->getQuantite();
+                    }
+                }
+                $finalActivity[$value] = [
+                    'nbr_commande_paye'=> $totalCommande,
+                    'somme_commande_paye'=> $totalPrice,
+                    'total_produit'=> $totalProduit
                 ];
-            } 
-            if($value->getEtat() == "prete"){
-                $price_cmd_cours += $value->getMontant();
-                $activity['prete'] = [
-                    'totalCommande'=> ++$cmd_prete,
-                    'totalPrice'=> $price_cmd_cours
-                ];
-            } 
-            if($value->getEtat() == "en_cours"){
-                $price_cmd_cours += $value->getMontant();
-                $activity['en_cours'] = [
-                    'totalCommande'=> ++$cmd_cours,
-                    'totalPrice'=> $price_cmd_cours
-                ];
-            } 
-            elseif($value->getEtat() == "remove"){
-                $price_cmd_delete += $value->getMontant();
-                $activity['remove'] = [
-                    'totalCommande'=> ++$cmd_delete,
-                    'totalPrice'=> $price_cmd_delete
-                ];
-            } 
-            elseif($value->getEtat() == "paye"){
-                $price_cmd_paye += $value->getMontant();
-                $activity['paye'] = [
-                    'totalCommande'=> ++$cmd_paye,
-                    'totalPrice'=> $price_cmd_paye
-                ];
-            } 
+                $dateStart = date('Y-m-d',strtotime($dateStart . "+1 days"));
+            }
+        }
+        elseif($request->get('echeance') == "mois"){
+            # code...
+        }
+        elseif($request->get('echeance') == "annee"){
+            $commandes = $this->commandeRepository->findBy(['restaurant'=>$user->getRestaurant()->getId()]);
         }
 
         return $this->handleView($this->view(
-            [
-                'activity' => $activity,
-                'chiffreAffaire' => $price_cmd_paye
-            ],
+            $finalActivity,
             Response::HTTP_OK)
         );
     }
@@ -636,11 +656,21 @@ class CommandeController extends APIController
         }
 
         $commandes = [];
-        if($user->getRole() == "serveur")
+        if($user->getRole() == "serveur"){
             $commandes = $this->commandeRepository->findBy(['user'=>$user->getId(), 'restaurant'=>$user->getRestaurant()->getId()]);
+        }
+        $activity = $this->buildActivity($commandes);
+        return $this->handleView($this->view(
+            [
+                'activity' => $activity['activity'],
+                'chiffreAffaire' => $activity['chiffreAffaire']
+            ],
+            Response::HTTP_OK)
+        );
+    }
 
+    public function buildActivity($commandes){
         $activity = $this->initActivity();
-
         $cmd_edition = $cmd_prete = $cmd_cours = $cmd_delete = $cmd_paye =  $price_cmd_cours = $price_cmd_delete = $price_cmd_paye = $price_cmd_edition = $price_cmd_prete= 0;
         foreach ($commandes as $key => $value) {
             if($value->getEtat() == "edition"){
@@ -679,14 +709,7 @@ class CommandeController extends APIController
                 ];
             } 
         }
-
-        return $this->handleView($this->view(
-            [
-                'activity' => $activity,
-                'chiffreAffaire' => $price_cmd_paye
-            ],
-            Response::HTTP_OK)
-        );
+        return ['activity'=>$activity, 'chiffreAffaire'=>$price_cmd_paye];
     }
 
     public function initActivity(){
