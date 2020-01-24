@@ -9,6 +9,10 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
 use App\Repository\CommandeRepository;
 use App\Repository\CommandeProduitRepository;
 use App\Repository\RestaurantRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use FOS\UserBundle\Event\UserEvent;
+use FOS\UserBundle\FOSUserEvents;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -349,5 +353,79 @@ class UserController extends APIController
             $user->getId(), 
             Response::HTTP_OK)
         );
+    }
+
+    /**
+    * Modifier le mot de passe de l'utilisateur
+    * @Rest\Post("/reset-password", name="user_reset_password")
+    *
+    * @return Response
+    */
+    public function resetPassword(Request $request, EventDispatcherInterface $dispatcher, UserManagerInterface $userManager, RequestStack $requestStack){
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $oldPassword = $request->request->get('oldPassword');
+        $newPassword = $request->request->get('newPassword');
+
+        $passwordEncoder = $this->get('security.password_encoder');
+        if($passwordEncoder->isPasswordValid($user, $oldPassword)){
+            $user->setPlainPassword($newPassword);
+            $userManager->updateUser($user);
+
+            $event = new UserEvent($user, $requestStack->getCurrentRequest());
+            $dispatcher->dispatch(FOSUserEvents::USER_PASSWORD_CHANGED, $event);
+
+            return $this->handleView($this->view(
+                $user->getId(),
+                Response::HTTP_OK));
+        }
+
+        return $this->handleView($this->view(
+            [
+            'statut' => 'error',
+            'message' => "Le mot de passe actuel n'est pas celui de l'utilisateur"
+            ],
+            Response::HTTP_INTERNAL_SERVER_ERROR));
+
+    }
+
+
+    /**
+    * @Rest\Post("/update-avatar", name="user_avatar")
+    *
+    * @return Response
+    */
+    public function resetAvatar(Request $request){
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        if ($request->get('avatar')) {
+            $nameImage = "avatar-".Date("Yds").".png";
+            $savePath = $request->server->get('DOCUMENT_ROOT')."/images/dynamiques/profile/".$nameImage;
+
+            if(strpos($request->get('avatar'), "data:image/") !== false ){
+                $base64_string = $request->get('avatar');
+                $data = explode( ',', $base64_string );
+                file_put_contents($savePath, base64_decode($data[1]));
+                $user->setAvatar($nameImage);
+                $entityManager->flush();
+            }
+        }
+
+        return $this->handleView($this->view(
+            $user->getId(),
+            Response::HTTP_OK));
     }
 }

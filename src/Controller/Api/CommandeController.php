@@ -623,23 +623,8 @@ class CommandeController extends APIController
             $tabAnnee = [ '01'=>'Jan', '02'=>'Feb', '03'=>'Mar', '04'=>'Apr', '05'=>'May', '06'=>'Jun', '07'=>'Jul', '08'=>'Aug', '09'=>'Sep', '10'=>'Oct', '11'=>'Nov', '12'=>'Dec'];
 
             $monthRang = array_search($month, $tabAnnee);
-            array_splice($tabAnnee, ($monthRang));
-            $dayRang = 0;
-            foreach ($tabAnnee as $key => $valeur) {
-                if($valeur != $month)
-                    $dayRang += cal_days_in_month(CAL_GREGORIAN, $key, $dateNow->format('Y'));
-                else{
-                    $dayRang--;
-                    break;
-                }
-            }
-            $dayRang += $dateNow->format('d');
-
-
-            $dateStart = date('Y-m-d',strtotime($dateNow->format('Y-m-d') . "-".$dayRang." days"));        
+            array_splice($tabAnnee, ($monthRang));       
             foreach ($tabAnnee as $key => $value) {
-                $nbrDayMonth = cal_days_in_month(CAL_GREGORIAN, $key, $dateNow->format('Y'));
-                $dateEnd = date('Y-m-d',strtotime($dateStart . "+".($nbrDayMonth-1)." days"));
                 $commandes = $this->commandeRepository->getByShopActivityByDatePaye(
                     $user->getRestaurant()->getId(), 
                     new \Datetime($dateNow->format('Y')."-".$key."-"."01"." 00:00:00"), 
