@@ -617,42 +617,51 @@ class CommandeController extends APIController
             array_splice($tabMois, ($dayRang+1));
             $dateStart = date('Y-m-d',strtotime($dateNow->format('Y-m-d') . "-".$dayRang." days"));
             $finalActivity = $this->buildActivityEcheance($dateStart, $tabMois, $user);
-        }/*
+        }
         elseif($request->get('echeance') == "annee"){
-            $month = $dateNow->format('m');
-            $tabAnnee = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            $month = $dateNow->format('M');
+            $tabAnnee = [ '01'=>'Jan', '02'=>'Feb', '03'=>'Mar', '04'=>'Apr', '05'=>'May', '06'=>'Jun', '07'=>'Jul', '08'=>'Aug', '09'=>'Sep', '10'=>'Oct', '11'=>'Nov', '12'=>'Dec'];
 
             $monthRang = array_search($month, $tabAnnee);
-            array_splice($tabAnnee, ($monthRang+1));
-            $dateStart = date('Y-m-d',strtotime($dateNow->format('Y-m-d') . "-".$monthRang." days"));
-        
-            foreach ($tabEchantillons as $value) {
+            array_splice($tabAnnee, ($monthRang));
+            $dayRang = 0;
+            foreach ($tabAnnee as $key => $valeur) {
+                if($valeur != $month)
+                    $dayRang += cal_days_in_month(CAL_GREGORIAN, $key, $dateNow->format('Y'));
+                else{
+                    $dayRang--;
+                    break;
+                }
+            }
+            $dayRang += $dateNow->format('d');
+
+
+            $dateStart = date('Y-m-d',strtotime($dateNow->format('Y-m-d') . "-".$dayRang." days"));        
+            foreach ($tabAnnee as $key => $value) {
+                $nbrDayMonth = cal_days_in_month(CAL_GREGORIAN, $key, $dateNow->format('Y'));
+                $dateEnd = date('Y-m-d',strtotime($dateStart . "+".($nbrDayMonth-1)." days"));
                 $commandes = $this->commandeRepository->getByShopActivityByDatePaye(
-                $user->getRestaurant()->getId(), new \Datetime($dateStart." 00:00:00"), 
-                new \Datetime($dateStart." 23:59:59"));
+                    $user->getRestaurant()->getId(), 
+                    new \Datetime($dateNow->format('Y')."-".$key."-"."01"." 00:00:00"), 
+                    new \Datetime($dateNow->format('Y')."-".$key."-".
+                        cal_days_in_month(CAL_GREGORIAN, $key, $dateNow->format('Y'))." 23:59:59") );
 
                 $totalCommande = $totalPrice = $totalProduit = 0;
-                foreach ($commandes as $key => $val) {
+                foreach ($commandes as $ky => $val) {
                     $totalCommande++;
                     $totalPrice += $val->getMontant();
-                    foreach ($val->getCommandeProduit() as $key => $vl) {
+                    foreach ($val->getCommandeProduit() as $ky => $vl) {
                         $totalProduit += $vl->getQuantite();
                     }
                 }
-                $finalActivity[$value] = [
+                $finalActivity[] = [
+                    'label'=> $value,
                     'nbr_commande_paye'=> $totalCommande,
                     'somme_commande_paye'=> $totalPrice,
-                    'total_produit'=> $totalProduit
+                    'total_produit'=> $totalProduit,
                 ];
-                $dateStart = date('Y-m-d',strtotime($dateStart . "+1 days"));
             }
-
-
-            $finalActivity = $this->buildActivityEcheance($dateStart, $tabAnnee, $user);
-
-            $d=cal_days_in_month(CAL_GREGORIAN,10,2005);
-            echo "There was $d days in October 2005";
-        }*/
+        }
 
         return $this->handleView($this->view(
             $finalActivity,
