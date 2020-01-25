@@ -623,7 +623,8 @@ class CommandeController extends APIController
             $tabAnnee = [ '01'=>'Jan', '02'=>'Feb', '03'=>'Mar', '04'=>'Apr', '05'=>'May', '06'=>'Jun', '07'=>'Jul', '08'=>'Aug', '09'=>'Sep', '10'=>'Oct', '11'=>'Nov', '12'=>'Dec'];
 
             $monthRang = array_search($month, $tabAnnee);
-            array_splice($tabAnnee, ($monthRang));       
+            array_splice($tabAnnee, ($monthRang));     
+            $topProd = [];   
             foreach ($tabAnnee as $key => $value) {
                 $commandes = $this->commandeRepository->getByShopActivityByDatePaye(
                     $user->getRestaurant()->getId(), 
@@ -637,6 +638,8 @@ class CommandeController extends APIController
                     $totalPrice += $val->getMontant();
                     foreach ($val->getCommandeProduit() as $ky => $vl) {
                         $totalProduit += $vl->getQuantite();
+                        $topProd = $this->getTopVente(
+                        $vl->getProduit()->getId(), $vl->getQuantite(), $topProd);
                     }
                 }
                 $finalActivity[] = [
@@ -644,6 +647,7 @@ class CommandeController extends APIController
                     'nbr_commande_paye'=> $totalCommande,
                     'somme_commande_paye'=> $totalPrice,
                     'total_produit'=> $totalProduit,
+                    'top_vente'=> $this->arsortCustom($topProd)
                 ];
             }
         }
@@ -735,19 +739,23 @@ class CommandeController extends APIController
             $user->getRestaurant()->getId(), new \Datetime($dateStart." 00:00:00"), 
             new \Datetime($dateStart." 23:59:59"));
 
+            $topProd = []; 
             $totalCommande = $totalPrice = $totalProduit = 0;
             foreach ($commandes as $key => $val) {
                 $totalCommande++;
                 $totalPrice += $val->getMontant();
                 foreach ($val->getCommandeProduit() as $key => $vl) {
                     $totalProduit += $vl->getQuantite();
+                    $topProd = $this->getTopVente(
+                        $vl->getProduit()->getId(), $vl->getQuantite(), $topProd);
                 }
             }
             $finalActivity[] = [
                 'label'=> $value,
                 'nbr_commande_paye'=> $totalCommande,
                 'somme_commande_paye'=> $totalPrice,
-                'total_produit'=> $totalProduit
+                'total_produit'=> $totalProduit,
+                'top_vente'=> $this->arsortCustom($topProd)
             ];
             $dateStart = date('Y-m-d',strtotime($dateStart . "+1 days"));
         }
@@ -779,6 +787,25 @@ class CommandeController extends APIController
       ];
 
       return $activity;
+    }
+
+    public function getTopVente($key, $qty, $topProd){
+        if (array_key_exists($key, $topProd)) {
+            $topProd[$key] += $qty;
+        }
+        else{
+            $topProd[$key] = $qty;
+        }
+        return $topProd;
+    }
+
+    public function arsortCustom($tab){
+        return $tab;
+        $tabRange = [];
+        $max = 0;
+        foreach ($tab as $key => $value) {
+           $tabRange;
+        }
     }
 
 }
