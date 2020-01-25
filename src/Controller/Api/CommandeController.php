@@ -808,6 +808,7 @@ class CommandeController extends APIController
                 'id'=> $key,
                 "nom"=>$produit->getNom(),
                 "qty_stock"=> $produit->getQuantite(),
+                "image"=> $produit->getImage(),
                 'qty_vendu'=> $value,
             ];
         }
