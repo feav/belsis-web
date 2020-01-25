@@ -800,12 +800,28 @@ class CommandeController extends APIController
     }
 
     public function arsortCustom($tab){
-        return $tab;
-        $tabRange = [];
         $max = 0;
+        $cle = 0;
         foreach ($tab as $key => $value) {
-           $tabRange;
+            if($value > $max){
+                $max = $value;
+                $cle = $key;
+            }
         }
+        return [
+            'id'=>$cle,
+            'qty'=> $max
+        ];
+
+        arsort($tab);
+        $tabFinal = [];
+        foreach ($tab as $key => $value) {
+            $tabFinal[] = [
+                'id'=> $key,
+                'val'=> $value,
+            ];
+        }
+        return $tabFinal;
     }
 
 }
