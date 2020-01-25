@@ -120,8 +120,8 @@ class RestaurantController extends APIController
         $entityManager = $this->getDoctrine()->getManager();
 
         $restaurant = new Restaurant();
-        if($request->get('product_id'))
-            $restaurant = $this->produitRepository->find($request->get('product_id'));
+        if($request->get('restaurant_id'))
+            $restaurant = $this->restaurantRepository->find($request->get('restaurant_id'));
 
         $restaurant->setNom($request->get('nom'));
         $restaurant->setAdresse($request->get('adresse'));
