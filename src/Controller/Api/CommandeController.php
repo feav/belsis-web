@@ -802,13 +802,18 @@ class CommandeController extends APIController
     public function arsortCustom($tab){
         arsort($tab);
         $tabFinal = [];
+
         foreach ($tab as $key => $value) {
             $produit = $this->produitRepository->find($key);
+            if($produit->getImage())
+                $image = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."uploads/produits/".$produit->getImage());
+            else
+                $image = str_replace("index.php/", "", $this->generateUrl('homepage', [], UrlGenerator::ABSOLUTE_URL)."images/image-default.jpeg");
             $tabFinal[] = [
                 'id'=> $key,
                 "nom"=>$produit->getNom(),
                 "qty_stock"=> $produit->getQuantite(),
-                "image"=> $produit->getImage(),
+                "image"=> $image,
                 'qty_vendu'=> $value,
             ];
         }
