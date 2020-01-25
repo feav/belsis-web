@@ -411,6 +411,7 @@ class UserController extends APIController
                     Response::HTTP_UNAUTHORIZED)
             );
         }
+        $entityManager = $this->getDoctrine()->getManager();
         if ($request->get('avatar')) {
             $nameImage = "avatar-".Date("Yds").".png";
             $savePath = $request->server->get('DOCUMENT_ROOT')."/images/dynamiques/profile/".$nameImage;

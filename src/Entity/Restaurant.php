@@ -86,6 +86,11 @@ class Restaurant
      */
     private $status;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $is_delete;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -94,6 +99,7 @@ class Restaurant
         $this->produits = new ArrayCollection();
         $this->commandes = new ArrayCollection();
         $this->status = true;
+        $this->is_delete = false;
         $this->users = new ArrayCollection();
     }
 
@@ -378,6 +384,18 @@ class Restaurant
                 $user->setRestaurant(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIsDelete(): ?bool
+    {
+        return $this->is_delete;
+    }
+
+    public function setIsDelete(?bool $is_delete): self
+    {
+        $this->is_delete = $is_delete;
 
         return $this;
     }
