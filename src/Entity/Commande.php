@@ -41,6 +41,7 @@ class Commande
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Table", inversedBy="commandes")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $table;
 

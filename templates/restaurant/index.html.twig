@@ -5,7 +5,7 @@
 {% block bo_content %}
     <div class="row-title">
         <h1 class="title">Liste des restaurants</h1> 
-        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+        {% if 'superadmin' in app.user.role %}
             <a href="{{path('restaurant_new')}}" class="call-action btn">Nouveau restaurant</a>
         {% endif %}
     </div>
@@ -43,7 +43,7 @@
                                 </td>
                                 <td>
                                     <a href="{{ path('restaurant_show', {'id': restaurant.id}) }}">detail</a>&nbsp
-                                    {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                                    {% if 'superadmin' in app.user.role %}
                                         <a href="{{ path('restaurant_edit', {'id': restaurant.id}) }}">modifier</a>
                                     {% endif %}
                                 </td>

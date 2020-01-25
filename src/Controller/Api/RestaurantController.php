@@ -100,4 +100,53 @@ class RestaurantController extends APIController
         ];
         return $this->handleView($this->view($restaurantArray, Response::HTTP_OK));
     }
+
+    /**
+     * @Rest\Post("/add", name="add_restaurant")
+     *
+     * @return Response
+     */
+    public function addRestaurant(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $restaurant = new Restaurant();
+        if($request->get('product_id'))
+            $restaurant = $this->produitRepository->find($request->get('product_id'));
+
+        $restaurant->setNom($request->get('nom'));
+        $restaurant->setAdresse($request->get('adresse'));
+        $restaurant->setDevise($request->get('devise'));
+        $restaurant->setChiffreAffaire($request->get('chiffre_affaire'));
+        
+        if ($request->get('logo')) {
+            $nameImage = "logo-".Date("Yds").".png";
+            $savePath = $request->server->get('DOCUMENT_ROOT')."/images/uploads/restaurant/".$nameImage;
+
+            if(strpos($request->get('logo'), "data:image/") !== false ){
+                $base64_string = $request->get('logo');
+                $data = explode( ',', $base64_string );
+                file_put_contents($savePath, base64_decode($data[1]));
+            }
+            $restaurant->setLogo($nameImage);
+        }
+        
+        $entityManager->persist($restaurant);
+        $entityManager->flush();
+
+        return $this->handleView($this->view(
+            $restaurant->getId(), 
+            Response::HTTP_OK)
+        );
+    }
+
 }

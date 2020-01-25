@@ -27,6 +27,12 @@ class TableController extends AbstractController
     public function index(TableRepository $tableRepository): Response
     {   
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $user = $this->getUser();
+        if($user->getRole() == "superadmin")
+            $tables = $tableRepository->findAll();
+        elseif($this->getUser()->getRole() == "admin")
+            $tables = $tableRepository->findBy(['restaurant'=>$user->getRestaurant()]);
+
         return $this->render('table/index.html.twig', [
             'tables' => $tableRepository->findAll(),
         ]);

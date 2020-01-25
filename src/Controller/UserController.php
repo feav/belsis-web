@@ -30,9 +30,14 @@ class UserController extends AbstractController
     public function index(UserRepository $userRepository): Response
     {   
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $user = $this->getUser();
+        if($user->getRole() == "superadmin")
+            $users = $userRepository->findAll();
+        elseif($this->getUser()->getRole() == "admin")
+            $users = $userRepository->findBy(['restaurant'=>$user->getRestaurant()]);
 
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'users' => $users,
         ]);
     }
 
