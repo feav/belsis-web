@@ -42,6 +42,7 @@ class ModePaiement
     public function __construct()
     {
         $this->commandes = new ArrayCollection();
+        $this->is_delete = false;
     }
 
     public function getId()
