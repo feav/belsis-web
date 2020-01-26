@@ -356,6 +356,80 @@ class UserController extends APIController
     }
 
     /**
+     * @Rest\Post("/inscription", name="inscription")
+     *
+     * @return Response
+     */
+    public function inscription(Request $request, UserManagerInterface $userManager)
+    {
+        $userConnect = $this->authToken($request);
+        if (is_array($userConnect)) {
+            return $this->handleView(
+                $this->view(
+                    $userConnect,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $user = new User();
+        $existEmail = $userManager->findUserByEmail($request->get('email'));
+        if(!is_null($existEmail)){
+            return $this->handleView(
+                $this->view(
+                    [
+                      "status" => "error",
+                      "message"=> "Un utilisateur existe déjà avec cet email."
+                    ],
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        $userNameExist = $userManager->findUserByUsername($request->get('username'));
+        if(!is_null($userNameExist)){
+            return $this->handleView(
+                $this->view(
+                    [
+                      "status" => "error",
+                      "message"=> "Un utilisateur existe déjà avec ce nom d\'utilisateur."
+                    ],
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        $user->setRole('admin');
+        
+        if($request->get('password'))
+            $user->setPlainPassword($request->get('password'));
+
+        $user->setNom($request->get('nom'));
+        $user->setPrenom($request->get('prenom'));
+        $user->setUsername($request->get('username'));
+        $user->setUsernameCanonical($request->get('username'));
+        $user->setEmail($request->get('email'));
+        $user->setEmailCanonical($request->get('email'));
+        $user->setEnabled(true);
+        
+        if ($request->get('avatar')) {
+            $nameImage = "avatar-".Date("Yds").".png";
+            $savePath = $request->server->get('DOCUMENT_ROOT')."/images/dynamiques/profile/".$nameImage;
+
+            if(strpos($request->get('avatar'), "data:image/") !== false ){
+                $base64_string = $request->get('avatar');
+                $data = explode( ',', $base64_string );
+                file_put_contents($savePath, base64_decode($data[1]));
+            }
+            $user->setAvatar($nameImage);
+        }
+        
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return $this->handleView($this->view(
+            $user->getId(), 
+            Response::HTTP_OK)
+        );
+    }
+
+    /**
     * Modifier le mot de passe de l'utilisateur
     * @Rest\Post("/reset-password", name="user_reset_password")
     *

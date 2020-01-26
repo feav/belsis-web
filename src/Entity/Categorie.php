@@ -55,9 +55,15 @@ class Categorie
      */
     private $produits;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $is_delete;
+
     public function __construct()
     {
         $this->produits = new ArrayCollection();
+        $this->is_delete = false;
     }
 
     public function getId()
@@ -146,5 +152,17 @@ class Categorie
 
     public function __toString(){
         return $this->nom;
+    }
+
+    public function getIsDelete(): ?bool
+    {
+        return $this->is_delete;
+    }
+
+    public function setIsDelete(?bool $is_delete): self
+    {
+        $this->is_delete = $is_delete;
+
+        return $this;
     }
 }
