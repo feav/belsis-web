@@ -362,14 +362,6 @@ class UserController extends APIController
      */
     public function inscription(Request $request, UserManagerInterface $userManager)
     {
-        $userConnect = $this->authToken($request);
-        if (is_array($userConnect)) {
-            return $this->handleView(
-                $this->view(
-                    $userConnect,
-                    Response::HTTP_UNAUTHORIZED)
-            );
-        }
 
         $entityManager = $this->getDoctrine()->getManager();
         $user = new User();
