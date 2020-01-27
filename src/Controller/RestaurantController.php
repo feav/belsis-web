@@ -73,6 +73,12 @@ class RestaurantController extends AbstractController
                 $restaurant->setLogo($newFilename);
             }
 
+            do{
+                $restoToken = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+                $restaurantExiste = $this->restaurantRepository->findOneBy(['token'=>$restoToken]);
+            }while(!is_null($restaurantExiste));
+            $restaurant->setToken($restoToken);
+
             $entityManager->persist($restaurant);
             $entityManager->flush();
 

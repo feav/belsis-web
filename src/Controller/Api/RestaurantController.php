@@ -122,7 +122,14 @@ class RestaurantController extends APIController
         $restaurant = new Restaurant();
         if($request->get('restaurant_id'))
             $restaurant = $this->restaurantRepository->find($request->get('restaurant_id'));
-
+        else{
+          do{
+            $restoToken = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+            $restaurantExiste = $this->restaurantRepository->findOneBy(['token'=>$restoToken]);
+          }while(!is_null($restaurantExiste));
+          $restaurant->setToken($restoToken);
+        }
+        
         $restaurant->setNom($request->get('nom'));
         $restaurant->setAdresse($request->get('adresse'));
         $restaurant->setDevise($request->get('devise'));

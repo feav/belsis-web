@@ -391,23 +391,34 @@ class UserController extends APIController
         /*
           creer restaurant
         */
-        $restaurant = new Restaurant();
-        $restaurant->setNom($request->get('nom_restaurant'));
-        $restaurant->setAdresse($request->get('adresse_restaurant'));
-        $restaurant->setDevise($request->get('devise'));
-        if($request->get('chiffre_affaire'))
-          $restaurant->setChiffreAffaire($request->get('chiffre_affaire'));
-        
-        if ($request->get('logo')) {
-          $nameImage = "logo-".Date("Yds").".png";
-          $savePath = $request->server->get('DOCUMENT_ROOT')."/images/uploads/restaurant/".$nameImage;
+        if($request->get('restaurant_token')){
+          $restaurant = $this->restaurantRepository->findOneBy(['token'=>$request->get('restaurant_token')]);
+        }
+        else{
+          $restaurant = new Restaurant();
+          $restaurant->setNom($request->get('nom_restaurant'));
+          $restaurant->setAdresse($request->get('adresse_restaurant'));
+          $restaurant->setDevise($request->get('devise'));
+          if($request->get('chiffre_affaire'))
+            $restaurant->setChiffreAffaire($request->get('chiffre_affaire'));
 
-          if(strpos($request->get('logo'), "data:image/") !== false ){
-              $base64_string = $request->get('logo');
-              $data = explode( ',', $base64_string );
-              file_put_contents($savePath, base64_decode($data[1]));
-          }
-          $restaurant->setLogo($nameImage);
+          do{
+            $restoToken = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+            $restaurantExiste = $this->restaurantRepository->findOneBy(['token'=>$restoToken]);
+          }while(!is_null($restaurantExiste));
+          $restaurant->setToken($restoToken);
+          
+          if ($request->get('logo')) {
+            $nameImage = "logo-".Date("Yds").".png";
+            $savePath = $request->server->get('DOCUMENT_ROOT')."/images/uploads/restaurant/".$nameImage;
+
+            if(strpos($request->get('logo'), "data:image/") !== false ){
+                $base64_string = $request->get('logo');
+                $data = explode( ',', $base64_string );
+                file_put_contents($savePath, base64_decode($data[1]));
+            }
+            $restaurant->setLogo($nameImage);
+          }          
         }
 
         /*

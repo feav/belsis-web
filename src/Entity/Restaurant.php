@@ -91,6 +91,11 @@ class Restaurant
      */
     private $is_delete;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $token;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -396,6 +401,18 @@ class Restaurant
     public function setIsDelete(?bool $is_delete): self
     {
         $this->is_delete = $is_delete;
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): self
+    {
+        $this->token = $token;
 
         return $this;
     }
