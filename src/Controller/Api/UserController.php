@@ -392,9 +392,11 @@ class UserController extends APIController
           creer restaurant
         */
         if($request->get('restaurant_token')){
+          $user->setRole($request->get('role'));
           $restaurant = $this->restaurantRepository->findOneBy(['token'=>$request->get('restaurant_token')]);
         }
         else{
+          $user->setRole('admin');
           $restaurant = new Restaurant();
           $restaurant->setNom($request->get('nom_restaurant'));
           $restaurant->setAdresse($request->get('adresse_restaurant'));
@@ -424,7 +426,7 @@ class UserController extends APIController
         /*
           creer user gestionnaire
         */
-        $user->setRole('admin');
+        
         
         if($request->get('password'))
             $user->setPlainPassword($request->get('password'));
