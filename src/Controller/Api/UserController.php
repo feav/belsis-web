@@ -387,6 +387,32 @@ class UserController extends APIController
                     Response::HTTP_UNAUTHORIZED)
             );
         }
+
+        /*
+          creer restaurant
+        */
+        $restaurant = new Restaurant();
+        $restaurant->setNom($request->get('nom_restaurant'));
+        $restaurant->setAdresse($request->get('adresse_restaurant'));
+        $restaurant->setDevise($request->get('devise'));
+        if($request->get('chiffre_affaire'))
+          $restaurant->setChiffreAffaire($request->get('chiffre_affaire'));
+        
+        if ($request->get('logo')) {
+          $nameImage = "logo-".Date("Yds").".png";
+          $savePath = $request->server->get('DOCUMENT_ROOT')."/images/uploads/restaurant/".$nameImage;
+
+          if(strpos($request->get('logo'), "data:image/") !== false ){
+              $base64_string = $request->get('logo');
+              $data = explode( ',', $base64_string );
+              file_put_contents($savePath, base64_decode($data[1]));
+          }
+          $restaurant->setLogo($nameImage);
+        }
+
+        /*
+          creer user gestionnaire
+        */
         $user->setRole('admin');
         
         if($request->get('password'))
@@ -399,7 +425,9 @@ class UserController extends APIController
         $user->setEmail($request->get('email'));
         $user->setEmailCanonical($request->get('email'));
         $user->setEnabled(true);
-        
+        $user->setRestaurant($restaurant);
+
+
         if ($request->get('avatar')) {
             $nameImage = "avatar-".Date("Yds").".png";
             $savePath = $request->server->get('DOCUMENT_ROOT')."/images/dynamiques/profile/".$nameImage;
@@ -412,6 +440,7 @@ class UserController extends APIController
             $user->setAvatar($nameImage);
         }
         
+        $entityManager->persist($restaurant);
         $entityManager->persist($user);
         $entityManager->flush();
 
