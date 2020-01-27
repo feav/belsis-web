@@ -60,6 +60,7 @@ class RestaurantController extends APIController
           "id"=> $restaurant->getId(),
           "nom"=> $restaurant->getNom(),
           "adresse"=> $restaurant->getAdresse(),
+          "restaurant_token"=> ($user->getRole() == "admin") ? $restaurant->getToken():"",
           "logo"=> $image,
           "devise"=> $restaurant->getDevise(),
           "chiffre_affaire"=> $restaurant->getChiffreAffaire(),
@@ -91,6 +92,7 @@ class RestaurantController extends APIController
 
         $restaurantArray = [
           "id"=> $restaurant->getId(),
+          "restaurant_token"=> ($user->getRole() == "admin") ? $restaurant->getToken():"",
           "nom"=> $restaurant->getNom(),
           "adresse"=> $restaurant->getAdresse(),
           "logo"=> $image,
@@ -129,7 +131,7 @@ class RestaurantController extends APIController
           }while(!is_null($restaurantExiste));
           $restaurant->setToken($restoToken);
         }
-        
+
         $restaurant->setNom($request->get('nom'));
         $restaurant->setAdresse($request->get('adresse'));
         $restaurant->setDevise($request->get('devise'));
