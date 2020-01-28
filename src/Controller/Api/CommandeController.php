@@ -303,7 +303,7 @@ class CommandeController extends APIController
     {
 
         $server_key = 'AAAAIrodwWw:APA91bGM7RRtiYKR9ahU2T7f9OXggGuFz-t67RTnlMOb3tRuNKqDqNWYeEy680qcS3vq0yyVZkmx-kRycYVF2bLTWaLGdCj-I-nFX_iC8IbeUlxytAGDk0pMVXiawr_l8NkAU0Xkwutc';
-        $client = new Client();
+        $client = new \GuzzleHttp\Client();
         $client->setApiKey($server_key);
         $client->injectGuzzleHttpClient(new \GuzzleHttp\Client());
 
