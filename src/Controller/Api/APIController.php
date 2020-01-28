@@ -38,6 +38,28 @@ class APIController extends FOSRestController
     {
     }
 
+    /**
+     * @Rest\Get("/send-devise-token", name="send_devise_token")
+     *
+     * @return Response
+     */
+    public function sendDeviceToken(Request $request)
+    {
+        $user = $this->authToken($request);
+        if (is_array($user)) {
+            return $this->handleView(
+                $this->view(
+                    $user,
+                    Response::HTTP_UNAUTHORIZED)
+            );
+        }
+        $entityManager = $this->getDoctrine()->getManager();
+        $user->setDeviceToken($request->get('devise-token'));
+        $entityManager->persist($user);
+        $entityManager->flush();
+        return $this->handleView($this->view($infos, Response::HTTP_OK));
+    }
+
     /** 
      * Get header Authorization
      * */
