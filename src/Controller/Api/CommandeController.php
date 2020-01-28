@@ -369,14 +369,14 @@ class CommandeController extends APIController
     public function pushNotification($user, $title, $message)
     {
 
-        $server_key = 'AAAAEwOp8M0:APA91bHSRffKVzbdCPbvJkOe1DDrYu3HjRntnSyvTCQqKby8W0PNiPAdOIAhnJWyU68GPp2GvfJhzIMYJNWhO8rWC5vcnxzdJAkMCFAIed1zQ-7Kt3CKt8GooWTHDkS93wzFX__nYqzk';
+        $server_key = $this->server_key;
         $client = new Client();
         $client->setApiKey($server_key);
         $client->injectGuzzleHttpClient(new \GuzzleHttp\Client());
 
         $message = new Message();
         $message->setPriority('high');
-        $message->addRecipient(new Device('daO-GyvavVc:APA91bGHsOdKC6QDlT9k1WNOMUYfOPhZbGAzhKHhopdhI4TXKOGfDYbnGsHZxgV6hWejIRC-upvDvy_ePCdXT54eGKC0kPhLIS6tH9-sne_8E1dXp-VetSQprfV7L0MxNKCeZWgLYh-J'));
+        $message->addRecipient(new Device($user->getDeviceToken()));
         $message
             ->setNotification(new Notification('some title', 'message to alex-22'))
             ->setData(['key' => 'value'])
