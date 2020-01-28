@@ -369,7 +369,7 @@ class CommandeController extends APIController
     public function pushNotification($user, $title, $message)
     {
         $client = new Client();
-        $client->setApiKey($this->server_key);
+        $client->setApiKey("AAAAEwOp8M0:APA91bHSRffKVzbdCPbvJkOe1DDrYu3HjRntnSyvTCQqKby8W0PNiPAdOIAhnJWyU68GPp2GvfJhzIMYJNWhO8rWC5vcnxzdJAkMCFAIed1zQ-7Kt3CKt8GooWTHDkS93wzFX__nYqzk");
         $client->injectGuzzleHttpClient(new \GuzzleHttp\Client());
 
         $message = new Message();
