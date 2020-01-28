@@ -368,21 +368,20 @@ class CommandeController extends APIController
 
     public function pushNotification($user, $title, $message)
     {
+
+        $server_key = 'AAAAEwOp8M0:APA91bHSRffKVzbdCPbvJkOe1DDrYu3HjRntnSyvTCQqKby8W0PNiPAdOIAhnJWyU68GPp2GvfJhzIMYJNWhO8rWC5vcnxzdJAkMCFAIed1zQ-7Kt3CKt8GooWTHDkS93wzFX__nYqzk';
         $client = new Client();
-        $client->setApiKey("AAAAEwOp8M0:APA91bHSRffKVzbdCPbvJkOe1DDrYu3HjRntnSyvTCQqKby8W0PNiPAdOIAhnJWyU68GPp2GvfJhzIMYJNWhO8rWC5vcnxzdJAkMCFAIed1zQ-7Kt3CKt8GooWTHDkS93wzFX__nYqzk");
+        $client->setApiKey($server_key);
         $client->injectGuzzleHttpClient(new \GuzzleHttp\Client());
 
         $message = new Message();
         $message->setPriority('high');
-        $message->addRecipient(new Device("daO-GyvavVc:APA91bGHsOdKC6QDlT9k1WNOMUYfOPhZbGAzhKHhopdhI4TXKOGfDYbnGsHZxgV6hWejIRC-upvDvy_ePCdXT54eGKC0kPhLIS6tH9-sne_8E1dXp-VetSQprfV7L0MxNKCeZWgLYh-J"));
-        
+        $message->addRecipient(new Device('daO-GyvavVc:APA91bGHsOdKC6QDlT9k1WNOMUYfOPhZbGAzhKHhopdhI4TXKOGfDYbnGsHZxgV6hWejIRC-upvDvy_ePCdXT54eGKC0kPhLIS6tH9-sne_8E1dXp-VetSQprfV7L0MxNKCeZWgLYh-J'));
         $message
-            ->setNotification(new Notification($title, $message))
+            ->setNotification(new Notification('some title', 'message to alex-22'))
             ->setData(['key' => 'value'])
         ;
         $response = $client->send($message);
-        /*var_dump($response->getBody()->getContents());*/
-
         return $response;
     }
 
