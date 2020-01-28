@@ -366,7 +366,7 @@ class CommandeController extends APIController
     }
 
 
-    public function pushNotification($user, $title, $message, $topic=null, $tabData=[])
+    public function pushNotification($user, $title, $message)
     {
         $client = new Client();
         $client->setApiKey($this->server_key);
@@ -374,7 +374,7 @@ class CommandeController extends APIController
 
         $message = new Message();
         $message->setPriority('high');
-        $message->addRecipient(new Device($user->getDeviceToken()));
+        $message->addRecipient(new Device("daO-GyvavVc:APA91bGHsOdKC6QDlT9k1WNOMUYfOPhZbGAzhKHhopdhI4TXKOGfDYbnGsHZxgV6hWejIRC-upvDvy_ePCdXT54eGKC0kPhLIS6tH9-sne_8E1dXp-VetSQprfV7L0MxNKCeZWgLYh-J"));
         
         $message
             ->setNotification(new Notification($title, $message))
