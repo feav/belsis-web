@@ -13,6 +13,7 @@
         "jms/serializer-bundle": "^3.4",
         "nelmio/cors-bundle": "^2.0",
         "sensio/framework-extra-bundle": "^5.4",
+        "sngrl/php-firebase-cloud-messaging": "dev-master",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "4.3.*",
         "symfony/console": "4.3.*",

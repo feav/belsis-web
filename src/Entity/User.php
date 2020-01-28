@@ -51,6 +51,11 @@ class User extends BaseUser
      */
     private $avatar;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $device_token;
+
     public function getRestaurant()
     {
         return $this->restaurant;
@@ -153,6 +158,18 @@ class User extends BaseUser
     public function setAvatar(?string $avatar): self
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getDeviceToken(): ?string
+    {
+        return $this->device_token;
+    }
+
+    public function setDeviceToken(?string $device_token): self
+    {
+        $this->device_token = $device_token;
 
         return $this;
     }

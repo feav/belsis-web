@@ -21,6 +21,10 @@ use App\Entity\Commande;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use sngrl\PhpFirebaseCloudMessaging\Client;
+use sngrl\PhpFirebaseCloudMessaging\Message;
+use sngrl\PhpFirebaseCloudMessaging\Recipient\Device;
+use sngrl\PhpFirebaseCloudMessaging\Notification;
 
 use App\Service\ProduitService;
 /**
@@ -291,6 +295,41 @@ class CommandeController extends APIController
     }
 
     /**
+     * @Rest\Get("/send-message", name="send_message")
+     *
+     * @return Response
+     */
+    public function sendMessage(Request $request)
+    {
+
+        $server_key = 'AAAAIrodwWw:APA91bGM7RRtiYKR9ahU2T7f9OXggGuFz-t67RTnlMOb3tRuNKqDqNWYeEy680qcS3vq0yyVZkmx-kRycYVF2bLTWaLGdCj-I-nFX_iC8IbeUlxytAGDk0pMVXiawr_l8NkAU0Xkwutc';
+        $client = new Client();
+        $client->setApiKey($server_key);
+        $client->injectGuzzleHttpClient(new \GuzzleHttp\Client());
+
+        $message = new Message();
+        $message->setPriority('high');
+        $message->addRecipient(new Device('daO-GyvavVc:APA91bGHsOdKC6QDlT9k1WNOMUYfOPhZbGAzhKHhopdhI4TXKOGfDYbnGsHZxgV6hWejIRC-upvDvy_ePCdXT54eGKC0kPhLIS6tH9-sne_8E1dXp-VetSQprfV7L0MxNKCeZWgLYh-J'));
+        $message
+            ->setNotification(new Notification('some title', 'message to alex'))
+            ->setData(['key' => 'value'])
+        ;
+
+        $response = $client->send($message);
+        /*var_dump($response->getStatusCode());
+        var_dump($response->getBody()->getContents());*/
+
+        return $this->handleView($this->view(
+            [
+                'status' => 'success',
+                'message' => $response->getStatusCode()
+            ], 
+            Response::HTTP_OK)
+        );
+
+    }
+
+    /**
      * @Rest\Get("/change-etat", name="change_etat")
      *
      * @return Response
@@ -306,6 +345,25 @@ class CommandeController extends APIController
             );
         }
 
+        $server_key = 'AAAAIrodwWw:APA91bGM7RRtiYKR9ahU2T7f9OXggGuFz-t67RTnlMOb3tRuNKqDqNWYeEy680qcS3vq0yyVZkmx-kRycYVF2bLTWaLGdCj-I-nFX_iC8IbeUlxytAGDk0pMVXiawr_l8NkAU0Xkwutc';
+        $client = new Client();
+        $client->setApiKey($server_key);
+        $client->injectGuzzleHttpClient(new \GuzzleHttp\Client());
+
+        $message = new Message();
+        $message->setPriority('high');
+        $message->addRecipient(new Device('cWK9r0lac6k:APA91bG7XogN5zNsOB1YStz2u3o1dm5KvYM9Ukenjm5hOA-HKDPJVqID4b8Nr8U7VYFtd3PDjwAFzCE-shUHtJMUysG4S2xaNwFH0TzXPTMWJUtAK7ew-Q-EensRckj1aBXXVrPKSwHD'));
+        $message
+            ->setNotification(new Notification('some title', 'some body'))
+            ->setData(['key' => 'value'])
+        ;
+
+        $response = $client->send($message);
+        /*var_dump($response->getStatusCode());
+        var_dump($response->getBody()->getContents());*/
+
+
+
         $entityManager = $this->getDoctrine()->getManager();
         $commande = $this->commandeRepository->find($request->get('order_id'));
         $this->updateStockChangeCmd($commande, $request);
@@ -318,7 +376,7 @@ class CommandeController extends APIController
         return $this->handleView($this->view(
             [
                 'status' => 'success',
-                'message' => "Etat modifié"
+                'message' => $response->getStatusCode()
             ], 
             Response::HTTP_OK)
         );
