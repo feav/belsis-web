@@ -302,7 +302,7 @@ class CommandeController extends APIController
     public function sendMessage(Request $request)
     {
 
-        $server_key = 'AAAAIrodwWw:APA91bGM7RRtiYKR9ahU2T7f9OXggGuFz-t67RTnlMOb3tRuNKqDqNWYeEy680qcS3vq0yyVZkmx-kRycYVF2bLTWaLGdCj-I-nFX_iC8IbeUlxytAGDk0pMVXiawr_l8NkAU0Xkwutc';
+        $server_key = 'AAAAEwOp8M0:APA91bHSRffKVzbdCPbvJkOe1DDrYu3HjRntnSyvTCQqKby8W0PNiPAdOIAhnJWyU68GPp2GvfJhzIMYJNWhO8rWC5vcnxzdJAkMCFAIed1zQ-7Kt3CKt8GooWTHDkS93wzFX__nYqzk';
         $client = new Clt();
         $client->setApiKey($server_key);
         $client->injectGuzzleHttpClient(new \GuzzleHttp\Client());
