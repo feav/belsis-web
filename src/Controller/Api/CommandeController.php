@@ -45,6 +45,7 @@ class CommandeController extends APIController
         $this->produitRepository = $produitRepository;
         $this->tableRepository = $tableRepository;
         $this->produit_s = $produit_s;
+        $this->firebaseService = $firebaseService;
     }
 
     /**

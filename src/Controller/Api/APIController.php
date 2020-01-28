@@ -57,7 +57,7 @@ class APIController extends FOSRestController
         $user->setDeviceToken($request->get('devise-token'));
         $entityManager->persist($user);
         $entityManager->flush();
-        return $this->handleView($this->view($infos, Response::HTTP_OK));
+        return $this->handleView($this->view($user->getId(), Response::HTTP_OK));
     }
 
     /** 
