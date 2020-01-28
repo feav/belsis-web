@@ -26,7 +26,7 @@ class FirebaseService{
         $this->userRepository = $userRepository;
     }
 
-    public function pushNotification($tabUser, $title, $message, $topic=null, $tabData=[])
+    public function pushNotification($tabUser, $title, $msg, $topic=null, $tabData=[])
     {
         $client = new Client();
         $client->setApiKey($this->server_key);
@@ -38,7 +38,7 @@ class FirebaseService{
             $message->addRecipient(new Device($user->getDeviceToken()));
         }
         $message
-            ->setNotification(new Notification($title, $message))
+            ->setNotification(new Notification($title, $msg))
             ->setData(['key' => 'value'])
         ;
         $response = $client->send($message);
