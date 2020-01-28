@@ -352,7 +352,7 @@ class CommandeController extends APIController
         $commande->setEtat($request->get('etat'));
         if($request->get('etat') == "prete")
             $commande->setCuisinier($user->getId());
-        $response =  $this->pushNotification($commande->getUser(), "Commande: changement d'etat", "Etat de la commande modifée");
+        $response =  $this->pushNotification($commande->getUser(), "Commande: changement d'etat", "Etat de la commande modifee");
 
         $entityManager->flush();
 
@@ -366,7 +366,7 @@ class CommandeController extends APIController
     }
 
 
-    public function pushNotification($user, $title, $message)
+    public function pushNotification($user, $title, $msg)
     {
 
         $server_key = $this->server_key;
@@ -378,7 +378,7 @@ class CommandeController extends APIController
         $message->setPriority('high');
         $message->addRecipient(new Device($user->getDeviceToken()));
         $message
-            ->setNotification(new Notification($title, $message))
+            ->setNotification(new Notification($title, $msg))
             ->setData(['key' => 'value'])
         ;
         $response = $client->send($message);
