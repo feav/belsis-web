@@ -378,7 +378,7 @@ class CommandeController extends APIController
         $message->setPriority('high');
         $message->addRecipient(new Device($user->getDeviceToken()));
         $message
-            ->setNotification(new Notification('some title', 'message to alex-22'))
+            ->setNotification(new Notification($title, $message))
             ->setData(['key' => 'value'])
         ;
         $response = $client->send($message);
