@@ -42,6 +42,7 @@ class CommandeController extends APIController
     private $doctrine;
     private $produit_s;
     private $firebaseService;
+    private $server_key = 'AAAAEwOp8M0:APA91bHSRffKVzbdCPbvJkOe1DDrYu3HjRntnSyvTCQqKby8W0PNiPAdOIAhnJWyU68GPp2GvfJhzIMYJNWhO8rWC5vcnxzdJAkMCFAIed1zQ-7Kt3CKt8GooWTHDkS93wzFX__nYqzk';
 
     public function __construct(CommandeRepository $commandeRepository, CommandeProduitRepository $commandeProduitRepository, ProduitRepository $produitRepository, TableRepository $tableRepository, ProduitService $produit_s, FirebaseService $firebaseService)
     {
@@ -351,7 +352,7 @@ class CommandeController extends APIController
         $commande->setEtat($request->get('etat'));
         if($request->get('etat') == "prete")
             $commande->setCuisinier($user->getId());
-        $response =  $this->firebaseService->pushNotification([$commande->getUser()], "Commande: changement d'etat", "La commande No:#".$commande->getId()." a été passé à ".$request->get('etat'));
+        $response =  $this->pushNotification($commande->getUser(), "Commande: changement d'etat", "La commande No:#".$commande->getId()." a été passé à ".$request->get('etat'));
 
         $entityManager->flush();
 
@@ -362,6 +363,27 @@ class CommandeController extends APIController
             ], 
             Response::HTTP_OK)
         );
+    }
+
+
+    public function pushNotification($user, $title, $message, $topic=null, $tabData=[])
+    {
+        $client = new Client();
+        $client->setApiKey($this->server_key);
+        $client->injectGuzzleHttpClient(new \GuzzleHttp\Client());
+
+        $message = new Message();
+        $message->setPriority('high');
+        $message->addRecipient(new Device($user->getDeviceToken()));
+        
+        $message
+            ->setNotification(new Notification($title, $message))
+            ->setData(['key' => 'value'])
+        ;
+        $response = $client->send($message);
+        /*var_dump($response->getBody()->getContents());*/
+
+        return $response;
     }
 
     /**
