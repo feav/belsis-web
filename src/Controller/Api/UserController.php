@@ -67,6 +67,8 @@ class UserController extends APIController
         return $this->handleView($this->view($infos, Response::HTTP_OK));
     }
 
+
+
     /**
      * @Rest\Get("/get-by-id", name="get_by_id")
      *
@@ -230,6 +232,7 @@ class UserController extends APIController
               'prenom' => $user->getPrenom(),
               'role' => $user->getRole(),
               'avatar' => $avatar,
+              'token_devise' => $user->getDeviceToken(),
               'totalCommande' => $totalCommande,
               'totalPrice' => $totalPrice,
               'activity' => $activity,

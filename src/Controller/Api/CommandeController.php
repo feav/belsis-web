@@ -22,6 +22,11 @@ use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use sngrl\PhpFirebaseCloudMessaging\Client;
+use sngrl\PhpFirebaseCloudMessaging\Message;
+use sngrl\PhpFirebaseCloudMessaging\Recipient\Device;
+use sngrl\PhpFirebaseCloudMessaging\Notification;
+
 use App\Service\ProduitService;
 use App\Service\FirebaseService;
 /**
@@ -291,6 +296,37 @@ class CommandeController extends APIController
             ], 
             Response::HTTP_OK)
         );
+    }
+
+    /**
+     * @Rest\Get("/send-message", name="send_message")
+     *
+     * @return Response
+     */
+    public function sendMessage(Request $request)
+    {
+
+        $server_key = 'AAAAEwOp8M0:APA91bHSRffKVzbdCPbvJkOe1DDrYu3HjRntnSyvTCQqKby8W0PNiPAdOIAhnJWyU68GPp2GvfJhzIMYJNWhO8rWC5vcnxzdJAkMCFAIed1zQ-7Kt3CKt8GooWTHDkS93wzFX__nYqzk';
+        $client = new Client();
+        $client->setApiKey($server_key);
+        $client->injectGuzzleHttpClient(new \GuzzleHttp\Client());
+
+        $message = new Message();
+        $message->setPriority('high');
+        $message->addRecipient(new Device('daO-GyvavVc:APA91bGHsOdKC6QDlT9k1WNOMUYfOPhZbGAzhKHhopdhI4TXKOGfDYbnGsHZxgV6hWejIRC-upvDvy_ePCdXT54eGKC0kPhLIS6tH9-sne_8E1dXp-VetSQprfV7L0MxNKCeZWgLYh-J'));
+        $message
+            ->setNotification(new Notification('some title', 'message to alex-22'))
+            ->setData(['key' => 'value'])
+        ;
+        $response = $client->send($message);
+        return $this->handleView($this->view(
+            [
+                'status' => 'success',
+                'message' => $response->getStatusCode()
+            ], 
+            Response::HTTP_OK)
+        );
+
     }
 
     /**
