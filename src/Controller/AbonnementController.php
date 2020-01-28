@@ -15,6 +15,11 @@ use App\Service\GlobalService;
 use Dompdf\Options;
 use Dompdf\Dompdf;
 
+use sngrl\PhpFirebaseCloudMessaging\Client;
+use sngrl\PhpFirebaseCloudMessaging\Message;
+use sngrl\PhpFirebaseCloudMessaging\Recipient\Device;
+use sngrl\PhpFirebaseCloudMessaging\Notification;
+
 /**
  * @Route("/dashboad/abonnement")
  */
@@ -33,6 +38,38 @@ class AbonnementController extends AbstractController
       $this->global_s = $global_s;
     }
 
+/**
+ * @Route("/send-message-2")
+ */
+    public function sendMessage(Request $request)
+    {
+
+        $server_key = 'AAAAIrodwWw:APA91bGM7RRtiYKR9ahU2T7f9OXggGuFz-t67RTnlMOb3tRuNKqDqNWYeEy680qcS3vq0yyVZkmx-kRycYVF2bLTWaLGdCj-I-nFX_iC8IbeUlxytAGDk0pMVXiawr_l8NkAU0Xkwutc';
+        $client = new Client();
+        $client->setApiKey($server_key);
+        $client->injectGuzzleHttpClient(new \GuzzleHttp\Client());
+
+        $message = new Message();
+        $message->setPriority('high');
+        $message->addRecipient(new Device('daO-GyvavVc:APA91bGHsOdKC6QDlT9k1WNOMUYfOPhZbGAzhKHhopdhI4TXKOGfDYbnGsHZxgV6hWejIRC-upvDvy_ePCdXT54eGKC0kPhLIS6tH9-sne_8E1dXp-VetSQprfV7L0MxNKCeZWgLYh-J'));
+        $message
+            ->setNotification(new Notification('some title', 'message to alex'))
+            ->setData(['key' => 'value'])
+        ;
+
+        $response = $client->send($message);
+        /*var_dump($response->getStatusCode());
+        var_dump($response->getBody()->getContents());*/
+
+        return $this->handleView($this->view(
+            [
+                'status' => 'success',
+                'message' => $response->getStatusCode()
+            ], 
+            Response::HTTP_OK)
+        );
+
+    }
     /**
      * @Route("/", name="abonnement_index", methods={"GET"})
      */
