@@ -354,7 +354,7 @@ class CommandeController extends APIController
             $commande->setCuisinier($user->getId());
         $idCommande = $commande->getId();
         $newEtat = $request->get('etat');
-        $msg = "La commande No:#$idCommande a été passé à $newEtat"; 
+        $msg = "La commande No:$idCommande a été passé à newEtat"; 
         $response =  $this->pushNotification($commande->getUser(), "Commande: changement d'etat", $msg);
 
         $entityManager->flush();
