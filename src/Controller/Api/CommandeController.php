@@ -21,7 +21,7 @@ use App\Entity\Commande;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use sngrl\PhpFirebaseCloudMessaging\Client;
+use sngrl\PhpFirebaseCloudMessaging\Client as Clt;
 use sngrl\PhpFirebaseCloudMessaging\Message;
 use sngrl\PhpFirebaseCloudMessaging\Recipient\Device;
 use sngrl\PhpFirebaseCloudMessaging\Notification;
@@ -303,7 +303,7 @@ class CommandeController extends APIController
     {
 
         $server_key = 'AAAAIrodwWw:APA91bGM7RRtiYKR9ahU2T7f9OXggGuFz-t67RTnlMOb3tRuNKqDqNWYeEy680qcS3vq0yyVZkmx-kRycYVF2bLTWaLGdCj-I-nFX_iC8IbeUlxytAGDk0pMVXiawr_l8NkAU0Xkwutc';
-        $client = new \GuzzleHttp\Client();
+        $client = new Clt();
         $client->setApiKey($server_key);
         $client->injectGuzzleHttpClient(new \GuzzleHttp\Client());
 
