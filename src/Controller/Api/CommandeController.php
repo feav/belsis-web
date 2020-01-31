@@ -549,8 +549,6 @@ class CommandeController extends APIController
 
         if($user->getRole() == "serveur")
             $commandes = $this->commandeRepository->findBy(['user'=>$user->getId()]);
-        elseif($user->getRole() == "cuisinier")
-            $commandes = $this->commandeRepository->findBy(['cuisinier'=>$user->getId()]);
         else
             $commandes = $this->commandeRepository->findBy(['restaurant'=>$user->getRestaurant()->getId()]);
 
