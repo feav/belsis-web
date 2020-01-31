@@ -532,7 +532,6 @@ class CommandeController extends APIController
     }
 
     /**
-     *Remove product to commande.
      * @Rest\Get("/get-by-user", name="get_by_user")
      *
      * @return Response
@@ -548,7 +547,13 @@ class CommandeController extends APIController
             );
         }
 
-        $commandes = $this->commandeRepository->findBy(['user'=>$user->getId()]);
+        if($user->getRole() == "serveur")
+            $commandes = $this->commandeRepository->findBy(['user'=>$user->getId()]);
+        elseif($user->getRole() == "cuisinier")
+            $commandes = $this->commandeRepository->findBy(['cuisinier'=>$user->getId()]);
+        else
+            $commandes = $this->commandeRepository->findBy(['restaurant'=>$user->getRestaurant()->getId()]);
+
         $commandesArray = [];
         foreach ($commandes as $key => $value) {
             $commandesArray[] = [
