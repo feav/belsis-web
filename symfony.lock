@@ -2,6 +2,9 @@
     "behat/transliterator": {
         "version": "v1.2.0"
     },
+    "cboden/ratchet": {
+        "version": "v0.4.2"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -101,6 +104,9 @@
     },
     "egulias/email-validator": {
         "version": "2.1.11"
+    },
+    "evenement/evenement": {
+        "version": "v3.0.1"
     },
     "friendsofsymfony/oauth-server-bundle": {
         "version": "1.6.2"
@@ -235,6 +241,30 @@
     },
     "ralouphie/getallheaders": {
         "version": "3.0.3"
+    },
+    "ratchet/rfc6455": {
+        "version": "v0.2.6"
+    },
+    "react/cache": {
+        "version": "v1.0.0"
+    },
+    "react/dns": {
+        "version": "v1.2.0"
+    },
+    "react/event-loop": {
+        "version": "v1.1.1"
+    },
+    "react/promise": {
+        "version": "v2.7.1"
+    },
+    "react/promise-timer": {
+        "version": "v1.5.1"
+    },
+    "react/socket": {
+        "version": "v1.3.0"
+    },
+    "react/stream": {
+        "version": "v1.1.0"
     },
     "sabberworm/php-css-parser": {
         "version": "8.3.0"

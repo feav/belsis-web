@@ -56,6 +56,16 @@ class User extends BaseUser
      */
     private $device_token;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Discussion", mappedBy="users")
+     */
+    private $discussions;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Message", mappedBy="destinateur")
+     */
+    private $messages;
+
     public function getRestaurant()
     {
         return $this->restaurant;
@@ -73,6 +83,8 @@ class User extends BaseUser
         parent::__construct();
         $this->commandes = new ArrayCollection();
         $this->role = "serveur";
+        $this->discussions = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId()
@@ -170,6 +182,65 @@ class User extends BaseUser
     public function setDeviceToken(?string $device_token): self
     {
         $this->device_token = $device_token;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Discussion[]
+     */
+    public function getDiscussions(): Collection
+    {
+        return $this->discussions;
+    }
+
+    public function addDiscussion(Discussion $discussion): self
+    {
+        if (!$this->discussions->contains($discussion)) {
+            $this->discussions[] = $discussion;
+            $discussion->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDiscussion(Discussion $discussion): self
+    {
+        if ($this->discussions->contains($discussion)) {
+            $this->discussions->removeElement($discussion);
+            $discussion->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Message[]
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setDestinateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->contains($message)) {
+            $this->messages->removeElement($message);
+            // set the owning side to null (unless already changed)
+            if ($message->getDestinateur() === $this) {
+                $message->setDestinateur(null);
+            }
+        }
 
         return $this;
     }
