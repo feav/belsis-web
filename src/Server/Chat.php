@@ -83,7 +83,7 @@ class Chat implements MessageComponentInterface
                 $msg->setIsRead(false);
                 
                 $this->em->persist($msg);
-                //$this->em->flush();
+                $this->em->flush();
                 
                 return $this->sendMessageToChannel($conn, $channel, $user->getId(), $message, $date, $action);
             default:

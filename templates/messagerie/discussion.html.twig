@@ -1,0 +1,146 @@
+
+{% extends 'backOffice/layout.html.twig' %}
+
+{% block title %}{{parent()}} | Messagerie{% endblock %}
+{% block style %}
+	<style type="text/css">
+		
+	</style>
+{% endblock %}
+
+{% block bo_content %}
+    <div class="row-title">
+        <h1 class="title">Mes discussions</h1> <span class="call-action btn">Nouvel discussion</span>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+        	<div class="example-wrapper">
+		       <div class="mesgs">
+		        <div id="ws-content">
+		        	{% for msg in discussion.messages %}
+		        	{% if msg.destinateur.id != user.id %}
+		        	<div class="incoming_msg">
+				        <div class="incoming_msg_img"> 
+				        	{% if user.avatar %}
+				        	<img class="avatar-sender" src="{{asset('images/dynamiques/profile/'~user.avatar)}}" alt="sunil">
+				        	{% else %}
+				        	<img src="{{asset('images/dynamiques/profile/user.png')}}" alt="sunil">
+				        	{% endif %}
+ 						</div>
+				        <div class="received_msg">
+				          <div class="received_withd_msg">
+				            <p>{{msg.contenu}}</p>
+				            <span class="time_date">
+				            	{{msg.dateCreate|date('Y-m-d H:i')}}
+				            </span></div>
+				        </div>
+				    </div>
+				    {% else %}
+				    <div class="outgoing_msg">
+			            <div class="sent_msg">
+			            	<p>{{msg.contenu}}</p>
+			            	<span class="time_date">
+				            	{{msg.dateCreate|date('Y-m-d H:i')}}
+				            </span> 
+			            </div>
+			        </div>
+			        {% endif %}
+			        {% endfor %}
+		        </div>
+		        <div class="type_msg">
+		          <div class="input_msg_write">
+		            <textarea  class="write_msg" placeholder="Type a message" id="message-input"  oninput="auto_grow(this)"></textarea>
+		            <button class="msg_send_btn" type="button" id="send-message"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+		          </div>
+		        </div>
+		      </div>
+			</div>
+        </div>
+    </div>
+{% endblock %}
+{% block validation_js %}
+	<audio id="audio" preload="auto" src="https://notificationsounds.com/notification-sounds/deduction-588/download/mp3"></audio>
+    <script type="text/javascript">
+		
+		var wsUrl = '{{ ws_url }}';
+		var $receiver = $('#ws-content');
+		var ws = new WebSocket('ws://' + wsUrl);
+		var defaultChannel = '{{ discussion.id }}';
+		var botName = 'ChatBot';
+		var userId = '{{ user.id }}';
+
+		ws.onopen = function () {
+			ws.send(JSON.stringify({
+				action: 'subscribe',
+				channel: defaultChannel,
+				userId: '{{ user.id }}'
+			}));
+		};
+
+		//se prepare à recevoir un message venant des autres utilisateurs
+		ws.onmessage = function (event) {
+			if( (JSON.parse(event.data).action == "subscribe") && (JSON.parse(event.data).userId != "{{ user.id }}") ){
+				toastr.info("Un membre a rejoins la discussion");
+			}
+			else
+				addMessageToChannel(event.data);
+		};
+
+		ws.onclose = function () {
+			//_receiver.innerHTML = 'Connection closed';
+		};
+
+		ws.onerror = function () {
+			//_receiver.innerHTML = 'An error occured!';
+		};
+
+		function auto_grow(element) {
+			element.style.height = (element.scrollHeight)+"px";
+		}
+		$('#send-message').click(function(){
+			var content = $('#message-input').val();
+			if(!content || content==''){
+				toastr.error("Le message ne peut pas être vide");
+			}
+			else{
+				$dataMessage = {
+					action: 'message',
+					userId: userId,
+					message: content,
+					channel: defaultChannel,
+					date:new Date(),
+				};
+				//addMessageToChannel($dataMessage);
+				ws.send(JSON.stringify($dataMessage));
+				$('#message-input').val('');
+			}
+		})
+
+		function addMessageToChannel($dataMessage){
+			var $dataMessage = JSON.parse($dataMessage);
+			if($dataMessage.userId != "{{ user.id }}"){
+				$msgElt = '<div class="incoming_msg">'+
+			        '<div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>'+
+			        '<div class="received_msg">'+
+			          '<div class="received_withd_msg">'+
+			            '<p>'+$dataMessage.message+'</p>'+
+			            '<span class="time_date">'+$dataMessage.date+'</span></div>'+
+			        '</div>'+
+			      '</div>';				
+			}
+			else{
+		      $msgElt = '<div class="outgoing_msg">'+
+				            '<div class="sent_msg">'+
+				              '<p>'+$dataMessage.message+'</p>'+
+				              '<span class="time_date">'+$dataMessage.date+'</span> </div>'+
+				        '</div>';			
+			}
+			$('#ws-content').append($msgElt);
+
+			if($dataMessage.userId != userId){
+				toastr.success("Nouveau message");
+			    document.getElementById('audio').play()
+			}
+		}
+  	</script>
+{% endblock %}
