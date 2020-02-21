@@ -47,6 +47,8 @@ class Discussion
     {
         $this->users = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->dateCreate = new \DateTime();
+        $this->archive = false;
     }
 
     public function getId(): ?int

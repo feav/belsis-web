@@ -148,7 +148,15 @@
 
 {% block bo_content %}
     <div class="row-title">
-        <h1 class="title">Chat</h1> <span class="call-action btn">Nouvel discussion</span>
+        <h1 class="title">
+        	Discussion
+       		{% if discussion.nom %}
+       			<b>{{discussion.nom}}</b>
+       		{% else %}
+       			<b>#{{discussion.id}}</b>
+       		{% endif %}
+        </h1>
+        <a class="call-action btn" href="{{path('discussions')}}">mes discussions</a>
     </div>
     <div class="x_panel">
         <div class="x_content">
@@ -250,10 +258,14 @@
 				};
 				//addMessageToChannel($dataMessage);
 				ws.send(JSON.stringify($dataMessage));
-				$('#message-input').val('');
+				$('#message-input').val('').css('height', 'auto');
 			}
 		})
-
+		$length = $("#ws-content").children().length;
+		$("#ws-content").animate({
+			scrollTop: $("#ws-content").children().eq($length -1).position().top
+		}, 'slow');
+		$scrollToTop = $("#ws-content").children().eq($length -1).position().top;
 		function addMessageToChannel($dataMessage){
 			var $dataMessage = JSON.parse($dataMessage);
 			if($dataMessage.userId != "{{ user.id }}"){
@@ -279,6 +291,10 @@
 				toastr.success("Nouveau message");
 			    document.getElementById('audio').play()
 			}
+
+			$length = $("#ws-content").children().length;
+			$scrollToTop +=  $("#ws-content").children().eq($length -1).height();
+			$("#ws-content").animate({scrollTop: $scrollToTop + $("#ws-content").children().eq($length -1).height()}, 'slow');
 		}
   	</script>
 {% endblock %}

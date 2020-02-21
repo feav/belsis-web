@@ -42,6 +42,32 @@ class UserController extends AbstractController
     }
 
     /**
+     * @Route("/users-list-xhr", name="users_list_xhr", methods={"GET"})
+     */
+    public function userXhr(Request $request, UserRepository $userRepository)
+    {   
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $user = $this->getUser();
+        if($user->getRole() == "superadmin")
+            $users = $userRepository->findAll();
+        elseif($this->getUser()->getRole() == "admin")
+            $users = $userRepository->findBy(['restaurant'=>$user->getRestaurant()]);
+
+        if($request->isXmlHttpRequest()){
+            $html = $this->renderView('user_list_xhr.html.twig', [
+              'users'=>$users,
+            ]);
+
+            $response = new Response(json_encode($html));
+            $response->headers->set('Content-Type', 'application/json');
+        
+            return $response;
+        }
+
+        return new Response("la methode d'access n'est pas autorisée");
+    }
+
+    /**
      * @Route("/new", name="user_new", methods={"GET","POST"})
      */
     public function new(Request $request, UserPasswordEncoderInterface $encoder, UserManagerInterface $userManager): Response

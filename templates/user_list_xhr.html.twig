@@ -1,0 +1,11 @@
+<ul class="user-list" style="list-style:none">
+	{% for usr in users %}
+	<li class="user-item">
+		{% if usr.prenom  or usr.nom %}
+			<a href="{{path('discussion_new',{'id_user':usr.id})}}">{{usr.prenom}} {{usr.nom}}</a>
+		{% else %}
+			<a href="{{path('discussion_new',{'id_user':usr.id})}}">{{usr.username}}</a>
+		{% endif %}
+	</li>
+	{% endfor %}
+</ul>
